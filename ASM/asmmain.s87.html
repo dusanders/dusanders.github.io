@@ -1,0 +1,506 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc1 {
+	color: #008000;
+}
+.sc2 {
+	color: #FF8000;
+}
+.sc3 {
+	color: #808080;
+}
+.sc4 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc5 {
+}
+.sc6 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc8 {
+	font-weight: bold;
+	color: #8080FF;
+	background: #FFFFCC;
+}
+.sc9 {
+	color: #0080FF;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc1">;   Author:     Dustin Anderson</span><span class="sc0">
+</span><span class="sc1">;   Title:      Scroll</span><span class="sc0">
+</span><span class="sc1">;   Problems:</span><span class="sc0">
+</span><span class="sc1">;</span><span class="sc0">
+</span><span class="sc1">;   Description:    This program is intended to take an input string and split</span><span class="sc0">
+</span><span class="sc1">;           this string into two display lines (16x2). The program then</span><span class="sc0">
+</span><span class="sc1">;           should 'scroll' the display if the input string is longer</span><span class="sc0">
+</span><span class="sc1">;           32. This is done by copying the bottom display line to the</span><span class="sc0">
+</span><span class="sc1">;           top display line and pulling a newly formed bottom line</span><span class="sc0">
+</span><span class="sc1">;           from the input string.</span><span class="sc0">
+
+#</span><span class="sc9">include</span><span class="sc0"> </span><span class="sc3">"ior5f1026a.h"</span><span class="sc0">
+#</span><span class="sc9">include</span><span class="sc0"> </span><span class="sc3">"ior5f1026a_ext.h"</span><span class="sc0">
+
+#</span><span class="sc5">define</span><span class="sc0">  </span><span class="sc5">STIF0</span><span class="sc0">      </span><span class="sc5">IF0H.0</span><span class="sc0">
+#</span><span class="sc5">define</span><span class="sc0">  </span><span class="sc5">SRIF0</span><span class="sc0">      </span><span class="sc5">IF0H.1</span><span class="sc0">
+#</span><span class="sc5">define</span><span class="sc0">  </span><span class="sc5">SREIF0</span><span class="sc0">     </span><span class="sc5">IF0H.2</span><span class="sc0">
+#</span><span class="sc5">define</span><span class="sc0">  </span><span class="sc5">SAU0EN</span><span class="sc0">     </span><span class="sc5">PER0.2</span><span class="sc0">              </span><span class="sc1">; serial array unit 0 enable</span><span class="sc0">
+#</span><span class="sc5">define</span><span class="sc0">  </span><span class="sc5">STMK0</span><span class="sc0">      </span><span class="sc5">MK0H.0</span><span class="sc0">              </span><span class="sc1">; error flag locations</span><span class="sc0">
+#</span><span class="sc5">define</span><span class="sc0">  </span><span class="sc5">SRMK0</span><span class="sc0">      </span><span class="sc5">MK0H.1</span><span class="sc0">
+#</span><span class="sc5">define</span><span class="sc0">  </span><span class="sc5">SREMK0</span><span class="sc0">     </span><span class="sc5">MK0H.2</span><span class="sc0">
+#</span><span class="sc5">define</span><span class="sc0">  </span><span class="sc5">BFF01</span><span class="sc0">      </span><span class="sc5">SSR01.5</span><span class="sc0">
+
+#</span><span class="sc5">define</span><span class="sc0"> </span><span class="sc5">RST</span><span class="sc0"> </span><span class="sc5">P1.3</span><span class="sc0">                        </span><span class="sc1">; LCD reset pin</span><span class="sc0">
+#</span><span class="sc5">define</span><span class="sc0"> </span><span class="sc5">term</span><span class="sc0">    </span><span class="sc2">0x24</span><span class="sc0">                    </span><span class="sc1">; string terminal char ($)</span><span class="sc0">
+
+    </span><span class="sc5">RSEG</span><span class="sc0">    </span><span class="sc5">CSTACK</span><span class="sc0">                      </span><span class="sc1">; stack segment definition</span><span class="sc0">
+    </span><span class="sc5">RSEG</span><span class="sc0">    </span><span class="sc5">NEAR_N</span><span class="sc0">                      </span><span class="sc1">; DATA segment</span><span class="sc0">
+</span><span class="sc5">array1</span><span class="sc4">:</span><span class="sc0">     </span><span class="sc8">DS</span><span class="sc0">  </span><span class="sc2">16</span><span class="sc0">                      </span><span class="sc1">; 16 bytes for upper  LCD</span><span class="sc0">
+</span><span class="sc5">array2</span><span class="sc4">:</span><span class="sc0">     </span><span class="sc8">DS</span><span class="sc0">  </span><span class="sc2">16</span><span class="sc0">                      </span><span class="sc1">; 16 bytes for bottom LCD</span><span class="sc0">
+</span><span class="sc9">ptr</span><span class="sc4">:</span><span class="sc0">        </span><span class="sc8">DS</span><span class="sc0">      </span><span class="sc2">2</span><span class="sc0">                   </span><span class="sc1">; pointer</span><span class="sc0">
+</span><span class="sc5">cnt</span><span class="sc4">:</span><span class="sc0">        </span><span class="sc8">DS</span><span class="sc0">  </span><span class="sc2">1</span><span class="sc0">                       </span><span class="sc1">; scroll speed counter</span><span class="sc0">
+</span><span class="sc5">ready</span><span class="sc4">:</span><span class="sc0">      </span><span class="sc8">DS</span><span class="sc0">  </span><span class="sc2">1</span><span class="sc0">                       </span><span class="sc1">; EOT flag</span><span class="sc0">
+
+</span><span class="sc5">buff_len</span><span class="sc0">        </span><span class="sc9">EQU</span><span class="sc0">     </span><span class="sc2">16</span><span class="sc0">              </span><span class="sc1">; buffer size</span><span class="sc0">
+</span><span class="sc5">uartData</span><span class="sc4">:</span><span class="sc0">       </span><span class="sc8">DS</span><span class="sc0">      </span><span class="sc5">buff_len</span><span class="sc0">        </span><span class="sc1">; data receive buffer</span><span class="sc0">
+</span><span class="sc5">dataPtr</span><span class="sc4">:</span><span class="sc0">        </span><span class="sc8">DS</span><span class="sc0">      </span><span class="sc2">2</span><span class="sc0">               </span><span class="sc1">; data buffer pointer</span><span class="sc0">
+</span><span class="sc5">sendPtr</span><span class="sc4">:</span><span class="sc0">        </span><span class="sc8">DS</span><span class="sc0">      </span><span class="sc2">2</span><span class="sc0">       </span><span class="sc1">;</span><span class="sc0">
+</span><span class="sc5">buff_cnt</span><span class="sc4">:</span><span class="sc0">       </span><span class="sc8">DS</span><span class="sc0">      </span><span class="sc2">1</span><span class="sc0">       </span><span class="sc1">; flag for first mem access</span><span class="sc0">
+</span><span class="sc5">SPEED</span><span class="sc4">:</span><span class="sc0">      </span><span class="sc8">DS</span><span class="sc0">  </span><span class="sc2">1</span><span class="sc0">               </span><span class="sc1">; scrolling speed</span><span class="sc0">
+
+    </span><span class="sc5">ASEGN</span><span class="sc0">   </span><span class="sc5">RCODE</span><span class="sc4">:</span><span class="sc5">CODE</span><span class="sc4">,</span><span class="sc0"> </span><span class="sc2">0</span><span class="sc0">       </span><span class="sc1">; vector table</span><span class="sc0">
+    </span><span class="sc9">ORG</span><span class="sc0">     </span><span class="sc5">RST_vect</span><span class="sc0">
+    </span><span class="sc9">DW</span><span class="sc0">      </span><span class="sc5">RESET</span><span class="sc0">               </span><span class="sc1">; Reset vector</span><span class="sc0">
+    </span><span class="sc9">ORG</span><span class="sc0">     </span><span class="sc5">INTIICA0_vect</span><span class="sc0">
+    </span><span class="sc9">DW</span><span class="sc0">      </span><span class="sc5">I2C_ISR</span><span class="sc0">             </span><span class="sc1">; I2C vector</span><span class="sc0">
+    </span><span class="sc9">ORG</span><span class="sc0">     </span><span class="sc5">INTIT_vect</span><span class="sc0">
+    </span><span class="sc9">DW</span><span class="sc0">      </span><span class="sc5">INTIT_ISR</span><span class="sc0">           </span><span class="sc1">; 12-bit interval timer vector</span><span class="sc0">
+    </span><span class="sc9">ORG</span><span class="sc0">     </span><span class="sc5">INTST0_vect</span><span class="sc0">
+    </span><span class="sc9">DW</span><span class="sc0">      </span><span class="sc5">INTST0_ISR</span><span class="sc0">          </span><span class="sc1">; UART transmit vector</span><span class="sc0">
+    </span><span class="sc9">ORG</span><span class="sc0">     </span><span class="sc5">INTSR0_vect</span><span class="sc0">
+    </span><span class="sc9">DW</span><span class="sc0">      </span><span class="sc5">INTSR0_ISR</span><span class="sc0">          </span><span class="sc1">; UART receive vector</span><span class="sc0">
+
+    </span><span class="sc9">ORG</span><span class="sc0"> </span><span class="sc2">0xC0</span><span class="sc0">                    </span><span class="sc1">; option byte</span><span class="sc0">
+    </span><span class="sc9">DB</span><span class="sc0">  </span><span class="sc2">0x6E</span><span class="sc0">                    </span><span class="sc1">; disable watchdog</span><span class="sc0">
+    </span><span class="sc9">DB</span><span class="sc0">  </span><span class="sc2">0x1F</span><span class="sc0">                    </span><span class="sc1">; 1.67V/1.63V LVD off</span><span class="sc0">
+    </span><span class="sc9">DB</span><span class="sc0">  </span><span class="sc2">0xAA</span><span class="sc0">                    </span><span class="sc1">; 8 MHz LS mode</span><span class="sc0">
+    </span><span class="sc9">DB</span><span class="sc0">  </span><span class="sc2">0x85</span><span class="sc0">                    </span><span class="sc1">; enable on-chip debugging</span><span class="sc0">
+
+        </span><span class="sc5">RSEG</span><span class="sc0">    </span><span class="sc5">CODE</span><span class="sc0">            </span><span class="sc1">; code segment</span><span class="sc0">
+</span><span class="sc5">RESET</span><span class="sc4">:</span><span class="sc0">  </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">SP</span><span class="sc4">,</span><span class="sc0"> #</span><span class="sc5">SFE</span><span class="sc4">(</span><span class="sc5">CSTACK</span><span class="sc4">)</span><span class="sc1">; setting up the stack pointer</span><span class="sc0">
+
+    </span><span class="sc1">; clock setup</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0"> </span><span class="sc5">HOCODIV</span><span class="sc4">,</span><span class="sc0">    #</span><span class="sc2">0x02</span><span class="sc0">       </span><span class="sc1">; set 8 MHz system clock</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0"> </span><span class="sc5">PER0</span><span class="sc4">,</span><span class="sc0">       #</span><span class="sc2">0x90</span><span class="sc0">       </span><span class="sc1">; enable RTC, I2C operation</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0"> </span><span class="sc5">OSMC</span><span class="sc4">,</span><span class="sc0">       #</span><span class="sc2">0x90</span><span class="sc0">       </span><span class="sc1">; select LFO as s/system clock</span><span class="sc0">
+
+    </span><span class="sc5">clrw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc0">                  </span><span class="sc1">; power-up delay for 65 msec</span><span class="sc0">
+</span><span class="sc5">pw_up</span><span class="sc4">:</span><span class="sc0">  
+    </span><span class="sc5">br</span><span class="sc0">      </span><span class="sc10">$</span><span class="sc4">+</span><span class="sc2">2</span><span class="sc0">                 </span><span class="sc1">; to debounce the button            </span><span class="sc0">
+    </span><span class="sc5">subw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">1</span><span class="sc0">          </span><span class="sc1">; 1 usec delay for CPU</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">pw_up</span><span class="sc0">               </span><span class="sc1">; clocked at 8 MHz  </span><span class="sc0">
+
+    </span><span class="sc1">; ports setup</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">ADPC</span><span class="sc4">,</span><span class="sc0">   #</span><span class="sc2">0x01</span><span class="sc0">       </span><span class="sc1">; set digital mode on all pins</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">PM1</span><span class="sc4">,</span><span class="sc0">    #</span><span class="sc2">0xF2</span><span class="sc0">       </span><span class="sc1">; configure port for input (p11, p12)</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">PMC1</span><span class="sc4">,</span><span class="sc0">   #</span><span class="sc2">0xE0</span><span class="sc0">       </span><span class="sc1">; set digital mode for P1</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">PM2</span><span class="sc4">,</span><span class="sc0">    #</span><span class="sc2">0xF0</span><span class="sc0">       </span><span class="sc1">; configure port for output</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">PM4</span><span class="sc4">,</span><span class="sc0">    #</span><span class="sc2">0xF9</span><span class="sc0">       </span><span class="sc1">; configure port for output</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">PMC4</span><span class="sc4">,</span><span class="sc0">   #</span><span class="sc2">0xF9</span><span class="sc0">       </span><span class="sc1">; set digital mode for P4</span><span class="sc0">
+
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">P1</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x04</span><span class="sc0">       </span><span class="sc1">; init port outputs</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">P2</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x00</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">P4</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x00</span><span class="sc0">
+
+    </span><span class="sc1">; I2C setup</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICWL0</span><span class="sc4">,</span><span class="sc0"> #</span><span class="sc2">31</span><span class="sc0">         </span><span class="sc1">; setup for 120 KHz operation @ 8 MHz</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICWH0</span><span class="sc4">,</span><span class="sc0"> #</span><span class="sc2">34</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">SVA0</span><span class="sc4">,</span><span class="sc0">   #</span><span class="sc2">0x7C</span><span class="sc0">       </span><span class="sc1">; own slave address</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICF0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">3</span><span class="sc0">          </span><span class="sc1">; enable START w/out STOP, no reservation</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICCTL00</span><span class="sc4">,</span><span class="sc0"> #</span><span class="sc2">0x0C</span><span class="sc0">
+    </span><span class="sc5">clr1</span><span class="sc0">    </span><span class="sc5">MK0H.5</span><span class="sc0">              </span><span class="sc1">; enable I2C interrupts</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.7</span><span class="sc0">          </span><span class="sc1">; enable I2C operation</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.6</span><span class="sc0">          </span><span class="sc1">; cancel current operation</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">PM6</span><span class="sc4">,</span><span class="sc0">    #</span><span class="sc2">0xFC</span><span class="sc0">       </span><span class="sc1">; configure port pins for output</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">P6</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; init I2C pins</span><span class="sc0">
+
+    </span><span class="sc5">EI</span><span class="sc0">                          </span><span class="sc1">; enable interrupts globally</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">Init_System</span><span class="sc0">         </span><span class="sc1">; configure LCD display and memory</span><span class="sc0">
+
+    </span><span class="sc5">mov1</span><span class="sc0">    </span><span class="sc5">CY</span><span class="sc4">,</span><span class="sc0"> </span><span class="sc5">P1.1</span><span class="sc0">            </span><span class="sc1">; USB connected?</span><span class="sc0">
+    </span><span class="sc5">sknc</span><span class="sc0">    
+     </span><span class="sc6">call</span><span class="sc0">   </span><span class="sc5">get_USB</span><span class="sc0">             </span><span class="sc1">; YES - get string from USB </span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">init_FRAM_Read</span><span class="sc0">      </span><span class="sc1">; setup for reading from memory</span><span class="sc0">
+    
+    </span><span class="sc1">; Interval timer setup</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">ITMC</span><span class="sc4">,</span><span class="sc0">   #</span><span class="sc2">0x8FFF</span><span class="sc0">     </span><span class="sc1">; set 270 msec period, int. enable</span><span class="sc0">
+    </span><span class="sc5">clr1</span><span class="sc0">    </span><span class="sc5">MK1L.3</span><span class="sc0">              </span><span class="sc1">; enable 12-bit timer interrupt</span><span class="sc0">
+    
+    </span><span class="sc5">br</span><span class="sc0">  </span><span class="sc5">entry</span><span class="sc0">
+</span><span class="sc1">;----------------------------MAIN PROGRAM LOOP--------------------------</span><span class="sc0">
+</span><span class="sc6">loop</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc5">stop</span><span class="sc0">                        </span><span class="sc1">; put MCU on sleep</span><span class="sc0">
+    </span><span class="sc6">nop</span><span class="sc0">                         </span><span class="sc1">; wake-up by 12-bit timer</span><span class="sc0">
+    </span><span class="sc6">dec</span><span class="sc0">     </span><span class="sc5">cnt</span><span class="sc0">                 </span><span class="sc1">; wait for next scroll</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc6">loop</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc5">SPEED</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">cnt</span><span class="sc4">,</span><span class="sc0">    </span><span class="sc5">A</span><span class="sc0">           </span><span class="sc1">; update the counter</span><span class="sc0">
+
+</span><span class="sc5">entry</span><span class="sc4">:</span><span class="sc0">  
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">copyArray</span><span class="sc0">           </span><span class="sc1">; array2 -&gt; array1</span><span class="sc0">
+
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array2</span><span class="sc0">     </span><span class="sc1">; HL = array2 (bottom display line)</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">fillArray</span><span class="sc0">           </span><span class="sc1">; fill array2</span><span class="sc0">
+
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array1</span><span class="sc0">     </span><span class="sc1">; HL = address of array1 buffer</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">0x80</span><span class="sc0">       </span><span class="sc1">; RAM address of line 1</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">sendString</span><span class="sc0">          </span><span class="sc1">; send array1</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array2</span><span class="sc0">     </span><span class="sc1">; HL = address of array2 buffer</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">0xC0</span><span class="sc0">       </span><span class="sc1">; RAM address of line 2</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">sendString</span><span class="sc0">          </span><span class="sc1">; send array2</span><span class="sc0">
+
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc5">ready</span><span class="sc0">           </span><span class="sc1">; is all string displayed?</span><span class="sc0">
+    </span><span class="sc5">cmp0</span><span class="sc0">    </span><span class="sc5">A</span><span class="sc0">
+    </span><span class="sc5">bz</span><span class="sc0">      </span><span class="sc6">loop</span><span class="sc0">                </span><span class="sc1">; skip if YES</span><span class="sc0">
+
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc9">ptr</span><span class="sc4">,</span><span class="sc0">    #</span><span class="sc2">0</span><span class="sc0">          </span><span class="sc1">; start over</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc9">ptr</span><span class="sc4">+</span><span class="sc2">1</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">ready</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">init_FRAM_Read</span><span class="sc0">      </span><span class="sc1">; restart memory location</span><span class="sc0">
+    </span><span class="sc5">br</span><span class="sc0">  </span><span class="sc6">loop</span><span class="sc0">
+
+</span><span class="sc1">;----------------------------------------------------------------</span><span class="sc0">
+</span><span class="sc5">test_FRAM</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc1">; FRAM write</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">BC</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0</span><span class="sc0">          </span><span class="sc1">; pointer to test string</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">init_FRAM_Write</span><span class="sc0">     </span><span class="sc1">; setup storage I2C for UART recp.</span><span class="sc0">
+</span><span class="sc5">L1</span><span class="sc4">:</span><span class="sc0"> </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc8">ES</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc8">ES</span><span class="sc4">:</span><span class="sc6">test</span><span class="sc4">[</span><span class="sc5">BC</span><span class="sc4">]</span><span class="sc0"> </span><span class="sc1">; get char from flash</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc8">ES</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x0F</span><span class="sc0">   
+    </span><span class="sc5">incw</span><span class="sc0">    </span><span class="sc5">BC</span><span class="sc0">                  </span><span class="sc1">; update string pointer</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc5">A</span><span class="sc0">           </span><span class="sc1">; send the char to FRAM</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for ACK</span><span class="sc0">
+    </span><span class="sc6">cmp</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc5">term</span><span class="sc0">       </span><span class="sc1">; did we get ESC character?</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">L1</span><span class="sc0">                  </span><span class="sc1">; NO - loop back                </span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.0</span><span class="sc0">          </span><span class="sc1">; STOP signal for I2C</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">20</span><span class="sc0">         </span><span class="sc1">; short delay</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc1">; FRAM read</span><span class="sc0">
+</span><span class="sc5">L2</span><span class="sc4">:</span><span class="sc0"> </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array1</span><span class="sc0">     </span><span class="sc1">; read here from FRAM</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">init_FRAM_Read</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.1</span><span class="sc0">          </span><span class="sc1">; generate START condition</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.2</span><span class="sc0">          </span><span class="sc1">; setup for ACK</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0xA1</span><span class="sc0">       </span><span class="sc1">; send I2C address + read</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for the end of transfer  </span><span class="sc0">
+</span><span class="sc5">L3</span><span class="sc4">:</span><span class="sc0"> </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.5</span><span class="sc0">          </span><span class="sc1">; start I2C receive</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for the end of receive</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc5">IICA0</span><span class="sc0">       </span><span class="sc1">; get received byte</span><span class="sc0">
+    </span><span class="sc6">cmp</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc5">term</span><span class="sc0">       </span><span class="sc1">; did we get ESC character?</span><span class="sc0">
+    </span><span class="sc5">bz</span><span class="sc0">      </span><span class="sc5">L4</span><span class="sc0">                  </span><span class="sc1">; YES - end </span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc4">[</span><span class="sc5">HL</span><span class="sc4">],</span><span class="sc0">   </span><span class="sc5">A</span><span class="sc0">           </span><span class="sc1">; NO  - copy char to buffer </span><span class="sc0">
+    </span><span class="sc5">incw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc0">                  </span><span class="sc1">; update buffer pointer</span><span class="sc0">
+    </span><span class="sc5">br</span><span class="sc0">      </span><span class="sc5">L3</span><span class="sc0">                  </span><span class="sc1">; loop back             </span><span class="sc0">
+</span><span class="sc5">L4</span><span class="sc4">:</span><span class="sc0"> </span><span class="sc5">clr1</span><span class="sc0">    </span><span class="sc5">IICCTL00.2</span><span class="sc0">          </span><span class="sc1">; setup for NACK</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.5</span><span class="sc0">          </span><span class="sc1">; start receive</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for the end of receive</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.0</span><span class="sc0">          </span><span class="sc1">; STOP signal for I2C</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">20</span><span class="sc0">         </span><span class="sc1">; short delay   </span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    
+</span><span class="sc5">lll</span><span class="sc4">:</span><span class="sc0">    </span><span class="sc5">br</span><span class="sc0"> </span><span class="sc5">lll</span><span class="sc0">  
+
+</span><span class="sc1">;----------------------------------------------------------------</span><span class="sc0">
+</span><span class="sc5">get_USB</span><span class="sc4">:</span><span class="sc0">                        </span><span class="sc1">; load string from USB to FRAM</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">init_UART</span><span class="sc0">           </span><span class="sc1">; NO - init_UART and begin reading</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">init_FRAM_Write</span><span class="sc0">     </span><span class="sc1">; setup storage I2C for UART recp.</span><span class="sc0">
+
+</span><span class="sc5">get_UART</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for char</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc5">RXD0</span><span class="sc0">        </span><span class="sc1">; read char</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc5">A</span><span class="sc0">           </span><span class="sc1">; send the char to FRAM</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">cmp</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc5">term</span><span class="sc0">       </span><span class="sc1">; did we get ESC character?</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">get_UART</span><span class="sc0">            </span><span class="sc1">; NO - loop back    </span><span class="sc0">
+            
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.0</span><span class="sc0">          </span><span class="sc1">; STOP signal for I2C   </span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">ST0L</span><span class="sc4">,</span><span class="sc0">   #</span><span class="sc2">0x03</span><span class="sc0">       </span><span class="sc1">; STOP UART recieve</span><span class="sc0">
+    </span><span class="sc5">clr1</span><span class="sc0">    </span><span class="sc5">PER0.2</span><span class="sc0">              </span><span class="sc1">; STOP UART clock</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">MK0H.1</span><span class="sc0">              </span><span class="sc1">; STOP UART interrupts</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">20</span><span class="sc0">         </span><span class="sc1">; short delay</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc6">ret</span><span class="sc0">
+
+</span><span class="sc1">;==============UART SETUP======================================</span><span class="sc0">
+</span><span class="sc5">init_UART</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">PER0.2</span><span class="sc0">              </span><span class="sc1">; enable clock for SAU0</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">SPS0L</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x22</span><span class="sc0">       </span><span class="sc1">; set 2 MHz SAU0 clock</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x0022</span><span class="sc0">     </span><span class="sc1">; set UART mode, CKS00 clock</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">SMR00</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc8">AX</span><span class="sc0">      
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x8197</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">SCR00</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc8">AX</span><span class="sc0">          </span><span class="sc1">; enable TX, 8N1, 8-bit data  </span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0xCE00</span><span class="sc0">     </span><span class="sc1">; setup for 9600 baud</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">SDR00</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc8">AX</span><span class="sc0">
+    
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x8122</span><span class="sc0">     </span><span class="sc1">; set UART mode, CKS01 clock</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">SMR01</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc8">AX</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x6197</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">SCR01</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc8">AX</span><span class="sc0">          </span><span class="sc1">; enable RX, 8N1, 8-bit data </span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0xCE00</span><span class="sc0">     </span><span class="sc1">; setup for 9600 baud</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">SDR01</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc8">AX</span><span class="sc0">
+    
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">0x401</span><span class="sc0">      </span><span class="sc1">; set output =1</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">SO0</span><span class="sc4">,</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">SOE0L</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">1</span><span class="sc0">          </span><span class="sc1">; enable serial output  </span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">SSC0</span><span class="sc4">,</span><span class="sc0">   #</span><span class="sc2">2</span><span class="sc0">          </span><span class="sc1">; enable receive interrupt</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">SS0L</span><span class="sc4">,</span><span class="sc0">   #</span><span class="sc2">3</span><span class="sc0">          </span><span class="sc1">; start operation of channes 0&amp;1</span><span class="sc0">
+    </span><span class="sc5">clr1</span><span class="sc0">    </span><span class="sc5">MK0H.1</span><span class="sc0">              </span><span class="sc1">; enable receiver interrupt INTSR0</span><span class="sc0">
+    </span><span class="sc6">ret</span><span class="sc0">
+
+</span><span class="sc1">;-----------------------------COPY ARRAY ROUTINE-----------------------</span><span class="sc0">
+</span><span class="sc5">copyArray</span><span class="sc4">:</span><span class="sc0">                      </span><span class="sc1">; copy array2 -&gt; array1</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">DE</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array1</span><span class="sc0">     </span><span class="sc1">; DE = array1</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array2</span><span class="sc0">     </span><span class="sc1">; HL = array2</span><span class="sc0">
+</span><span class="sc5">cal</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc4">[</span><span class="sc5">HL</span><span class="sc4">]</span><span class="sc0">        </span><span class="sc1">; a = array2[i]</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc4">[</span><span class="sc5">DE</span><span class="sc4">],</span><span class="sc0">   </span><span class="sc5">A</span><span class="sc0">           </span><span class="sc1">; array1[i] = a</span><span class="sc0">
+    </span><span class="sc5">incw</span><span class="sc0">    </span><span class="sc5">DE</span><span class="sc0">                  </span><span class="sc1">; inc ptr</span><span class="sc0">
+    </span><span class="sc5">incw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     </span><span class="sc5">HL</span><span class="sc0">
+    </span><span class="sc5">cmpw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array2</span><span class="sc4">+</span><span class="sc2">16</span><span class="sc0">  </span><span class="sc1">; 16 char?</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">cal</span><span class="sc0">                 </span><span class="sc1">; NO - loop back</span><span class="sc0">
+    </span><span class="sc6">ret</span><span class="sc0">                         </span><span class="sc1">; return to caller</span><span class="sc0">
+
+</span><span class="sc1">;-----------------------------FILL ARRAY ROUTINE-----------------------</span><span class="sc0">
+</span><span class="sc5">fillArray</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     </span><span class="sc5">HL</span><span class="sc0">          </span><span class="sc1">; start address</span><span class="sc0">
+    </span><span class="sc5">addw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">16</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">DE</span><span class="sc4">,</span><span class="sc0">     </span><span class="sc8">AX</span><span class="sc0">          </span><span class="sc1">; end address</span><span class="sc0">
+
+</span><span class="sc5">fa1</span><span class="sc4">:</span><span class="sc0">    
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc5">ready</span><span class="sc0">       </span><span class="sc1">; check the ready flag</span><span class="sc0">
+    </span><span class="sc5">cmp0</span><span class="sc0">    </span><span class="sc5">A</span><span class="sc0">                   </span><span class="sc1">; if 1, we are done</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">fa2</span><span class="sc0">
+
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">10</span><span class="sc0">         </span><span class="sc1">; 10 usec delay needed by I2C</span><span class="sc0">
+    </span><span class="sc6">dec</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc0">                   </span><span class="sc1">; between STOP and START</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">1</span><span class="sc0">
+    </span><span class="sc6">bt</span><span class="sc0">      </span><span class="sc5">IICS0.6</span><span class="sc4">,</span><span class="sc0"> </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">0</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.1</span><span class="sc0">          </span><span class="sc1">; generate START signal</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0xA1</span><span class="sc0">       </span><span class="sc1">; send slave address with r/w = 1</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for ACK</span><span class="sc0">
+    </span><span class="sc5">clr1</span><span class="sc0">    </span><span class="sc5">IICCTL00.2</span><span class="sc0">          </span><span class="sc1">; setup for NACK</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.5</span><span class="sc0">          </span><span class="sc1">; request next char form FRAM</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc5">IICA0</span><span class="sc0">       </span><span class="sc1">; get character</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.0</span><span class="sc0">          </span><span class="sc1">; generate STOP signal</span><span class="sc0">
+
+    </span><span class="sc6">cmp</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc5">term</span><span class="sc0">       </span><span class="sc1">; check for ESC</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">fa3</span><span class="sc0">                 </span><span class="sc1">; we are done</span><span class="sc0">
+</span><span class="sc5">fa2</span><span class="sc4">:</span><span class="sc0">    
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">ready</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">1</span><span class="sc0">          </span><span class="sc1">; end of string flag</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">0x20</span><span class="sc0">       </span><span class="sc1">; a = 'space' character</span><span class="sc0">
+</span><span class="sc5">fa3</span><span class="sc4">:</span><span class="sc0">    
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc4">[</span><span class="sc5">HL</span><span class="sc4">],</span><span class="sc0">   </span><span class="sc5">A</span><span class="sc0">           </span><span class="sc1">; array1[i] = a (input[i])</span><span class="sc0">
+    </span><span class="sc5">incw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc0">                  </span><span class="sc1">; inc array pointer</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     </span><span class="sc5">HL</span><span class="sc0">          </span><span class="sc1">;</span><span class="sc0">
+    </span><span class="sc5">cmpw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     </span><span class="sc5">DE</span><span class="sc0">          </span><span class="sc1">; did we hit 16 chars?</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">fa1</span><span class="sc0">                 </span><span class="sc1">; no - loop back</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">20</span><span class="sc0">         </span><span class="sc1">; 10 usec delay needed by I2C</span><span class="sc0">
+    </span><span class="sc6">dec</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc0">                   </span><span class="sc1">; between STOP and START</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">1</span><span class="sc0"> 
+    </span><span class="sc6">ret</span><span class="sc0">                         </span><span class="sc1">; ret to caller</span><span class="sc0">
+
+</span><span class="sc1">;------------------------STORAGE I2C SETUP ROUTINES--------------------------</span><span class="sc0">
+</span><span class="sc5">init_FRAM_Write</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc6">bt</span><span class="sc0">      </span><span class="sc5">IICS0.6</span><span class="sc4">,</span><span class="sc0"> </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">0</span><span class="sc0">        </span><span class="sc1">; wait for i2c ready</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.1</span><span class="sc0">          </span><span class="sc1">; generate start</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0xA0</span><span class="sc0">       </span><span class="sc1">; send slave address AND r/w bit(last bit)</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; r = 1   w = 0</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; send MSB memory start location</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; send LSB memory start location</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">ret</span><span class="sc0">                         </span><span class="sc1">; done setting up, continue to UART</span><span class="sc0">
+
+</span><span class="sc5">init_FRAM_Read</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc6">bt</span><span class="sc0">      </span><span class="sc5">IICS0.6</span><span class="sc4">,</span><span class="sc0"> </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">0</span><span class="sc0">        </span><span class="sc1">; wait for i2c ready</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.1</span><span class="sc0">          </span><span class="sc1">; generate START condition</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.2</span><span class="sc0">          </span><span class="sc1">; setup for ACK</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0xA0</span><span class="sc0">       </span><span class="sc1">; send I2C address + write</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for the end of transfer</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; send address MSB</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">        
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; send address LSB</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.0</span><span class="sc0">          </span><span class="sc1">; generate STOP condition</span><span class="sc0">
+        
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">20</span><span class="sc0">         </span><span class="sc1">; 10 usec delay needed by I2C</span><span class="sc0">
+    </span><span class="sc6">dec</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc0">                   </span><span class="sc1">; between STOP and START</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">1</span><span class="sc0">
+    
+    </span><span class="sc6">bt</span><span class="sc0">      </span><span class="sc5">IICS0.6</span><span class="sc4">,</span><span class="sc0"> </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">0</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.1</span><span class="sc0">          </span><span class="sc1">; generate START signal</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0xA1</span><span class="sc0">       </span><span class="sc1">; send slave address with r/w = 1</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for ACK</span><span class="sc0">
+    </span><span class="sc5">clr1</span><span class="sc0">    </span><span class="sc5">IICCTL00.2</span><span class="sc0">          </span><span class="sc1">; setup for NACK</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.5</span><span class="sc0">          </span><span class="sc1">; request next char form FRAM</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc5">IICA0</span><span class="sc0">           </span><span class="sc1">; get speed</span><span class="sc0">
+    </span><span class="sc6">sub</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">0x30</span><span class="sc0">       </span><span class="sc1">; sub 48d from ascii code</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">SPEED</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc5">A</span><span class="sc0">           </span><span class="sc1">; set the speed </span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.0</span><span class="sc0">          </span><span class="sc1">; generate STOP signal</span><span class="sc0">
+    
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">20</span><span class="sc0">         </span><span class="sc1">; 10 usec delay needed by I2C</span><span class="sc0">
+    </span><span class="sc6">dec</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc0">                   </span><span class="sc1">; between STOP and START</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">1</span><span class="sc0"> 
+    </span><span class="sc6">ret</span><span class="sc0"> 
+    
+</span><span class="sc1">;------------------------------I2C---Send Routine---(FOR LCD DISPLAY)---</span><span class="sc0">
+</span><span class="sc5">sendString</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc6">bt</span><span class="sc0">      </span><span class="sc5">IICS0.6</span><span class="sc4">,</span><span class="sc0"> </span><span class="sc10">$</span><span class="sc4">-</span><span class="sc2">0</span><span class="sc0">        </span><span class="sc1">; wait for i2c ready</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.1</span><span class="sc0">          </span><span class="sc1">; generate Start</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.2</span><span class="sc0">          </span><span class="sc1">; setup for ACK</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x7C</span><span class="sc0">       </span><span class="sc1">; LCD slave address</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x80</span><span class="sc0">       </span><span class="sc1">; 'CMD follows' signal</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc5">A</span><span class="sc0">           </span><span class="sc1">; set cursor position</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x40</span><span class="sc0">       </span><span class="sc1">; 'only data follow' signal</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc5">clrb</span><span class="sc0">    </span><span class="sc5">B</span><span class="sc0">                   </span><span class="sc1">; zero string pointer</span><span class="sc0">
+</span><span class="sc5">sendChar</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc4">[</span><span class="sc5">HL</span><span class="sc4">+</span><span class="sc5">B</span><span class="sc4">]</span><span class="sc0">      </span><span class="sc1">; a = array[i]</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  </span><span class="sc5">A</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">           </span><span class="sc1">; processing delay</span><span class="sc0">
+    </span><span class="sc6">inc</span><span class="sc0">     </span><span class="sc5">B</span><span class="sc0">                   </span><span class="sc1">; update counter</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      </span><span class="sc5">B</span><span class="sc0">
+    </span><span class="sc6">cmp</span><span class="sc0">     </span><span class="sc5">A</span><span class="sc4">,</span><span class="sc0">      #</span><span class="sc2">16</span><span class="sc0">         </span><span class="sc1">; 16-char?</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">sendChar</span><span class="sc0">
+
+</span><span class="sc5">sendStop</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.0</span><span class="sc0">          </span><span class="sc1">; STOP signal</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">10</span><span class="sc0">         </span><span class="sc1">; short delay</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc6">ret</span><span class="sc0">                         </span><span class="sc1">; ret from routine</span><span class="sc0">
+
+</span><span class="sc1">;--------------------------DELAY ROUTINE-------------------------------</span><span class="sc0">
+</span><span class="sc5">delay50us</span><span class="sc4">:</span><span class="sc0">                      </span><span class="sc1">; delay for 50 usec</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">50</span><span class="sc0">
+</span><span class="sc5">delay</span><span class="sc4">:</span><span class="sc0">  
+    </span><span class="sc5">br</span><span class="sc0">      </span><span class="sc10">$</span><span class="sc4">+</span><span class="sc2">2</span><span class="sc0">                 </span><span class="sc1">; delay for AX usec</span><span class="sc0">
+    </span><span class="sc5">subw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">1</span><span class="sc0">          </span><span class="sc1">; 1 usec delay for CPU</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">delay</span><span class="sc0">               </span><span class="sc1">; clocked at 8 MHz</span><span class="sc0">
+    </span><span class="sc6">ret</span><span class="sc0">
+
+</span><span class="sc1">;------------------------------CONFIGURE SYSTEM------------------------</span><span class="sc0">
+</span><span class="sc5">Init_System</span><span class="sc4">:</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">Init_LCD</span><span class="sc0">            </span><span class="sc1">;configure LCD display</span><span class="sc0">
+    
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">ready</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; end of text flag</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc9">ptr</span><span class="sc4">,</span><span class="sc0">    #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; index of processing string character</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc9">ptr</span><span class="sc4">+</span><span class="sc2">1</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; ptr = 0</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">cnt</span><span class="sc4">,</span><span class="sc0">    #</span><span class="sc5">SPEED</span><span class="sc0">      </span><span class="sc1">; set scroll speed in 270 ms units</span><span class="sc0">
+
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array2</span><span class="sc0">     </span><span class="sc1">; HL = array2</span><span class="sc0">
+</span><span class="sc5">is1</span><span class="sc4">:</span><span class="sc0">    
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc4">[</span><span class="sc5">HL</span><span class="sc4">],</span><span class="sc0">   #</span><span class="sc2">0x20</span><span class="sc0">       </span><span class="sc1">; fill bottom line with spaces</span><span class="sc0">
+    </span><span class="sc5">incw</span><span class="sc0">    </span><span class="sc5">HL</span><span class="sc0">                  </span><span class="sc1">; inc pointer</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     </span><span class="sc5">HL</span><span class="sc0">
+    </span><span class="sc5">cmpw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc5">array2</span><span class="sc4">+</span><span class="sc2">16</span><span class="sc0">  </span><span class="sc1">; 16 char?</span><span class="sc0">
+    </span><span class="sc5">bnz</span><span class="sc0">     </span><span class="sc5">is1</span><span class="sc0">                 </span><span class="sc1">; loop back</span><span class="sc0">
+    </span><span class="sc6">ret</span><span class="sc0">
+
+</span><span class="sc1">;------------------------------CONFIGURE LCD DISPLAY-------------------</span><span class="sc0">
+</span><span class="sc5">Init_LCD</span><span class="sc4">:</span><span class="sc0">                       </span><span class="sc1">; init sequence for LCD</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">RST</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0"> #</span><span class="sc2">50000</span><span class="sc0">          </span><span class="sc1">; 50 msec power-up delay</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+
+</span><span class="sc5">il0</span><span class="sc4">:</span><span class="sc0">    
+    </span><span class="sc6">bt</span><span class="sc0">      </span><span class="sc5">IICS0.6</span><span class="sc4">,</span><span class="sc0"> </span><span class="sc5">il0</span><span class="sc0">        </span><span class="sc1">; wait for I2C interface ready</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.1</span><span class="sc0">          </span><span class="sc1">; generate START condition</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x7C</span><span class="sc0">       </span><span class="sc1">; send RTC address + write</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; wait for the end of transfer</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x00</span><span class="sc0">       </span><span class="sc1">; send last control byte</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">                        </span><span class="sc1">; only CMD follow from here</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x38</span><span class="sc0">       </span><span class="sc1">; set 8-bit 2-lines 5x7 mode</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x39</span><span class="sc0">       </span><span class="sc1">; set IS1 instruction table</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x14</span><span class="sc0">       </span><span class="sc1">; set 1/5 bias, 183Hz frame freq</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x78</span><span class="sc0">       </span><span class="sc1">; contrast set</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x5E</span><span class="sc0">       </span><span class="sc1">; power/con/contrast control</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x6C</span><span class="sc0">       </span><span class="sc1">; follower control</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">60000</span><span class="sc0">      </span><span class="sc1">; long delay is required here</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">60000</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">60000</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">60000</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x0C</span><span class="sc0">       </span><span class="sc1">; display on</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x01</span><span class="sc0">       </span><span class="sc1">; clear display</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0">     #</span><span class="sc2">3000</span><span class="sc0">       </span><span class="sc1">; longer delay is required</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc6">mov</span><span class="sc0">     </span><span class="sc5">IICA0</span><span class="sc4">,</span><span class="sc0">  #</span><span class="sc2">0x06</span><span class="sc0">       </span><span class="sc1">; entry mode set</span><span class="sc0">
+    </span><span class="sc5">halt</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay50us</span><span class="sc0">
+    </span><span class="sc5">set1</span><span class="sc0">    </span><span class="sc5">IICCTL00.0</span><span class="sc0">          </span><span class="sc1">; generate STOP condition</span><span class="sc0">
+    </span><span class="sc5">movw</span><span class="sc0">    </span><span class="sc8">AX</span><span class="sc4">,</span><span class="sc0"> #</span><span class="sc2">10</span><span class="sc0">             </span><span class="sc1">; short delay</span><span class="sc0">
+    </span><span class="sc6">call</span><span class="sc0">    </span><span class="sc5">delay</span><span class="sc0">
+    </span><span class="sc6">ret</span><span class="sc0">
+
+    </span><span class="sc1">; ISR definitions</span><span class="sc0">
+</span><span class="sc1">;===============================================================</span><span class="sc0">
+</span><span class="sc5">I2C_ISR</span><span class="sc4">:</span><span class="sc0">                        </span><span class="sc1">; I2C_ISR:</span><span class="sc0">
+    </span><span class="sc5">reti</span><span class="sc0">                        </span><span class="sc1">; just wake-up CPU from sleep</span><span class="sc0">
+
+</span><span class="sc1">;---------------------------------------------------------------</span><span class="sc0">
+</span><span class="sc5">INTIT_ISR</span><span class="sc4">:</span><span class="sc0">                      </span><span class="sc1">; 12-bit interval timer ISR</span><span class="sc0">
+    </span><span class="sc5">reti</span><span class="sc0">                        </span><span class="sc1">; just wake-up CPU from sleep</span><span class="sc0">
+
+</span><span class="sc1">;---------------------------------------------------------------</span><span class="sc0">
+</span><span class="sc5">INTST0_ISR</span><span class="sc4">:</span><span class="sc0">
+        </span><span class="sc5">reti</span><span class="sc0">
+
+</span><span class="sc1">;---------------------------------------------------------------</span><span class="sc0">
+</span><span class="sc5">INTSR0_ISR</span><span class="sc4">:</span><span class="sc0">                     </span><span class="sc1">; UART receive ISR</span><span class="sc0">
+        </span><span class="sc5">clr1</span><span class="sc0">    </span><span class="sc5">SRIF0</span><span class="sc0">           </span><span class="sc1">; clear receive  flag</span><span class="sc0">
+        </span><span class="sc5">reti</span><span class="sc0">
+
+    </span><span class="sc9">END</span></div></body>
+</html>

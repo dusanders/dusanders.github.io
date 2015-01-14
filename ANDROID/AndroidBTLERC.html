@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta name="keywords" content="C,C++,C#,embedded,Embedded,Java,Java SE">
+    <meta name="description" content="Examples of code written in C, C++, C#, ASM, JAVA. Along with examples of embedded systems and programming.">
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1"> 
+    <link rel="stylesheet" href="../stylesheet.css">
+
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../script.js"></script>
+    <title>Android Examples</title>
+</head>
+<body>
+    <div id="background"><img src="androidLanding.png" /></div>
+    <div id="textBackground">
+    </div>
+    <div id="container">
+        <div class="content-div">
+                <h1 style="text-align:center;">Dash Cam App</h1>
+                <p>
+                    After collecting a couple smartphones over the course of time, I came to the
+                    conclusion that I should put one to use. I had the idea to turn my old Motorola Photon 4g
+                    into a useable dashcam.
+                </p><p>
+                    The idea was simple; create an app that would have a video 'buffer'
+                    which would empty itself or save itself depending on user input. The 'buffer' would be two minute
+                    video chucks, currently set to 3 chucks before self-delete takes place. This allows the app to buffer
+                    atleast 4 minutes of continous video, plus whatever its currently recording.
+                </p>
+                <h2 style="text-align:center;">Challenge One: "Get Back!"</h2>
+                <p>
+                    I needed the dash cam to able to run in the background so I did not have to be in constant focus.
+                    This is useful becuase in the future I would like to create another app that will forward
+                    google maps data to my Photon so I can also have a dash mounted navigation device. I also
+                    wanted to allow the Photon to sleep; usually when the
+                    phone is put into sleep any running services are stopped and the CPU is put into a low power
+                    state. This forces any running processes in my app to quit, specifically the recording.
+                </p>
+                <p>
+                    The app is designed to run in the background so the recording would continue even after
+                    the phone screen was turned off or the user navigated out of the app. This was handled with
+                    empty onPause() and onStop() methods. These methods are called when a user navigates away
+                    from the app; for example hitting the home button, locking the screen, or the system entering 'sleep'
+                    after screen timeout.
+                    The main issue with this approach was the fact that the MediaRecorder object
+                    was losing its surface when the app recieved calls to onPause() and onStop() because the preview
+                    surface that was setup within the onCreate() method when the app is first created, was being destroyed
+                    by the operating system. The way to fix this issue was test whether we have the window focus or not.
+                    If the user <span style="font-style:italic; text-decoration:underline;">does </span> have focus on our app, then we can load a preview
+                    surface and start the recorder. Otherwise, if the user <span style="font-style:italic; text-decoration:underline;">does not</span> have focus on the app, then I start the MediaRecorder
+                    without a preview surface. This was causing issues when the MediaRecorder was re-created after the
+                    two minute interval and a new instance was setup to record the next two minute chunk.
+                </p>
+                <h2 style="text-align:center;">Challenge Two: "Save Space!"</h2>
+                <p>
+                    The app is also designed with space constraints in mind. My Photon has an 8 gigabyte internal memory,
+                    this would quickly fill up if I allowed the camera to record one continous stream of video.
+                </p>
+        </div>
+        <div id="sideBar">
+            <ul id="sideBarList">
+                <p style="text-align:center; text-decoration:underline;">Projects</p>
+                <li class="sideBarItem" id="RingerWrangler"><a href="AndroidRingerWrangler.html">Ringer Wrangler</a></li>
+                <li class="sideBarItem" id="DashCam"><a href="AndroidDashCam.html">Dash Cam</a></li>
+                <li class="sideBarItem" id="BluetoothRc" style="color: #006600; cursor:default;">BTLE RC Car</li>
+                <li class="sideBarItem" id="BluetoothShare"><a href="AndroidSensorApp.html">Sensor App</a></li>
+            </ul>
+        </div>
+        <div id="menuBar">
+            <ul id="menuList">
+                <li class="menuItem"><a href="../CPP/CPP.html">C++</a></li>
+                <li class="menuItem"><a href="../CSHARP/CSharp.html">C#</a></li>
+                <li class="menuItem"><a href="../JAVA/Java.html">Java</a></li>
+                <li class="menuItem"><a href="../ASM/ASM.html">Embedded Systems</a></li>
+                <li class="menuItem" style="color: #80CC80;">Android</li>
+            </ul>
+        </div>
+    </div><!--end container-->
+</body>
+
+</html>

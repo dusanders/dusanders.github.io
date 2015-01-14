@@ -1,0 +1,453 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc1 {
+	color: #008000;
+}
+.sc2 {
+	color: #008000;
+}
+.sc4 {
+	color: #FF8000;
+}
+.sc5 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc6 {
+	color: #808080;
+}
+.sc7 {
+	color: #808080;
+}
+.sc9 {
+	color: #804000;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc11 {
+}
+.sc16 {
+	color: #8000FF;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc0">
+</span><span class="sc9">#include "io430.h"
+</span><span class="sc0">
+</span><span class="sc9">#define BUFF_LEN 20
+</span><span class="sc0">
+</span><span class="sc16">char</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">type</span><span class="sc10">;</span><span class="sc0">         </span><span class="sc2">//what are we returning?
+</span><span class="sc16">char</span><span class="sc0"> </span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc11">BUFF_LEN</span><span class="sc10">];</span><span class="sc0">      </span><span class="sc2">//buffer for recieve
+//char *characteristicForward = "Indicate,002A,";
+//char *characteristicBackwards = "Indicate,002C,";
+//char *characteristicLeft = "Indicate,002E,";
+//char *characteristicRight = "Indicate,0030,";
+</span><span class="sc16">char</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">stateOn</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">"Connected"</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">char</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">aok</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">"AOK\r\n"</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">unsigned</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">forward</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">unsigned</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">backwards</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">unsigned</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">unsigned</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">right</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">char</span><span class="sc0"> </span><span class="sc11">direction</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">volatile</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">sendPointer</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">volatile</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">receivePointer</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">moving</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">movingLeft</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">movingRight</span><span class="sc10">;</span><span class="sc0">
+
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">delay</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">timer</span><span class="sc10">);</span><span class="sc0">
+
+</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">main</span><span class="sc10">(</span><span class="sc16">void</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc11">WDTCTL</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">WDTPW</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">WDTHOLD</span><span class="sc10">;</span><span class="sc0">                 </span><span class="sc2">// Stop WDT
+</span><span class="sc0">  </span><span class="sc2">//MAKE SURE EVERYTHING IS OFF
+</span><span class="sc0">  </span><span class="sc11">P1OUT</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0x00</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc11">P1DIR</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0x00</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc11">P2OUT</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0x00</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0x00</span><span class="sc10">;</span><span class="sc0">
+
+
+  </span><span class="sc2">//RESET PROCEDURE FOR FULL SYSTEM RESET
+</span><span class="sc0">  </span><span class="sc2">//THIS RESETS ALL SETTINGS IN RN4020
+</span><span class="sc1">/*
+  P1DIR |= BIT4;    //1.4 OUTPUT FOR SW_WAKE
+  P1OUT |= BIT4;    //PUT SW_WAKE HIGH
+  P1DIR |= BIT3;    //1.3 TO OUTPUT FOR CMD PIN
+  P1OUT |= BIT3;    //PUT 1.3 HIGH FOR SYSTEM RESET
+  P1DIR |= BIT6;    //1.6 TO OUTPUT FOR SYSTEM VDD
+  P1OUT |= BIT6;    //1.6 ON FOR POWER
+*/</span><span class="sc0">
+
+
+  </span><span class="sc2">//SETUP OUR UART
+</span><span class="sc0">  </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">CALBC1_1MHZ</span><span class="sc10">==</span><span class="sc4">0xFF</span><span class="sc10">)</span><span class="sc0">                    </span><span class="sc2">// If calibration constant erased
+</span><span class="sc0">  </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc4">1</span><span class="sc10">);</span><span class="sc0">                               </span><span class="sc2">// do not load, trap CPU!!
+</span><span class="sc0">  </span><span class="sc10">}</span><span class="sc0">
+  </span><span class="sc11">DCOCTL</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">                               </span><span class="sc2">// Select lowest DCOx and MODx settings
+</span><span class="sc0">  </span><span class="sc11">P1SEL</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">BIT1</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">BIT2</span><span class="sc0"> </span><span class="sc10">;</span><span class="sc0">                     </span><span class="sc2">// P1.1 = RXD, P1.2=TXD
+</span><span class="sc0">  </span><span class="sc11">P1SEL2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">BIT1</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">BIT2</span><span class="sc0"> </span><span class="sc10">;</span><span class="sc0">                    </span><span class="sc2">// P1.1 = RXD, P1.2=TXD
+</span><span class="sc0">
+  </span><span class="sc2">//FOR USE WITH 9600 BAUD UART
+</span><span class="sc0">  </span><span class="sc11">BCSCTL1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">CALBC1_1MHZ</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc11">BCSCTL3</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">LFXT1S_2</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc11">DCOCTL</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">CALDCO_1MHZ</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc11">UCA0CTL1</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">UCSSEL_2</span><span class="sc10">;</span><span class="sc0">                     </span><span class="sc2">// SMCLK
+</span><span class="sc0">  </span><span class="sc11">UCA0BR0</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">104</span><span class="sc10">;</span><span class="sc0">                            </span><span class="sc2">//9600
+</span><span class="sc0">  </span><span class="sc11">UCA0BR1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc1">/*
+  //FOR USE WITH 115200 UART BAUD
+ UCA0MCTL = UCBRS0;
+ UCA0BR0 = 8;                               //115200
+ UCA0BR1 = 0;
+ UCA0MCTL = UCBRS2 + UCBRS1;
+*/</span><span class="sc0">
+
+  </span><span class="sc11">UCA0CTL1</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">UCSWRST</span><span class="sc10">;</span><span class="sc0">                     </span><span class="sc2">// **Initialize USCI state machine**
+</span><span class="sc0">  </span><span class="sc11">IE2</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">UCA0RXIE</span><span class="sc10">;</span><span class="sc0">                          </span><span class="sc2">// Enable USCI_A0 RX interrupt
+</span><span class="sc0">
+</span><span class="sc11">__bis_SR_register</span><span class="sc10">(</span><span class="sc11">GIE</span><span class="sc10">);</span><span class="sc0">       </span><span class="sc2">// interrupts enabled
+</span><span class="sc0">    </span><span class="sc2">//TURN ON SW_WAKE TO AVOID RESET &lt;--BT Module
+</span><span class="sc0">    </span><span class="sc11">P1DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">P1OUT</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//TURN ON DEVICE &lt;--BT Module
+</span><span class="sc0">    </span><span class="sc11">P1DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT6</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">P1OUT</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT6</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//SET OUTPUT FOR HW_WAKE &lt;--BT Module
+</span><span class="sc0">    </span><span class="sc11">P1DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT7</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">P1OUT</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT7</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+
+
+  </span><span class="sc11">__bis_SR_register</span><span class="sc10">(</span><span class="sc11">LPM0_bits</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">GIE</span><span class="sc10">);</span><span class="sc0">       </span><span class="sc2">// Enter LPM0, interrupts enabled
+</span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc2">//reserved for possible future use
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">delay</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">timer</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">=</span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">timer</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">  </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc2">//set PWM cycles
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">setTimer</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc5">switch</span><span class="sc10">(</span><span class="sc11">direction</span><span class="sc10">)</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">
+      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'A'</span><span class="sc10">:</span><span class="sc0">             </span><span class="sc2">//forward
+</span><span class="sc0">        </span><span class="sc2">//pin 2.2 set to TA1
+</span><span class="sc0">         </span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">;</span><span class="sc0">
+         </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+         </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+         </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+         </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+         </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+         </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+         </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+         </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc2">// are we moving?
+</span><span class="sc0">        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">dutyCycle</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc2">//are we turning?
+</span><span class="sc0">        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc2">//set TA1 CCR0 to 100Hz
+</span><span class="sc0">        </span><span class="sc11">TA1CCR0</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc4">10000</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc2">//get our duty cycle value (passed values are 1 - 9)
+</span><span class="sc0">        </span><span class="sc11">TA1CCR1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">*</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0">   </span><span class="sc2">//2.1
+</span><span class="sc0">        </span><span class="sc11">TA1CCTL1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">OUTMOD_7</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">TA1CCR2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">*</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0">   </span><span class="sc2">//2.4
+</span><span class="sc0">        </span><span class="sc11">TA1CCTL2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">OUTMOD_7</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">TA1CTL</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">TASSEL_2</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">MC_1</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">TACLR</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'E'</span><span class="sc10">:</span><span class="sc0">             </span><span class="sc2">//left
+</span><span class="sc0">        </span><span class="sc2">//pin 2.1
+</span><span class="sc0">        </span><span class="sc2">//let everyone know we are turning
+</span><span class="sc0">        </span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">dutyCycle</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc2">//are we currently moving?
+</span><span class="sc0">        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc2">//are we stopped?
+</span><span class="sc0">        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CCR0</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">10000</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CCR1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">*</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc2">//2.2
+</span><span class="sc0">          </span><span class="sc11">TA1CCTL1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">OUTMOD_7</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CCR2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">*</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc2">//2.4
+</span><span class="sc0">          </span><span class="sc11">TA1CCTL2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">OUTMOD_7</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CTL</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">TASSEL_2</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc11">MC_1</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">TACLR</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'C'</span><span class="sc10">:</span><span class="sc0">             </span><span class="sc2">//backwards
+</span><span class="sc0">        </span><span class="sc2">//pin 2.4 set to TA1.2
+</span><span class="sc0">          </span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">dutyCycle</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc2">//set TA1 CCR to 100Hz
+</span><span class="sc0">        </span><span class="sc11">TA1CCR0</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc4">10000</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc2">//set our duty cycle
+</span><span class="sc0">        </span><span class="sc11">TA1CCR1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">*</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0">   </span><span class="sc2">//2.1
+</span><span class="sc0">        </span><span class="sc11">TA1CCTL1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">OUTMOD_7</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">TA1CCR2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">*</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0">   </span><span class="sc2">//2.5
+</span><span class="sc0">        </span><span class="sc11">TA1CCTL2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">OUTMOD_7</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">TA1CTL</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">TASSEL_2</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">MC_1</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">TACLR</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">:</span><span class="sc0">             </span><span class="sc2">//right
+</span><span class="sc0">        </span><span class="sc2">//pin 2.5 TA1.2
+</span><span class="sc0">        </span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">dutyCycle</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">movingLeft</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">moving</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT5</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">BIT1</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT2</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2DIR</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">P2SEL</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">BIT4</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CCR0</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">10000</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CCR1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">*</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CCTL1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">OUTMOD_7</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CCR2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">dutyCycle</span><span class="sc10">*</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CCTL2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">OUTMOD_7</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc11">TA1CTL</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">TASSEL_2</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc11">MC_1</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">TACLR</span><span class="sc10">;</span><span class="sc0">
+          </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc2">//check our connection status
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">connectStatus</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">match</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc2">//examine received string
+</span><span class="sc0">  </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">=</span><span class="sc4">1</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc7">'\r'</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc11">stateOn</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">])</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+      </span><span class="sc11">match</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+      </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc11">match</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+  </span><span class="sc2">//connected - send command to start sensor
+</span><span class="sc0">  </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">match</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">type</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">"chw,0032,0001\r"</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">IE2</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">UCA0TXIE</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc2">//get our direction and duty cycle, set motors
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">setMotor</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc16">char</span><span class="sc0"> </span><span class="sc11">c</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">12</span><span class="sc10">];</span><span class="sc0">
+    </span><span class="sc5">switch</span><span class="sc10">(</span><span class="sc11">c</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'A'</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0">
+        </span><span class="sc11">forward</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">14</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc4">10</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">15</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">direction</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc7">'A'</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">setTimer</span><span class="sc10">(</span><span class="sc11">forward</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc2">//send the ack
+</span><span class="sc0">        </span><span class="sc11">type</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">"chw,0032,0001\r"</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">IE2</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">UCA0TXIE</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'E'</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0">
+        </span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">14</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc4">10</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">15</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">direction</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc7">'E'</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">setTimer</span><span class="sc10">(</span><span class="sc11">left</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc2">//send the ack
+</span><span class="sc0">        </span><span class="sc11">type</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">"chw,0032,0001\r"</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">IE2</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">UCA0TXIE</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'C'</span><span class="sc10">:</span><span class="sc0">
+        </span><span class="sc11">backwards</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">14</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc4">10</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">15</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">direction</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc7">'C'</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">setTimer</span><span class="sc10">(</span><span class="sc11">backwards</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc2">//send the ack
+</span><span class="sc0">        </span><span class="sc11">type</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">"chw,0032,0001\r"</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">IE2</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">UCA0TXIE</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">:</span><span class="sc0">
+        </span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">14</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc4">10</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">15</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">direction</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">setTimer</span><span class="sc10">(</span><span class="sc11">right</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc2">//send the ack
+</span><span class="sc0">        </span><span class="sc11">type</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">"chw,0032,0001\r"</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">IE2</span><span class="sc0"> </span><span class="sc10">|=</span><span class="sc0"> </span><span class="sc11">UCA0TXIE</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+ </span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc2">//clean out the buffer for received strings
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">clearBuffer</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">=</span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">&lt;</span><span class="sc11">BUFF_LEN</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc7">'\0'</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+
+</span><span class="sc2">//=============================================================================
+//=============================ISR ROUTINES====================================
+//=============================================================================
+</span><span class="sc0">
+</span><span class="sc2">// UART RX ISR routine
+</span><span class="sc9">#pragma vector=USCIAB0RX_VECTOR
+</span><span class="sc11">__interrupt</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">USCI0RX_ISR</span><span class="sc10">(</span><span class="sc16">void</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc11">receivePointer</span><span class="sc10">++]</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">UCA0RXBUF</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">UCA0RXBUF</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc7">'\n'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">receivePointer</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+
+    </span><span class="sc2">//shut up and wait while we get done setting up motors
+</span><span class="sc11">__bic_SR_register</span><span class="sc10">(</span><span class="sc11">GIE</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc2">//decide what to do
+</span><span class="sc0">    </span><span class="sc16">char</span><span class="sc0"> </span><span class="sc11">c</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">buffer</span><span class="sc10">[</span><span class="sc4">0</span><span class="sc10">];</span><span class="sc0">
+    </span><span class="sc5">switch</span><span class="sc10">(</span><span class="sc11">c</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+
+      </span><span class="sc2">//if we get an 'AOK' --disregard it
+</span><span class="sc0">      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'A'</span><span class="sc10">:</span><span class="sc0">
+        </span><span class="sc11">clearBuffer</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+
+      </span><span class="sc2">//did we get a 'Connected' or 'Connection End'?
+</span><span class="sc0">      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'C'</span><span class="sc10">:</span><span class="sc0">
+        </span><span class="sc11">connectStatus</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc2">//clear the buffer out
+</span><span class="sc0">        </span><span class="sc11">clearBuffer</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+
+      </span><span class="sc2">//did we get an 'Indicate'?
+</span><span class="sc0">      </span><span class="sc5">case</span><span class="sc0"> </span><span class="sc7">'I'</span><span class="sc10">:</span><span class="sc0">
+        </span><span class="sc11">setMotor</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc2">//ok to talk again
+</span><span class="sc11">__bis_SR_register</span><span class="sc10">(</span><span class="sc11">GIE</span><span class="sc10">);</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+
+</span><span class="sc2">// UART TX ISR routine
+</span><span class="sc9">#pragma vector = USCIAB0TX_VECTOR
+</span><span class="sc11">__interrupt</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">USCI0TX_ISR</span><span class="sc10">(</span><span class="sc16">void</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc11">UCA0TXBUF</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">type</span><span class="sc10">[</span><span class="sc11">sendPointer</span><span class="sc10">++];</span><span class="sc0">
+    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">type</span><span class="sc10">[</span><span class="sc11">sendPointer</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc7">'\0'</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+      </span><span class="sc11">sendPointer</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+      </span><span class="sc11">IE2</span><span class="sc0"> </span><span class="sc10">&amp;=</span><span class="sc0"> </span><span class="sc10">~</span><span class="sc11">UCA0TXIE</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+</span></div></body>
+</html>
