@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc1 {
+	color: #008000;
+}
+.sc2 {
+	color: #008000;
+}
+.sc4 {
+	color: #FF8000;
+}
+.sc5 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc6 {
+	color: #808080;
+}
+.sc9 {
+	color: #804000;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc11 {
+}
+.sc16 {
+	color: #8000FF;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc1">/*  Author:     Dustin Anderson
+*   Title:      Polygon.cpp
+*   Problems:   
+*   Desc:       This program is intended to read an input text file.
+*                The text file will contain segments in the form; (x1,y1,x2,y2).
+*                The program will take these segments and arrange the output
+*                to form a polygon. File read is expected as file re-direction 
+*                on command line (./Polygon &lt; &lt;file&gt;.dat).
+*/</span><span class="sc0">
+
+</span><span class="sc9">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;vector&gt;
+</span><span class="sc5">using</span><span class="sc0"> </span><span class="sc5">namespace</span><span class="sc0"> </span><span class="sc11">std</span><span class="sc10">;</span><span class="sc0">
+
+</span><span class="sc2">//struct to hold the points
+</span><span class="sc16">struct</span><span class="sc0"> </span><span class="sc11">point2D</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc2">//x-value
+</span><span class="sc0">    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">x</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//y-value
+</span><span class="sc0">    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">y</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc10">};</span><span class="sc2">//end point struct
+</span><span class="sc0">
+
+</span><span class="sc2">//struct to hold the segments
+</span><span class="sc16">struct</span><span class="sc0"> </span><span class="sc11">segment2D</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">point2D</span><span class="sc0"> </span><span class="sc11">p1</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">point2D</span><span class="sc0"> </span><span class="sc11">p2</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc10">};</span><span class="sc2">//end segment struct
+</span><span class="sc0">
+
+</span><span class="sc2">//class polygon to hold list of segments
+</span><span class="sc16">class</span><span class="sc0"> </span><span class="sc11">Polygon</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc10">:</span><span class="sc0">
+        </span><span class="sc2">//struct for linked list
+</span><span class="sc0">        </span><span class="sc16">struct</span><span class="sc0"> </span><span class="sc11">listNode</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc11">segment2D</span><span class="sc0"> </span><span class="sc11">seg</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">listNode</span><span class="sc10">*</span><span class="sc0"> </span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">listNode</span><span class="sc10">*</span><span class="sc0"> </span><span class="sc11">prev</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">};</span><span class="sc2">//end struct
+</span><span class="sc0">        </span><span class="sc2">//head for list
+</span><span class="sc0">        </span><span class="sc11">listNode</span><span class="sc10">*</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc10">:</span><span class="sc0">
+    
+        </span><span class="sc2">//default constructor
+</span><span class="sc0">        </span><span class="sc11">Polygon</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc11">head</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc2">//end default constructor
+</span><span class="sc0">        
+        </span><span class="sc10">~</span><span class="sc11">Polygon</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//while we have elements
+</span><span class="sc0">            </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">head</span><span class="sc10">!=</span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">listNode</span><span class="sc10">*</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">head</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//delete element
+</span><span class="sc0">                </span><span class="sc5">delete</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end while
+</span><span class="sc0">        </span><span class="sc10">};</span><span class="sc2">//end destructor
+</span><span class="sc0">        
+        </span><span class="sc2">//method to insert elements into list
+</span><span class="sc0">        </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">insert</span><span class="sc10">(</span><span class="sc11">segment2D</span><span class="sc0"> </span><span class="sc10">&amp;</span><span class="sc11">segment</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc11">listNode</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">listNode</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc2">//first element to list?
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">head</span><span class="sc10">==</span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc10">(*</span><span class="sc11">tmp</span><span class="sc10">).</span><span class="sc11">seg</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">segment</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">prev</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">head</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end if first element
+</span><span class="sc0">            </span><span class="sc5">else</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//find the head
+</span><span class="sc0">                </span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//get to the tail
+</span><span class="sc0">                </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">)</span><span class="sc0">
+                    </span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//create new node for tail
+</span><span class="sc0">                </span><span class="sc11">listNode</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">newNode</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">listNode</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//set data
+</span><span class="sc0">                </span><span class="sc10">(*</span><span class="sc11">newNode</span><span class="sc10">).</span><span class="sc11">seg</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">segment</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//place new node
+</span><span class="sc0">                </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">prev</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end else
+</span><span class="sc0">        </span><span class="sc10">}</span><span class="sc2">//end insert()
+</span><span class="sc0">        
+        </span><span class="sc2">//method to sort the segments into a polygon
+</span><span class="sc0">        </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">sort</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//starting point
+</span><span class="sc0">            </span><span class="sc11">listNode</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">ptr</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">listNode</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">temp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc5">while</span><span class="sc10">((</span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">||</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">temp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">           
+            </span><span class="sc10">(</span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">prev</span><span class="sc10">)-&gt;</span><span class="sc11">next</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">prev</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">temp</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">swap</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc2">//end sort()
+</span><span class="sc0">        
+        </span><span class="sc2">//method to swap the points within a segment object
+</span><span class="sc0">        </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">swap</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//current position in list
+</span><span class="sc0">            </span><span class="sc11">listNode</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">curr</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc2">//while we have a list
+</span><span class="sc0">            </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//are we at head?
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc10">(!</span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">prev</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//move to next element
+</span><span class="sc0">                    </span><span class="sc11">curr</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc2">//end if at head
+</span><span class="sc0">                </span><span class="sc2">//do we have a 'mixed up' element?
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc10">((</span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">prev</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0">
+                    </span><span class="sc10">(</span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">prev</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc10">))</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc2">//swap the values
+</span><span class="sc0">                    </span><span class="sc2">//get the values
+</span><span class="sc0">                    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">x1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">y1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">x2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">y2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc2">//swap the values
+</span><span class="sc0">                    </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">x2</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">y2</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">x1</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">y1</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc2">//end if mixed element
+</span><span class="sc0">                </span><span class="sc2">//next element
+</span><span class="sc0">                </span><span class="sc11">curr</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">curr</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end while in list
+</span><span class="sc0">        </span><span class="sc10">}</span><span class="sc2">//end swap()
+</span><span class="sc0">        
+        </span><span class="sc2">//method to print the polygon list
+</span><span class="sc0">        </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">printPolygon</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//get the head
+</span><span class="sc0">            </span><span class="sc11">listNode</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">ptr</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">head</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc2">//while we are in list
+</span><span class="sc0">            </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">ptr</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//output the points
+</span><span class="sc0">                </span><span class="sc11">cout</span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">" "</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc0">
+                    </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">" "</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">" "</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">seg</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">ptr</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">ptr</span><span class="sc10">-&gt;</span><span class="sc11">next</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end while in list
+</span><span class="sc0">        </span><span class="sc10">}</span><span class="sc2">//end print()
+</span><span class="sc10">};</span><span class="sc2">//end Polygon class declaration
+</span><span class="sc0">
+</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">main</span><span class="sc10">()</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc2">//new Polygon list
+</span><span class="sc0">    </span><span class="sc11">Polygon</span><span class="sc0"> </span><span class="sc11">polygon</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//input string
+</span><span class="sc0">    </span><span class="sc11">string</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//vector to hold input integers
+</span><span class="sc0">    </span><span class="sc11">vector</span><span class="sc10">&lt;</span><span class="sc16">int</span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">inputInt</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//while we have input
+</span><span class="sc0">    </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">getline</span><span class="sc10">(</span><span class="sc11">cin</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">))</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc2">//c-string for tokenizer
+</span><span class="sc0">        </span><span class="sc16">char</span><span class="sc0"> </span><span class="sc11">CinputStream</span><span class="sc10">[</span><span class="sc11">inputStream</span><span class="sc10">.</span><span class="sc11">length</span><span class="sc10">()];</span><span class="sc0">
+        </span><span class="sc2">//get the string
+</span><span class="sc0">        </span><span class="sc11">strcpy</span><span class="sc10">(</span><span class="sc11">CinputStream</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">.</span><span class="sc11">c_str</span><span class="sc10">());</span><span class="sc0">
+        </span><span class="sc2">//tokenize the string
+</span><span class="sc0">        </span><span class="sc16">char</span><span class="sc10">*</span><span class="sc0"> </span><span class="sc11">token</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">strtok</span><span class="sc10">(</span><span class="sc11">CinputStream</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc6">" "</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc2">//while we have tokens
+</span><span class="sc0">        </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">token</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//get the integer
+</span><span class="sc0">            </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">atoi</span><span class="sc10">(</span><span class="sc11">token</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">push_back</span><span class="sc10">(</span><span class="sc11">x</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc2">//get rest of string
+</span><span class="sc0">            </span><span class="sc11">token</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">strtok</span><span class="sc10">(</span><span class="sc5">NULL</span><span class="sc10">,</span><span class="sc6">" "</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc2">//end while tokens
+</span><span class="sc0">        </span><span class="sc2">//get the values from the vector
+</span><span class="sc0">        </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">y2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">back</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">pop_back</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">x2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">back</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">pop_back</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">y1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">back</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">pop_back</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">x1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">back</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc11">inputInt</span><span class="sc10">.</span><span class="sc11">pop_back</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc2">//create new point objects
+</span><span class="sc0">        </span><span class="sc11">point2D</span><span class="sc0"> </span><span class="sc11">p1</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">x1</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">p1</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">y1</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">point2D</span><span class="sc0"> </span><span class="sc11">p2</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">x2</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">p2</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">y2</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc2">//create new segment
+</span><span class="sc0">        </span><span class="sc11">segment2D</span><span class="sc0"> </span><span class="sc11">segment</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">segment</span><span class="sc10">.</span><span class="sc11">p1</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">p1</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">segment</span><span class="sc10">.</span><span class="sc11">p2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">p2</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">polygon</span><span class="sc10">.</span><span class="sc11">insert</span><span class="sc10">(</span><span class="sc11">segment</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc2">//end while input
+</span><span class="sc0">    
+    </span><span class="sc2">//print the polygon members
+</span><span class="sc0">    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"Original List"</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">polygon</span><span class="sc10">.</span><span class="sc11">printPolygon</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc2">//sort the list
+</span><span class="sc0">    </span><span class="sc11">polygon</span><span class="sc10">.</span><span class="sc11">swap</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc11">polygon</span><span class="sc10">.</span><span class="sc11">sort</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc2">//print sorted list
+</span><span class="sc0">    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"Sorted List"</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">polygon</span><span class="sc10">.</span><span class="sc11">printPolygon</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc2">//exit program
+</span><span class="sc0">    </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc2">//end main
+</span></div></body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../stylesheet.css">
+
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../script.js"></script>
+    <title>C# File Compression</title>
+</head>
+<body>
+    <div id="background" style="padding-top: 200px; padding-left:100px;"><img src="logoC.jpg" /></div>
+    <div id="textBackground"></div>
+    <div id="container">
+    <div class="content-div">
+        <h1 style="text-align:center">File Compression</h1>
+        <p>
+            This program is intended to compress text files using the Huffman Algorithm for data compression. The program uses three classes; Compressor.cs, 
+            RootedBinaryTree.cs, and Test.cs. The program uses the Test.cs class as the main entry point and this is where we create our 'Compressor' object that will
+            handle the compression and decompression operations. I was able to compress my test file by about 57%. The test file being the plain text version of the 
+            United States Constitution available <a href="http://www.usconstitution.net/const.txt"target="_blank">here.</a> The original file is 44.9KB and the compressed
+            file is 25.7KB. </p>
+        <div class="codeBoxN">
+            <pre>
+                
+</span><span class="sc5">namespace</span><span class="sc0"> </span><span class="sc11">FileCompression</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc5">public</span><span class="sc0"> </span><span class="sc16">class</span><span class="sc0"> </span><span class="sc11">Test</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc16">static</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">Main</span><span class="sc10">(</span><span class="sc16">string</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">args</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc16">string</span><span class="sc0"> </span><span class="sc11">dir</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">Directory</span><span class="sc10">.</span><span class="sc11">GetCurrentDirectory</span><span class="sc10">();</span><span class="sc0">
+            </span><span class="sc11">Console</span><span class="sc10">.</span><span class="sc11">WriteLine</span><span class="sc10">(</span><span class="sc11">dir</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc11">Compressor</span><span class="sc10">.</span><span class="sc11">compress</span><span class="sc10">(</span><span class="sc11">dir</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">"\\TextFile1.txt"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">dir</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">"\\output.bin"</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc11">Compressor</span><span class="sc10">.</span><span class="sc11">decompress</span><span class="sc10">(</span><span class="sc11">dir</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">"\\output.bin"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">dir</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">"\\TextFile2.txt"</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+</pre><div class="caption">Here we see the Test.cs class that acts as a testing file. This is the main entry point to the program and where we create our 'Compressor' object.</div>
+        </div>
+        <p>
+            Once the Compressor is created, we call the 'compress(string inputFileName, string outputFileName)' which expects two strings. A valid input file string is expected 
+            which is the file intended to be compressed, along with an output file name which the program must have permission to write to avoid exceptions. Once this method
+            is called, the program will begin compressing the input file.
+        </p>
+        <h2>Compression</h2>
+        <p>
+            The 'Compressor' class contains a private struct which has three public members; string 'plainWord', double 'probability', and string 'codeWord'. This struct is used
+            for each different character within the input file. Each struct will then contain the 'plain' character it represents, the probability of that character to appear within the
+            file, and the assigned 'code word' that we give the character during our Huffman algorithm.
+        </p>
+        <div class="codeBoxN">
+            <pre>
+                
+</span><span class="sc5">namespace</span><span class="sc0"> </span><span class="sc11">FileCompression</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc5">public</span><span class="sc0"> </span><span class="sc16">class</span><span class="sc0"> </span><span class="sc11">Compressor</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">private</span><span class="sc0"> </span><span class="sc16">struct</span><span class="sc0"> </span><span class="sc11">Word</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc5">public</span><span class="sc0"> </span><span class="sc16">string</span><span class="sc0"> </span><span class="sc11">plainWord</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc5">public</span><span class="sc0"> </span><span class="sc16">double</span><span class="sc0"> </span><span class="sc11">probability</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc5">public</span><span class="sc0"> </span><span class="sc16">string</span><span class="sc0"> </span><span class="sc11">codeWord</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">};</span><span class="sc0">
+</pre><div class="caption">Here we see the 'Word' struct that will be used to represent each character within the input file.</div>
+        </div>
+        <p>
+            We begin the 'compress' method by opening a <a href="http://msdn.microsoft.com/en-us/library/system.io.streamreader%28v=vs.110%29.aspx"target="_blank">StreamReader</a>
+         object, 'inputReader', that will read the input file. The StreamReader reads the input file one line at a time and processes the characters within this line. We also add 
+        the carriage return that is lost when using the StreamReader. This allows us to avoid reading the entire input file into memory. During the reading of the file, we examine
+        each character within the returned line and compare it against a <a href="http://msdn.microsoft.com/en-us/library/6sh2ey19%28v=vs.110%29.aspx"target="_blank">List</a>
+        of  'found' characters; if the character being examined is not within the List, we add the character to the list, otherwise we increment a second List which acts as a 
+        counter for each character. After the input file is finished being read, we have two List objects, one with the plain characters found and the other, an index matched
+        List of the number of occurences of each character.</p>
+        <div class="codeBoxN">
+            <pre>                
+        </span><span class="sc5">public</span><span class="sc0"> </span><span class="sc16">static</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">compress</span><span class="sc10">(</span><span class="sc16">string</span><span class="sc0"> </span><span class="sc11">inputFileName</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc16">string</span><span class="sc0"> </span><span class="sc11">outputFileName</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc11">List</span><span class="sc10">&lt;</span><span class="sc16">char</span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">characterList</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">List</span><span class="sc10">&lt;</span><span class="sc16">char</span><span class="sc10">&gt;();</span><span class="sc0">
+            </span><span class="sc11">List</span><span class="sc10">&lt;</span><span class="sc16">double</span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">characterCount</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">List</span><span class="sc10">&lt;</span><span class="sc16">double</span><span class="sc10">&gt;();</span><span class="sc0">
+            </span><span class="sc16">double</span><span class="sc0"> </span><span class="sc11">totalCharacters</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">StreamReader</span><span class="sc0"> </span><span class="sc11">inputReader</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">StreamReader</span><span class="sc10">(</span><span class="sc11">inputFileName</span><span class="sc10">);</span><span class="sc0"> 
+            </span><span class="sc16">string</span><span class="sc0"> </span><span class="sc11">inputString</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc5">while</span><span class="sc10">((</span><span class="sc11">inputString</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inputReader</span><span class="sc10">.</span><span class="sc11">ReadLine</span><span class="sc10">())</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc5">null</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">inputString</span><span class="sc0"> </span><span class="sc10">+=</span><span class="sc0"> </span><span class="sc11">Environment</span><span class="sc10">.</span><span class="sc11">NewLine</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">=</span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">inputString</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc16">char</span><span class="sc0"> </span><span class="sc11">currentChar</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inputString</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">];</span><span class="sc0">
+                    </span><span class="sc11">totalCharacters</span><span class="sc10">++;</span><span class="sc0">
+                    </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(!(</span><span class="sc11">characterList</span><span class="sc10">.</span><span class="sc11">Contains</span><span class="sc10">(</span><span class="sc11">currentChar</span><span class="sc10">)))</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">characterList</span><span class="sc10">.</span><span class="sc11">Add</span><span class="sc10">(</span><span class="sc11">currentChar</span><span class="sc10">);</span><span class="sc0">
+                        </span><span class="sc11">characterCount</span><span class="sc10">.</span><span class="sc11">Insert</span><span class="sc10">(</span><span class="sc11">characterList</span><span class="sc10">.</span><span class="sc11">IndexOf</span><span class="sc10">(</span><span class="sc11">currentChar</span><span class="sc10">),</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">);</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc5">else</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc16">double</span><span class="sc0"> </span><span class="sc11">newCount</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">characterCount</span><span class="sc10">[</span><span class="sc11">characterList</span><span class="sc10">.</span><span class="sc11">IndexOf</span><span class="sc10">(</span><span class="sc11">currentChar</span><span class="sc10">)];</span><span class="sc0">
+                        </span><span class="sc11">newCount</span><span class="sc10">++;</span><span class="sc0">
+                        </span><span class="sc11">characterCount</span><span class="sc10">.</span><span class="sc11">RemoveAt</span><span class="sc10">(</span><span class="sc11">characterList</span><span class="sc10">.</span><span class="sc11">IndexOf</span><span class="sc10">(</span><span class="sc11">currentChar</span><span class="sc10">));</span><span class="sc0">
+                        </span><span class="sc11">characterCount</span><span class="sc10">.</span><span class="sc11">Insert</span><span class="sc10">(</span><span class="sc11">characterList</span><span class="sc10">.</span><span class="sc11">IndexOf</span><span class="sc10">(</span><span class="sc11">currentChar</span><span class="sc10">),</span><span class="sc0"> </span><span class="sc11">newCount</span><span class="sc10">);</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc11">inputReader</span><span class="sc10">.</span><span class="sc11">Dispose</span><span class="sc10">();</span><span class="sc0">
+            </span><span class="sc11">inputReader</span><span class="sc10">.</span><span class="sc11">Close</span><span class="sc10">();</span><span class="sc0">
+</pre><div class="caption">Here we see the procedure for reading the input file and filling our List objects with the data pertaining to each character within the input file.</div>
+        </div>
+        <p>
+            Once we have the two List objects, we begin creating our 'Word' structs which are put into third List object. We put these into a List object so that we can sort this
+            list as we build it. The Huffman algorithm expects a sorted array to be passed, so we sort the 'Word' objects into the List and call <a href="http://msdn.microsoft.com/en-us/library/x303t819%28v=vs.110%29.aspx"target="_blank">List.ToArray().</a>
+         to put the 'Word' objects into a 'Word' array, which we then pass to the Huffman algorithm.
+        </p>
+        <div class="codeBoxN">
+            <pre>                
+            </span><span class="sc11">List</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">wordList</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">List</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;();</span><span class="sc0">
+            </span><span class="sc11">Word</span><span class="sc0"> </span><span class="sc11">newWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Word</span><span class="sc10">();</span><span class="sc0">
+            </span><span class="sc2">//initialize the List with a first element
+</span><span class="sc0">            </span><span class="sc11">newWord</span><span class="sc10">.</span><span class="sc11">plainWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">characterList</span><span class="sc10">[</span><span class="sc4">0</span><span class="sc10">].</span><span class="sc11">ToString</span><span class="sc10">();</span><span class="sc0">
+            </span><span class="sc11">newWord</span><span class="sc10">.</span><span class="sc11">probability</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">characterCount</span><span class="sc10">[</span><span class="sc4">0</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">/</span><span class="sc0"> </span><span class="sc11">totalCharacters</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">wordList</span><span class="sc10">.</span><span class="sc11">Add</span><span class="sc10">(</span><span class="sc11">newWord</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">characterList</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">newWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Word</span><span class="sc10">();</span><span class="sc0">
+                </span><span class="sc11">newWord</span><span class="sc10">.</span><span class="sc11">plainWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">characterList</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">ToString</span><span class="sc10">();</span><span class="sc0">
+                </span><span class="sc11">newWord</span><span class="sc10">.</span><span class="sc11">probability</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">characterCount</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">/</span><span class="sc0"> </span><span class="sc11">totalCharacters</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//sort Words as we build the List
+</span><span class="sc0">                </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">wordList</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc10">++)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">newWord</span><span class="sc10">.</span><span class="sc11">probability</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">wordList</span><span class="sc10">[</span><span class="sc11">j</span><span class="sc10">].</span><span class="sc11">probability</span><span class="sc10">)</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">wordList</span><span class="sc10">.</span><span class="sc11">Insert</span><span class="sc10">(</span><span class="sc11">j</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">newWord</span><span class="sc10">);</span><span class="sc0">
+                        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">j</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">wordList</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">wordList</span><span class="sc10">.</span><span class="sc11">Add</span><span class="sc10">(</span><span class="sc11">newWord</span><span class="sc10">);</span><span class="sc0">
+                        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc11">Word</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">wordList</span><span class="sc10">.</span><span class="sc11">ToArray</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;();</span><span class="sc0">
+</pre><div class="caption">Here we see the construction of the sorted List object of 'Word's, then the copy to an array of 'Word's.</div>
+        </div>
+        <div class="space"></div>
+        <h2>Huffman Alogorithm</h2>
+        <p>
+            The Huffman algorithm expects a sorted array of 'Word' objects and begins by creating a 'RootedBinaryTree' object for each character within the array. 
+            We then begin merging these binary trees until we have only one large tree which contains all the characters sorted according to probability. The trees are combined
+            based on thier probability, the two lowest probability trees are merged and the newly formed tree takes the sum of the two combined trees. This process is 
+            repeated until we have only one tree left within the List of trees. This allows us to form a binary tree whose elements are sorted based on thier probability, which we need
+            to create the 'code words' we use to compress the file.
+        </p>
+        <div class="codeBoxN">
+            <pre>
+                </span><span class="sc0">
+        </span><span class="sc5">private</span><span class="sc0"> </span><span class="sc16">static</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">huffman</span><span class="sc10">(</span><span class="sc11">Word</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc11">List</span><span class="sc10">&lt;</span><span class="sc11">RootedBinaryTree</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;&gt;</span><span class="sc0"> </span><span class="sc11">treeArray</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">List</span><span class="sc10">&lt;</span><span class="sc11">RootedBinaryTree</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;&gt;();</span><span class="sc0">
+            </span><span class="sc2">//make our initial list of binary trees
+</span><span class="sc0">            </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">Add</span><span class="sc10">(</span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">RootedBinaryTree</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;(</span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]));</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc2">//combine trees
+</span><span class="sc0">            </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">Word</span><span class="sc0"> </span><span class="sc11">newWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Word</span><span class="sc10">();</span><span class="sc0">
+                </span><span class="sc11">newWord</span><span class="sc10">.</span><span class="sc11">plainWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">null</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">newWord</span><span class="sc10">.</span><span class="sc11">codeWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">null</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//combine the probabilities
+</span><span class="sc0">                </span><span class="sc11">newWord</span><span class="sc10">.</span><span class="sc11">probability</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">ElementAt</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">).</span><span class="sc11">getData</span><span class="sc10">().</span><span class="sc11">probability</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">ElementAt</span><span class="sc10">(</span><span class="sc4">1</span><span class="sc10">).</span><span class="sc11">getData</span><span class="sc10">().</span><span class="sc11">probability</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//make a new tree for the combined trees.
+</span><span class="sc0">                </span><span class="sc11">RootedBinaryTree</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">combinedTrees</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">RootedBinaryTree</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;(</span><span class="sc11">newWord</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">combinedTrees</span><span class="sc10">.</span><span class="sc11">combineTrees</span><span class="sc10">(</span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">ElementAt</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">),</span><span class="sc0"> </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">ElementAt</span><span class="sc10">(</span><span class="sc4">1</span><span class="sc10">));</span><span class="sc0">
+                </span><span class="sc2">//make sure we are at root
+</span><span class="sc0">                </span><span class="sc11">combinedTrees</span><span class="sc10">.</span><span class="sc11">toRoot</span><span class="sc10">();</span><span class="sc0">
+                </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">newTreeIndex</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc2">//insert tree
+</span><span class="sc0">                </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">((</span><span class="sc11">combinedTrees</span><span class="sc10">.</span><span class="sc11">getData</span><span class="sc10">().</span><span class="sc11">probability</span><span class="sc0"> </span><span class="sc10">&gt;=</span><span class="sc0"> </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">ElementAt</span><span class="sc10">(</span><span class="sc11">newTreeIndex</span><span class="sc10">).</span><span class="sc11">getData</span><span class="sc10">().</span><span class="sc11">probability</span><span class="sc10">))</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc2">//did we reach the end?
+</span><span class="sc0">                    </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">newTreeIndex</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">newTreeIndex</span><span class="sc10">++;</span><span class="sc0">
+                        </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc2">//if not, keep looping until we find our insert point
+</span><span class="sc0">                    </span><span class="sc11">newTreeIndex</span><span class="sc10">++;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc2">//insert tree
+</span><span class="sc0">                </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">Insert</span><span class="sc10">(</span><span class="sc11">newTreeIndex</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">combinedTrees</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">RemoveAt</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">RemoveAt</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end while( &gt;1)
+</span><span class="sc0">            </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">ElementAt</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">).</span><span class="sc11">toRoot</span><span class="sc10">();</span><span class="sc0">
+            </span><span class="sc11">RootedBinaryTree</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">combinedTree</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">treeArray</span><span class="sc10">.</span><span class="sc11">ElementAt</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc16">string</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">""</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">assignCodes</span><span class="sc10">(</span><span class="sc5">ref</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">combinedTree</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc2">//end huffman()
+</span><span class="sc0">
+</pre><div class="caption">Here we see the Huffman algorithm that combines the 'RootedBinaryTree' objects.</div>
+        </div>
+        <p>
+            After the 'RootedBinaryTree' objects are combined, we call a recursive function that traverses the tree and assigns the 'code words' that we use to compress 
+            the file. The code words are based on the probability of the character appearing within the input file; the higher the probability of a character, the shorter the 
+            code word will be. The process simply labels '1' or '0' based on the traversal of the tree to get to the character. Left traversal will add a label '0' while right
+            traversal will add a label '1'. This also gives our code words the property in which no code word will be a prefix of another. This is important when we are reading
+            the back during 'decompress'.
+        </p>
+        <div class="codeBoxN">
+            <pre>
+</span><span class="sc0">
+        </span><span class="sc5">private</span><span class="sc0"> </span><span class="sc16">static</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">assignCodes</span><span class="sc10">(</span><span class="sc5">ref</span><span class="sc0"> </span><span class="sc16">string</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">Word</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">RootedBinaryTree</span><span class="sc10">&lt;</span><span class="sc11">Word</span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">combinedTree</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//if we can go left...
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">combinedTree</span><span class="sc10">.</span><span class="sc11">moveLeft</span><span class="sc10">())</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//adjust codeword string accordingly...
+</span><span class="sc0">                </span><span class="sc11">codeString</span><span class="sc0"> </span><span class="sc10">+=</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">combinedTree</span><span class="sc10">.</span><span class="sc11">getData</span><span class="sc10">().</span><span class="sc11">plainWord</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc5">null</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//if we have a character here....
+</span><span class="sc0">                    </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//find the character in our 'theWords' array...
+</span><span class="sc0">                        </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">combinedTree</span><span class="sc10">.</span><span class="sc11">getData</span><span class="sc10">().</span><span class="sc11">plainWord</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">plainWord</span><span class="sc10">)</span><span class="sc0">
+                        </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//label this character with a codeword string
+</span><span class="sc0">                            </span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">codeWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc10">;</span><span class="sc0">
+                            </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc2">//recusive call
+</span><span class="sc0">                </span><span class="sc11">assignCodes</span><span class="sc10">(</span><span class="sc5">ref</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">combinedTree</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc2">//back from recursion, remove a character from our codeword string
+</span><span class="sc0">                </span><span class="sc11">codeString</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc10">.</span><span class="sc11">Remove</span><span class="sc10">(</span><span class="sc11">codeString</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end if(combinedTree.moveLeft())
+</span><span class="sc0">            </span><span class="sc2">//do the same for right sides....
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">combinedTree</span><span class="sc10">.</span><span class="sc11">moveRight</span><span class="sc10">())</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">codeString</span><span class="sc0"> </span><span class="sc10">+=</span><span class="sc0"> </span><span class="sc7">'1'</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">combinedTree</span><span class="sc10">.</span><span class="sc11">getData</span><span class="sc10">().</span><span class="sc11">plainWord</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc5">null</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">combinedTree</span><span class="sc10">.</span><span class="sc11">getData</span><span class="sc10">().</span><span class="sc11">plainWord</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">plainWord</span><span class="sc10">)</span><span class="sc0">
+                        </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">codeWord</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc10">;</span><span class="sc0">
+                            </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc11">assignCodes</span><span class="sc10">(</span><span class="sc5">ref</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">combinedTree</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">codeString</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">codeString</span><span class="sc10">.</span><span class="sc11">Remove</span><span class="sc10">(</span><span class="sc11">codeString</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">-</span><span class="sc4">1</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc2">//explored all possibilities, move back up....
+</span><span class="sc0">            </span><span class="sc11">combinedTree</span><span class="sc10">.</span><span class="sc11">moveUp</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span>
+</pre><div class="caption">Here we see the recursive function that will label our 'Word' objects with thier respective code word.</div>
+        </div>
+        <div class="space"></div>
+        <h2>Writing the Compressed File</h2>
+        <p>
+            Once we have the Huffman code words from our algorithm, we begin writing the compressed file to memory. The file is written in binary and is named with the 
+            passed parameter when calling the 'compress' method of the Compressor class. We begin writing the compressed file by first writing our dictionary of code words;
+             this is organized as such: we first write the total number of characters and thier code words, labeled 'pairs', followed by writing the original file. We use the 
+            <a href="http://msdn.microsoft.com/en-us/library/system.io.filestream%28v=vs.110%29.aspx"target="_blank">FileStream</a> class to write our file.         
+        </p>
+        <p>
+            Firstly, we write the plain string character as a byte followed by the code word length, and finally the code word itself as a byte. The code word is written by
+            iterating over the string object 'codeWord' within the 'Word' struct. We create a byte, 'writeByte', and shift this for each position within the string 'codeWord'. 
+            we increment the 'writeByte' for every '1' character within the string 'codeWord', the shifting will take care of '0' characters within 'codeWord'. The process is 
+            compared against a 'counter' integer that counts our shifts. Once the 'counter' reaches eight, we know we have filled a byte and it is time to write this byte to the 
+            file. This allows us to write the file in binary.
+        </p>
+        <div class="codeBoxN">
+            <pre>
+                 </span><span class="sc2">//get the output file
+</span><span class="sc0">            </span><span class="sc11">FileStream</span><span class="sc0"> </span><span class="sc11">outputFile</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">File</span><span class="sc10">.</span><span class="sc11">OpenWrite</span><span class="sc10">(</span><span class="sc11">outputFileName</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc2">//print the dictionary to binary file
+</span><span class="sc0">            </span><span class="sc16">byte</span><span class="sc0"> </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">counter</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">stringPointer</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc2">//write total pairs
+</span><span class="sc0">            </span><span class="sc11">outputFile</span><span class="sc10">.</span><span class="sc11">WriteByte</span><span class="sc10">((</span><span class="sc16">byte</span><span class="sc10">)</span><span class="sc11">theWords</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//write code word
+                </span><span class="sc11">outputFile</span><span class="sc10">.</span><span class="sc11">WriteByte</span><span class="sc10">((</span><span class="sc16">byte</span><span class="sc10">)</span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">plainWord</span><span class="sc10">[</span><span class="sc4">0</span><span class="sc10">]);</span><span class="sc0">
+                </span><span class="sc2">//write code word length
+</span><span class="sc0">                </span><span class="sc11">outputFile</span><span class="sc10">.</span><span class="sc11">WriteByte</span><span class="sc10">((</span><span class="sc16">byte</span><span class="sc10">)</span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">codeWord</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc2">//write the code word
+</span><span class="sc0">                </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">codeWord</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc10">++)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">*=</span><span class="sc0"> </span><span class="sc4">2</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc11">counter</span><span class="sc10">++;</span><span class="sc0">
+                    </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">+=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">byte</span><span class="sc10">)(</span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">codeWord</span><span class="sc10">[</span><span class="sc11">j</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">);</span><span class="sc0">
+                    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">counter</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc4">8</span><span class="sc10">)</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">outputFile</span><span class="sc10">.</span><span class="sc11">WriteByte</span><span class="sc10">(</span><span class="sc11">writeByte</span><span class="sc10">);</span><span class="sc0">
+                        </span><span class="sc11">counter</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+                        </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc2">//pad the (end) of the last byte
+</span><span class="sc0">                </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">counter</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc4">8</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">*=</span><span class="sc0"> </span><span class="sc4">2</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc11">counter</span><span class="sc10">++;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc11">outputFile</span><span class="sc10">.</span><span class="sc11">WriteByte</span><span class="sc10">(</span><span class="sc11">writeByte</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">counter</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+</pre><div class="caption">Here we see the procedure for writing the dictionary into the compressed file.</div>
+        </div>
+        <p>
+            Once we write the dictionary of code words, we write the original file to memory. This is accomplished with nearly the same procedure we had when we 
+            first read the file; opening another StreamReader object and reading the original file by line. We read a line from the file and add the carriage return, we then
+            examine each character of the returned string and locate the correct 'Word' object that contains our code word. The character is then written to file using the 
+            binary representation of the code word; this process is similar to writing the dictionary to file.
+        </p>
+        <div class="codeBoxN">
+            <pre>
+                
+            </span><span class="sc2">//print the document to binary file
+</span><span class="sc0">            </span><span class="sc11">inputReader</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">StreamReader</span><span class="sc10">(</span><span class="sc11">inputFileName</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc11">inputString</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc6">""</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc2">//while we have a string to read
+</span><span class="sc0">            </span><span class="sc5">while</span><span class="sc10">((</span><span class="sc11">inputString</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inputReader</span><span class="sc10">.</span><span class="sc11">ReadLine</span><span class="sc10">())</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc5">null</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//for every character in inputString
+</span><span class="sc0">                </span><span class="sc11">inputString</span><span class="sc0"> </span><span class="sc10">+=</span><span class="sc0"> </span><span class="sc11">Environment</span><span class="sc10">.</span><span class="sc11">NewLine</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">=</span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">&lt;</span><span class="sc11">inputString</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//find the correct Word object
+</span><span class="sc0">                    </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc10">=</span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc10">&lt;</span><span class="sc11">theWords</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">j</span><span class="sc10">++)</span><span class="sc0">
+                    </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//once we find the correct Word object
+</span><span class="sc0">                        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">inputString</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">j</span><span class="sc10">].</span><span class="sc11">plainWord</span><span class="sc10">[</span><span class="sc4">0</span><span class="sc10">])</span><span class="sc0">
+                        </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//print the code word of the Word object
+</span><span class="sc0">                            </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">w</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">w</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">j</span><span class="sc10">].</span><span class="sc11">codeWord</span><span class="sc10">.</span><span class="sc11">Length</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">w</span><span class="sc10">++)</span><span class="sc0">
+                            </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//shift our byte
+</span><span class="sc0">                                </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">*=</span><span class="sc0"> </span><span class="sc4">2</span><span class="sc10">;</span><span class="sc0">
+                                </span><span class="sc11">counter</span><span class="sc10">++;</span><span class="sc0">
+                                </span><span class="sc2">//add our value
+</span><span class="sc0">                                </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">+=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">byte</span><span class="sc10">)(</span><span class="sc11">theWords</span><span class="sc10">[</span><span class="sc11">j</span><span class="sc10">].</span><span class="sc11">codeWord</span><span class="sc10">[</span><span class="sc11">w</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc7">'0'</span><span class="sc10">);</span><span class="sc0">
+                                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">counter</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">8</span><span class="sc10">)</span><span class="sc0">
+                                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//write the byte once we hit 8 bits;
+</span><span class="sc0">                                    </span><span class="sc11">outputFile</span><span class="sc10">.</span><span class="sc11">WriteByte</span><span class="sc10">(</span><span class="sc11">writeByte</span><span class="sc10">);</span><span class="sc0">
+                                    </span><span class="sc11">counter</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+                                    </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+                                </span><span class="sc10">}</span><span class="sc0">
+                            </span><span class="sc10">}</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc2">//print the last byte - pad right to make full byte
+</span><span class="sc0">            </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">counter</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc4">8</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">writeByte</span><span class="sc0"> </span><span class="sc10">*=</span><span class="sc0"> </span><span class="sc4">2</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">counter</span><span class="sc10">++;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc11">outputFile</span><span class="sc10">.</span><span class="sc11">WriteByte</span><span class="sc10">(</span><span class="sc11">writeByte</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc11">outputFile</span><span class="sc10">.</span><span class="sc11">Close</span><span class="sc10">();</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc2">//end compress()
+</span>
+</pre><div class="caption">Here we see the procedure for writing the original file to the compressed version. We 'pad' the last byte of the file for ease of decompression.</div>
+        </div>
+
+
+
+        <h2>Please Check Back for Updates!</h2>
+        <p style="text-align:center;"><a href="https://github.com/dusanders/dusanders.github.io/tree/master/CSHARP/Source" target="_blank">Raw Source Files</a></p>
+        <div id="footer">
+            <div id="copyright">
+                <p>Copyright &copy; 2015 Dustin Anderson</p>
+            </div>
+            <div id="aboutButton">
+                <p><a href="../index.html">About</a></p>
+            </div>
+        </div>
+    </div>
+        <div id="sideBar">
+            <ul id="sideBarList">
+                <p style="text-align:center; text-decoration:underline;">Projects</p>
+                <li class="sideBarItem" id="ScrollProject"><a href="Graph.html">Graph Class</a></li>
+                <li class="sideBarItem" id="BluetoothRc"><a href="HashMap.html">HashMap Class</a></li>
+                <li class="sideBarItem"><a href="File.html">File Compression</a></li>
+                <li class="sideBarItem"><a href="Game.html">Game Theory</a></li>
+            </ul>
+        </div>
+        <div id="menuBar">
+            <ul id="menuList">
+                <li class="menuItem"><a href="../CPP/CPP.html">C++</a></li>
+                <li class="menuItem" style="color: #80CC80;">C#</li>
+                <li class="menuItem"><a href="../JAVA/Java.html">Java</a></li>
+                <li class="menuItem"><a href="../ASM/ASM.html">Embedded Systems</a></li>
+                <li class="menuItem"><a href="../ANDROID/AndroidHome.html">Android</a></li>
+            </ul>
+        </div>
+    </div><!--end container-->
+</body>
+</html>

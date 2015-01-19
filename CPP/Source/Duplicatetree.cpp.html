@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc1 {
+	color: #008000;
+}
+.sc2 {
+	color: #008000;
+}
+.sc4 {
+	color: #FF8000;
+}
+.sc5 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc6 {
+	color: #808080;
+}
+.sc9 {
+	color: #804000;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc11 {
+}
+.sc16 {
+	color: #8000FF;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc1">/*  Author:     Dustin Anderson
+*   Title:      Duplicatetree.cpp
+*   Problems:   None
+*   Desc:       This program is intended to implement a tree-node list
+*               list that allows for a 'middle' element. The middle
+*               element will contain a duplicate input number. The
+*               program should delete one of these duplicate numbers.
+*/</span><span class="sc0">
+
+</span><span class="sc9">#include &lt;iostream&gt;
+</span><span class="sc5">using</span><span class="sc0"> </span><span class="sc5">namespace</span><span class="sc0"> </span><span class="sc11">std</span><span class="sc10">;</span><span class="sc0">
+
+</span><span class="sc2">//node struct
+</span><span class="sc16">struct</span><span class="sc0"> </span><span class="sc11">Node</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">Node</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">right</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">Node</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">Node</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">middle</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">Node</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">parent</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc10">};</span><span class="sc2">//end node struct
+//type def for Node objects
+</span><span class="sc5">typedef</span><span class="sc0"> </span><span class="sc11">Node</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">node</span><span class="sc10">;</span><span class="sc0">
+
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">insert</span><span class="sc10">(</span><span class="sc11">node</span><span class="sc0"> </span><span class="sc10">&amp;</span><span class="sc11">N</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc2">//open new node
+</span><span class="sc0">    </span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Node</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//first tree element??
+</span><span class="sc0">    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">N</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc2">//set the pointers
+</span><span class="sc0">        </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc11">N</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc2">//end if start of tree
+</span><span class="sc0">    </span><span class="sc2">//else figure out where to place it.
+</span><span class="sc0">    </span><span class="sc5">else</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc2">//open new node
+</span><span class="sc0">        </span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">t</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc2">//find correct place for node
+</span><span class="sc0">        </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc5">true</span><span class="sc10">)</span><span class="sc0">            
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//if we have MIDDLE object
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">        
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//is it the last middle object?
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//place the object
+</span><span class="sc0">                    </span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">t</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"Middle"</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc2">//end if last middle
+</span><span class="sc0">                </span><span class="sc2">//else keep going down the middle
+</span><span class="sc0">                </span><span class="sc5">else</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">t</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc5">continue</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc2">//end else middle tranverse
+</span><span class="sc0">            </span><span class="sc10">}</span><span class="sc2">//end if MIDDLE object
+</span><span class="sc0">            
+            </span><span class="sc2">//if we have a RIGHT object
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">     
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//are we at the right-most object?
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">      
+                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//place new node
+</span><span class="sc0">                    </span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc10">;</span><span class="sc0">     
+                    </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">t</span><span class="sc10">;</span><span class="sc0">        
+                    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"right"</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc2">//end if end of right tree
+</span><span class="sc0">                </span><span class="sc2">//else keep going right
+</span><span class="sc0">                </span><span class="sc5">else</span><span class="sc0"> 
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">t</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">;</span><span class="sc0">       
+                    </span><span class="sc5">continue</span><span class="sc10">;</span><span class="sc0">           
+                </span><span class="sc10">}</span><span class="sc2">//end else
+</span><span class="sc0">            </span><span class="sc10">}</span><span class="sc2">//end if RIGHT object
+</span><span class="sc0">            
+            </span><span class="sc2">//do we need to go LEFT?
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">     
+            </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//did we find end of left?
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">       
+                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//place new node
+</span><span class="sc0">                    </span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">newNode</span><span class="sc10">;</span><span class="sc0">      
+                    </span><span class="sc11">newNode</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">t</span><span class="sc10">;</span><span class="sc0">    
+                    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"left"</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+                    </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc2">//end if
+</span><span class="sc0">                </span><span class="sc2">//else keep going left
+</span><span class="sc0">                </span><span class="sc5">else</span><span class="sc0">
+                    </span><span class="sc11">t</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">t</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end if LEFT
+</span><span class="sc0">        </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc2">// of while
+</span><span class="sc0">    </span><span class="sc10">}</span><span class="sc2">//end else
+</span><span class="sc10">}</span><span class="sc2">//end insert()
+</span><span class="sc0">
+</span><span class="sc2">//method to return the maximum element.
+</span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">findMax</span><span class="sc10">(</span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">n</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc2">//while there is a max..
+</span><span class="sc0">    </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">n</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">n</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">n</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//return the max object
+</span><span class="sc0">    </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">n</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc2">//end findMax()
+</span><span class="sc0">
+</span><span class="sc2">//method to search the tree for an element
+</span><span class="sc16">bool</span><span class="sc0"> </span><span class="sc11">search</span><span class="sc10">(</span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc2">//if we have an empty tree, return false;
+</span><span class="sc0">    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">N</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//did we find the data?
+</span><span class="sc0">    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc5">true</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//do we go right?
+</span><span class="sc0">    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">search</span><span class="sc10">(</span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc2">//do we go left?
+</span><span class="sc0">    </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">search</span><span class="sc10">(</span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">);</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc2">//end search()
+</span><span class="sc0">
+</span><span class="sc2">//method to delete tree nodes
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">deleteNode</span><span class="sc10">(</span><span class="sc11">node</span><span class="sc0"> </span><span class="sc10">&amp;</span><span class="sc11">N</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">cout</span><span class="sc10">&lt;&lt;</span><span class="sc6">"Deleting..."</span><span class="sc10">&lt;&lt;</span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//find the node within the tree
+</span><span class="sc0">    </span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">       
+        </span><span class="sc2">//if LESS, go left
+</span><span class="sc0">        </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc2">//if GREATER, go right
+</span><span class="sc0">        </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc2">//if EQUAL, go middle
+</span><span class="sc0">        </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc2">//end finding while
+</span><span class="sc0">    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"tmp "</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc10">)-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//check for no child objects
+</span><span class="sc0">    </span><span class="sc5">if</span><span class="sc10">((</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">))</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc2">//check for empty tree
+</span><span class="sc0">        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc11">N</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc2">//delete node
+</span><span class="sc0">        </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc2">//end if no child objects
+</span><span class="sc0">    
+    </span><span class="sc2">//check for one child
+</span><span class="sc0">    </span><span class="sc5">if</span><span class="sc10">((</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">||</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">||</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">))</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc2">//if we are at the base
+</span><span class="sc0">        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//check left
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">N</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc2">//check right
+</span><span class="sc0">            </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">N</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc2">//check middle
+</span><span class="sc0">            </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">N</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc2">//delete
+</span><span class="sc0">            </span><span class="sc5">delete</span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc2">//not at base, check for child
+</span><span class="sc0">        </span><span class="sc5">else</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//if no right child
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//are we left of parent?
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">((</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">)</span><span class="sc0"> 
+                    </span><span class="sc2">//reset left
+</span><span class="sc0">                    </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">    
+                </span><span class="sc5">else</span><span class="sc0">
+                    </span><span class="sc2">//reset right
+</span><span class="sc0">                    </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">   
+            </span><span class="sc10">}</span><span class="sc2">//end if no right
+</span><span class="sc0">            </span><span class="sc2">//if no left
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">     
+            </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//are we left of parent?
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">((</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">)</span><span class="sc0">
+                    </span><span class="sc2">//reset
+</span><span class="sc0">                    </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc5">else</span><span class="sc0">
+                    </span><span class="sc2">//reset right
+</span><span class="sc0">                    </span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc2">//end if no left
+</span><span class="sc0">            </span><span class="sc2">//delete the node
+</span><span class="sc0">            </span><span class="sc5">delete</span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc2">//end else
+</span><span class="sc0">    </span><span class="sc10">}</span><span class="sc2">//end if one child
+</span><span class="sc0">    
+    </span><span class="sc2">//two children
+</span><span class="sc0">    </span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">tmp2</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">findMax</span><span class="sc10">(</span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp2</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//is there a left object?
+</span><span class="sc0">    </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp2</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp2</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc2">//reset left
+</span><span class="sc0">            </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">else</span><span class="sc0">
+            </span><span class="sc2">//reset right
+</span><span class="sc0">            </span><span class="sc10">(</span><span class="sc11">tmp2</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc2">//end if no left
+</span><span class="sc0">    </span><span class="sc5">else</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">tmp2</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">tmp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">(</span><span class="sc11">tmp2</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">left</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp2</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc5">else</span><span class="sc0">
+            </span><span class="sc10">(</span><span class="sc11">tmp2</span><span class="sc10">-&gt;</span><span class="sc11">parent</span><span class="sc10">)-&gt;</span><span class="sc11">right</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">tmp2</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc2">//delete
+</span><span class="sc0">    </span><span class="sc5">delete</span><span class="sc10">(</span><span class="sc11">tmp2</span><span class="sc10">);</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc2">//end deleteNode()
+</span><span class="sc0">
+
+
+</span><span class="sc2">//method to print the tree
+</span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">printTree</span><span class="sc10">(</span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">node</span><span class="sc0"> </span><span class="sc11">temp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">N</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">temp</span><span class="sc10">!=</span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc2">//recursively print left elements
+</span><span class="sc0">        </span><span class="sc11">printTree</span><span class="sc10">(</span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">left</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">" "</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc2">//print the middle elements
+</span><span class="sc0">        </span><span class="sc11">printTree</span><span class="sc10">(</span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">middle</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc2">//print the right elements
+</span><span class="sc0">        </span><span class="sc11">printTree</span><span class="sc10">(</span><span class="sc11">temp</span><span class="sc10">-&gt;</span><span class="sc11">right</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc2">//end print tree()
+</span><span class="sc0">
+</span><span class="sc2">//begin main()
+</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">main</span><span class="sc10">()</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">Node</span><span class="sc0"> </span><span class="sc10">*</span><span class="sc11">tree</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//prompt user
+</span><span class="sc0">    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"Enter integers, exit with non-integer input:"</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//while we have an input stream
+</span><span class="sc0">    </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc11">cin</span><span class="sc0"> </span><span class="sc10">&gt;&gt;</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc2">//insert the elements
+</span><span class="sc0">        </span><span class="sc11">insert</span><span class="sc10">(</span><span class="sc11">tree</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc2">//end input while loop
+</span><span class="sc0">    </span><span class="sc11">cin</span><span class="sc10">.</span><span class="sc11">clear</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc2">//print the tree
+</span><span class="sc0">    </span><span class="sc11">printTree</span><span class="sc10">(</span><span class="sc11">tree</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//prompt for delete
+</span><span class="sc0">    </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"Which node to delete?"</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//get the delete node
+</span><span class="sc0">    </span><span class="sc11">cin</span><span class="sc0"> </span><span class="sc10">&gt;&gt;</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//make sure we have it, then, delete it
+</span><span class="sc0">    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">search</span><span class="sc10">(</span><span class="sc11">tree</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">))</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc11">deleteNode</span><span class="sc10">(</span><span class="sc11">tree</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">inputStream</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc5">else</span><span class="sc0">
+        </span><span class="sc11">cout</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc6">"Element was not found!"</span><span class="sc0"> </span><span class="sc10">&lt;&lt;</span><span class="sc0"> </span><span class="sc11">endl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//print altered tree
+</span><span class="sc0">    </span><span class="sc11">printTree</span><span class="sc10">(</span><span class="sc11">tree</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc2">//exit program
+</span><span class="sc0">    </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc2">//end main()
+</span></div></body>
+</html>
