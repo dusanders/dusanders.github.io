@@ -159,15 +159,15 @@ div img{
 #sideBar li:hover{
 	color:#006600;
 }
-#sideBar a{
+#sideBar li a{
     color: inherit;
     text-decoration: inherit;
 }
-#sideBar a:visited {
+#sideBar li a:visited {
     color:inherit;
     text-decoration: inherit;
 }
-#sideBar a:hover {
+#sideBar li a:hover {
     color: inherit;
     text-decoration: inherit;
 }
