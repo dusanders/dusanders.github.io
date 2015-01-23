@@ -1,8 +1,7 @@
 /*	Author:		Dustin Anderson
 *	Title:		Duplicatetree.cpp
-*	Problems:	None
 *	Desc:		This program is intended to implement a tree-node list
-*				list that allows for a 'middle' element. The middle
+*				that allows for a 'middle' element. The middle
 *				element will contain a duplicate input number. The
 * 				program should delete one of these duplicate numbers.
 */
@@ -50,7 +49,6 @@ void insert(node &N, int data)
 				{	//place the object
 					t->middle = newNode;
 					newNode->parent = t;
-					cout << "Middle" <<endl;
 					return;
 				}//end if last middle
 				//else keep going down the middle
@@ -69,7 +67,6 @@ void insert(node &N, int data)
 				{	//place new node
 					t->right = newNode;		
 					newNode->parent = t;		
-					cout << "right" <<endl;
 					return;
 				}//end if end of right tree
 				//else keep going right
@@ -87,7 +84,6 @@ void insert(node &N, int data)
 				{	//place new node
 					t->left = newNode;		
 					newNode->parent = t;	
-					cout << "left" << endl;
 					return;
 				}//end if
 				//else keep going left
@@ -148,7 +144,6 @@ void deleteNode(node &N, int data)
 			}
 		}
 	}//end finding while
-	cout << "tmp " << (tmp->middle)->data << endl;
 	//check for no child objects
 	if((tmp->left == 0) && (tmp->right == 0) && (tmp->middle == 0))
 	{

@@ -43,7 +43,7 @@ struct Book
 		
 	}
 	string ToString()
-	{	
+	{	//capture our returning string object
 		ostringstream ostream;
 		ostream << bookprice << " " << title << '\n';
 		string result = ostream.str();

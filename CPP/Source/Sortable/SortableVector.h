@@ -24,6 +24,7 @@ public:
     SortableVector(){head = 0;};
     ~SortableVector();
     T min();
+	T max();
     void push_back(T &inData);
     void print();
     void sortVectorAscending();
@@ -61,17 +62,38 @@ T SortableVector<T>::min()
 }
 
 template <class T>
+T SortableVector<T>::max()
+{
+	Node *currentMax = head;
+	Node *tmp = head;
+	while(tmp != 0)
+	{
+		if(tmp->data->CompareTo(currentMax->data) == -1)
+		{
+			currentMax->data = tmp->data;
+		}
+		else
+		{
+			tmp = tmp->next;
+		}
+	}
+	return currentMax->data;
+}
+
+template <class T>
 void SortableVector<T>::push_back(T &inData)
 {
+	//is the list empty?
 	if(head == 0)
-	{
+	{	//create a new head
 		Node *tmp = new Node;
 		(*tmp).data = inData;
 		tmp->next = head;
 		head = tmp;
 	}
+	//otherwise
 	else
-	{
+	{	//add new data to tail
 		Node *tmp = head;
 		while(tmp->next != 0)
 		{
