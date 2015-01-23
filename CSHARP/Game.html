@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../stylesheet.css">
+
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../script.js"></script>
+    <title>C#</title>
+</head>
+<body>
+    <div id="background" style="padding-top: 200px; padding-left:100px;"><img src="logoC.jpg" /></div>
+    <div id="textBackground"></div>
+    <div id="container">
+        <div class="content-div">
+            <h1 style="text-align:center;">Minimax Algorithm</h1>
+            <p>
+                This was an assignment for one of the programming courses I attended; the assignment was to implement the <a href="http://en.wikipedia.org/wiki/Minimax" target="_blank">Minimax Algorithm.</a>
+                The students were given a mostly complete graphical chess game and were tasked with completing the decision making portion of the game. The game should be able to play a full game
+                of chess against itself or a human opponent. The 'computer' opponent must return the best possible move after considering a  number of moves. The moves are based on all possible
+                moves available while also considering a set number of future turns.
+            </p>
+            <div><img src="chess.jpg" /></div>
+            <div class="space"></div>
+            <h2>Implementation</h2>
+            <p>
+                The algorithm is designed to examine all possible moves for a given number of turns. The algorithm must examine all possible moves of the current board configuration
+                while and then examine all possible moves from all possible board configurations resulting from all possible moves currently available; naturally this is a recursive function.
+                The algorithm will explore these possibilities to a given depth, a depth value of three is used in my implementation.
+            </p>
+            <p>
+                My implementation uses five methods; 'bestMove', 'evaluatePosition', 'findMin', 'findMax', and 'getBoardCount'. The 'bestMove' method is the method called when the user
+                submits a request to allow the program to choose the next move, this option can be done for either player. The method expects a depth value, and a reference to a counter
+                variable, 'totalMoves', which will display the total number of moves considered by the algorithm. Once the method is called, it creates the required objects needed to store
+                all of the possible moves at the current board configuration; the method then begins evaluating each move via a recursive call to 'evaluatePosition'
+            </p>
+            <div class="codeBoxN">
+                <pre>
+        <span class="sc5">private</span><span class="sc0"> </span><span class="sc11">ChessMove</span><span class="sc0"> </span><span class="sc11">bestMove</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">depth</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc5">ref</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">totalMoves</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc11">ChessMove</span><span class="sc0"> </span><span class="sc11">niceMove</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">ChessMove</span><span class="sc10">();</span><span class="sc0">
+            </span><span class="sc11">niceMove</span><span class="sc10">.</span><span class="sc11">origin</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc4">1</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">ChessMove</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">moves</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">ChessMove</span><span class="sc10">[</span><span class="sc11">MaxMoves</span><span class="sc10">];</span><span class="sc0">
+            </span><span class="sc11">totalMoves</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">numMoves</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">getLegalMoves</span><span class="sc10">(</span><span class="sc11">moves</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">numMoves</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">niceMove</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc16">double</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">nextMoves</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc16">double</span><span class="sc10">[</span><span class="sc11">numMoves</span><span class="sc10">];</span><span class="sc0">
+            </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">numMoves</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">PIECE</span><span class="sc0"> </span><span class="sc11">former</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">board</span><span class="sc10">[</span><span class="sc11">moves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">destination</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">moves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">destination</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc10">];</span><span class="sc0">
+                </span><span class="sc11">makeMove</span><span class="sc10">(</span><span class="sc11">moves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]);</span><span class="sc0">
+                </span><span class="sc2">//recursively check this move
+</span><span class="sc0">                </span><span class="sc11">nextMoves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">evaluatePosition</span><span class="sc10">(</span><span class="sc11">depth</span><span class="sc10">-</span><span class="sc4">1</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc5">ref</span><span class="sc0"> </span><span class="sc11">totalMoves</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc2">//undo the move
+</span><span class="sc0">                </span><span class="sc11">undoMove</span><span class="sc10">(</span><span class="sc11">moves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">],</span><span class="sc0"> </span><span class="sc11">former</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span>
+</pre><div class="caption">Here we see the procedure for evaluating all of the possible moves. Once this finishes, our 'nextMoves' array will contain all outcome values for each move.</div>
+            </div>
+            <div class="smallSpace"></div>
+            <p>
+                Once we call the 'evaluatePosition' method the program begins recursively going through all possible moves. This involves creating new objects to store all of the information about
+                the moves that are to be examined. The goal of this method is 'look ahead' from the move that called it and return the best possible outcome that could happen within the passed
+                depth value. 
+            </p>
+            <div class="codeBoxN">
+                <pre>
+       <span class="sc5">private</span><span class="sc0"> </span><span class="sc16">double</span><span class="sc0"> </span><span class="sc11">evaluatePosition</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">depth</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc5">ref</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">totalMoves</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc11">ChessMove</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">possibleMoves</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">ChessMove</span><span class="sc10">[</span><span class="sc11">MaxMoves</span><span class="sc10">];</span><span class="sc0">
+            </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">numMoves</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">getLegalMoves</span><span class="sc10">(</span><span class="sc11">possibleMoves</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc16">double</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">movesValues</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc16">double</span><span class="sc10">[</span><span class="sc11">numMoves</span><span class="sc10">];</span><span class="sc0">
+            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">depth</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">getBoardCount</span><span class="sc10">();</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc11">depth</span><span class="sc10">--;</span><span class="sc0">
+            </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">numMoves</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">totalMoves</span><span class="sc10">++;</span><span class="sc0"> 
+                </span><span class="sc11">PIECE</span><span class="sc0"> </span><span class="sc11">former</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">board</span><span class="sc10">[</span><span class="sc11">possibleMoves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">destination</span><span class="sc10">.</span><span class="sc11">x</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">possibleMoves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">].</span><span class="sc11">destination</span><span class="sc10">.</span><span class="sc11">y</span><span class="sc10">];</span><span class="sc0">
+                </span><span class="sc11">makeMove</span><span class="sc10">(</span><span class="sc11">possibleMoves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]);</span><span class="sc0">
+                </span><span class="sc11">movesValues</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">evaluatePosition</span><span class="sc10">(</span><span class="sc11">depth</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc5">ref</span><span class="sc0"> </span><span class="sc11">totalMoves</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">undoMove</span><span class="sc10">(</span><span class="sc11">possibleMoves</span><span class="sc10">[</span><span class="sc11">i</span><span class="sc10">],</span><span class="sc0"> </span><span class="sc11">former</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">whoseTurn</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">PLAYER</span><span class="sc10">.</span><span class="sc11">WHITE</span><span class="sc10">)</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//white gets the maximum
+</span><span class="sc0">                </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">movesValues</span><span class="sc10">[</span><span class="sc11">findMax</span><span class="sc10">(</span><span class="sc11">movesValues</span><span class="sc10">)];</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc5">else</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//black gets the minimum
+</span><span class="sc0">                </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">movesValues</span><span class="sc10">[</span><span class="sc11">findMin</span><span class="sc10">(</span><span class="sc11">movesValues</span><span class="sc10">)];</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">}</span>
+</pre><div class="caption">Here we see the 'evaluatePosition' method that is responsible for determining the outcome of possible moves.</div>
+            </div>
+            <div class="smallSpace"></div>
+            <p>
+                Once the program returns from the 'evaluatePosition' method, the array 'nextMoves' will contain the various outcomes from the moves available. This array is then examined to find the 
+                best possible move for thier respective player. Player white will always look for the largest possible value, while player black will always look for the minimum value. Once a move is 
+                found, it is checked to ensure that there will not be a 'draw by repetition' situation. This is accomplished by checking the selected move against the 'moveHistory' to see if the move had
+                been taken within previously, and resetting this move value while looping back to get the next best move.
+            </p>
+            <div class="codeBoxN">
+                <pre>
+            <span class="sc2">//ensure no 'draw by repetition'
+</span><span class="sc0">            </span><span class="sc16">bool</span><span class="sc0"> </span><span class="sc11">duplicateMove</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">true</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">((</span><span class="sc11">whoseTurn</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">PLAYER</span><span class="sc10">.</span><span class="sc11">WHITE</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">duplicateMove</span><span class="sc10">))</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">bestFound</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">findMax</span><span class="sc10">(</span><span class="sc11">nextMoves</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">niceMove</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">moves</span><span class="sc10">[</span><span class="sc11">bestFound</span><span class="sc10">];</span><span class="sc0">
+                </span><span class="sc5">if</span><span class="sc10">((</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc4">3</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">niceMove</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc11">moveHistory</span><span class="sc10">[</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc4">4</span><span class="sc10">]))</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">duplicateMove</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc2">//check for repetition
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">((</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc4">3</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">niceMove</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">moveHistory</span><span class="sc10">[</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc4">4</span><span class="sc10">]))</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//modify this move to infinity
+</span><span class="sc0">                    </span><span class="sc11">nextMoves</span><span class="sc10">[</span><span class="sc11">bestFound</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">&lt;=</span><span class="sc0"> </span><span class="sc4">3</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">duplicateMove</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">((</span><span class="sc11">whoseTurn</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">PLAYER</span><span class="sc10">.</span><span class="sc11">BLACK</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">duplicateMove</span><span class="sc10">))</span><span class="sc0">
+            </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">bestFound</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">findMin</span><span class="sc10">(</span><span class="sc11">nextMoves</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">niceMove</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">moves</span><span class="sc10">[</span><span class="sc11">bestFound</span><span class="sc10">];</span><span class="sc0">
+                </span><span class="sc5">if</span><span class="sc10">((</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc4">3</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">niceMove</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc11">moveHistory</span><span class="sc10">[</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc4">4</span><span class="sc10">]))</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">duplicateMove</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc2">//check for repetition
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">((</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc4">3</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">niceMove</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">moveHistory</span><span class="sc10">[</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc0"> </span><span class="sc4">4</span><span class="sc10">]))</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">   </span><span class="sc2">//modify this move to infinity
+</span><span class="sc0">                    </span><span class="sc11">nextMoves</span><span class="sc10">[</span><span class="sc11">bestFound</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">1000</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">moveHistory</span><span class="sc10">.</span><span class="sc11">Count</span><span class="sc0"> </span><span class="sc10">&lt;=</span><span class="sc0"> </span><span class="sc4">3</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">duplicateMove</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">niceMove</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span>
+</pre><div class="caption">Here we see the rest of the 'bestMove' method. We see the procedure for finding the best move from the array that was formed after calling 'evaluatePosition' 
+                for each available move. We also see the checking for 'draw by repetition'.</div>
+            </div>
+            <h2>Conclusion</h2>
+            <p>
+                Implementing this algorithm was an interesting learning exercise with decision trees and general game theory. The UI and most of the other functional code was written by the 
+                instructor and should not be credited to me. The methods that check for a 'check mate' or a 'check' condition are also currently not complete. I am able to play a full game of
+                chess against the algorithm and lose, though my chess skills are minimal. The algorithm also plays against itself fairly well with some surprising descision making.
+            </p>
+            <p style="text-align:center;"><a href="https://github.com/dusanders/dusanders.github.io/tree/master/CSHARP/Source/Game/ChessGame.cs" target="_blank">ChessGame.cs</a></p>
+            <p style="text-align:center;"><a href="https://github.com/dusanders/dusanders.github.io/tree/master/CSHARP/Source/Game/" target="_blank">Source Folder</a></p>
+            <div id="footer">
+                <div id="copyright">
+                    <p>Copyright &copy; 2015 Dustin Anderson</p>
+                </div>
+                <div id="aboutButton">
+                    <p><a href="../index.html">About</a></p>
+                </div>
+            </div>
+        </div>
+        <div id="sideBar">
+            <ul id="sideBarList">
+                <p style="text-align:center; text-decoration:underline;">Projects</p>
+                <li class="sideBarItem"><a href="HashMap.html">HashMap Class</a></li>
+                <li class="sideBarItem"><a href="File.html">File Compression</a></li>
+                <li class="sideBarItem"><a href="Game.html">Game Theory</a></li>
+            </ul>
+        </div>
+        <div id="menuBar">
+            <ul id="menuList">
+                <li class="menuItem"><a href="../CPP/CPP.html">C++</a></li>
+                <li class="menuItem" style="color: #80CC80;">C#</li>
+                <li class="menuItem"><a href="../JAVA/Java.html">Java</a></li>
+                <li class="menuItem"><a href="../ASM/ASM.html">Embedded Systems</a></li>
+                <li class="menuItem"><a href="../ANDROID/AndroidHome.html">Android</a></li>
+            </ul>
+        </div>
+    </div><!--end container-->
+</body>
+</html>
