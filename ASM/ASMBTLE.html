@@ -13,7 +13,7 @@
     <div id="container">
         <div class="content-div">
             <h1 style="text-align:center;">Bluetooth Low Energy RC Car</h1>
-
+        <div><img src="rcCar1.jpg" /></div>
         <p>This project started as an idea I had for learning Bluetooth technology. Wireless communications are rapidly expanding and gaining more
             demand every year. Bluetooth technology is not going anywhere anytime soon, there is a wide spectrum of applications for Bluetooth; from peer-to-peer 
             messages without the need for cell coverage, to medical devices that require communication to various devices, the applications vary wildy. The main advantage
@@ -113,7 +113,8 @@
     </span><span class="sc11">movingRight</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0">
   </span><span class="sc11">__bis_SR_register</span><span class="sc10">(</span><span class="sc11">LPM0_bits</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">GIE</span><span class="sc10">);</span><span class="sc0">       </span><span class="sc2">// Enter LPM0, interrupts enabled
 </span><span class="sc10">}</span><span class="sc0">
-</pre><div class="caption">Here we see the MSP startup procedure.</div>
+</pre><div class="caption">Here we see the MSP startup procedure. Note the procedure for starting the BT module, there is a specific way of starting the module to avoid a complete factory
+            reset.</div>
         </div><div class="smallSpace"></div>
             <p>
                 The microcontroller is responsible
@@ -476,7 +477,7 @@
             applications. Learning these two protocols makes me interested in possibly building my own quadcopter at some point, but we will see.</p>
             <h2>Please Check Back for Updates!</h2>
             <p style="text-align:center;">
-			<a href="https://github.com/dusanders/dusanders.github.io/tree/master/ASM/Source/BTLEmain.c" target="_blank">Download Source File</a>
+			<a href="https://github.com/dusanders/dusanders.github.io/blob/master/ASM/Source/BTLEmain.c" target="_blank">Download Source File</a>
             </p>
 			<p style="text-align:center;">
             <a href="https://github.com/dusanders/dusanders.github.io/tree/master/ASM/Source/" target="_blank">View Source Files Folder</a>
