@@ -209,3 +209,13 @@ div img{
 .content-div p{
     font-size: 1.4em;
 }
+
+#about-content-div{
+    margin-left:auto;
+    margin-right:auto;
+}
+#about-content-div p{
+    width:500px;
+    margin-left:auto;
+    margin-right:auto;
+}

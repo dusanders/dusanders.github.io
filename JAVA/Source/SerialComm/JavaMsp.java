@@ -19,7 +19,7 @@ public class JavaMsp {
 				MspPort found_port = new MspPort(port_id);
 				MSP_port_list.add(found_port);
 			}
-		}//end while (port_list.hasmoreelemtns
+		}//end while (port_list.hasmoreelemtns)
 		
 		for(int i=0; i < MSP_port_list.size(); i++) {
 			System.out.println(i + " : " +MSP_port_list.get(i).get_port_name());

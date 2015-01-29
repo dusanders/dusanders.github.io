@@ -1,74 +1,77 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
 <html>
 <head>
-    <link rel="stylesheet" href="../stylesheet.css">
-
-    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="../script.js"></script>
-    <title>Serial Communication</title>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc1 {
+	color: #008000;
+}
+.sc2 {
+	color: #008000;
+}
+.sc4 {
+	color: #FF8000;
+}
+.sc5 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc6 {
+	color: #808080;
+}
+.sc7 {
+	color: #808080;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc11 {
+}
+.sc16 {
+	color: #8000FF;
+}
+</style>
 </head>
 <body>
-    <div id="background" style="padding-top: 200px; padding-left:100px;"><img src="java_logo1.png" /></div>
-    <div id="textBackground"></div>
-    <div id="container">
-        <div class="content-div">
-            <h1 style="text-align:center;">Serial Communication</h1>
-        <div><img src="mainGUI.jpg" /></div>
-        <p>
-            This project started as a learning experience using the MSP430 microcontroller evaluation kit. I wanted to learn the Java implementations available for
-            serial communications. I eventually stumbled on the RXTXcomm libraries that allow for accessing the <a href="http://docs.oracle.com/cd/E17802_01/products/products/javacomm/reference/api/javax/comm/package-summary.html"target="_blank">javax.comm</a> api.
-        The program has a GUI that allows for changing all of the port settings, along with a simple text area to send a message and a text area to view responses.
-         </p>
-        <h2>Building the GUI</h2>
-        <p>I used the Eclipse IDE to build the GUI window, this tool allowed me the ability to 'drag-and-drop' components onto the interface. These components then had to
-            be implemented with the actual calls to the serial communication methods. This is done with setting various listener objects to the components placed on the interface,
-            these listeners will then check what action was requested and then send that specific command. The user is able to view and select the correct comm port number,
-            along with setting the baud rate, data bits, parity bits, stop bits, and flow control to various different configurations. </p>
-        <div><img src="screen2.jpg" /></div>
-        <div class="space"></div>
-        <h2>Implement Serial Communications</h2>
-        <p>
-            The application creates an Enumeration list of open serial ports that are detected when it is first launched. Each entry of the list that is returned is checked if is of type
-            Serial, and creates an MspPort object. The newly created MspPort will handle all of calls to the comm port that was passed during the constructor. These MspPort 
-            objects are then put into a list which is passed to the GUI class that will display all found Serial ports to the user. 
-        </p>
-        <div class="codeBoxN">
-            <pre>                
-</span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">class</span><span class="sc0"> </span><span class="sc11">JavaMsp</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
-    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">static</span><span class="sc0"> </span><span class="sc11">ArrayList</span><span class="sc10">&lt;</span><span class="sc11">MspPort</span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc11">MSP_port_list</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">ArrayList</span><span class="sc10">&lt;</span><span class="sc11">MspPort</span><span class="sc10">&gt;();</span><span class="sc0">
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc1">/*  Dustin Anderson
+*   Serial Communication Application
+*   This is the MspPort class which handles all calls/actions with the
+*       Serial ports.
+*/</span><span class="sc0">
+
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">java</span><span class="sc10">.</span><span class="sc11">io</span><span class="sc10">.</span><span class="sc11">IOException</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">java</span><span class="sc10">.</span><span class="sc11">io</span><span class="sc10">.</span><span class="sc11">InputStream</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">java</span><span class="sc10">.</span><span class="sc11">io</span><span class="sc10">.</span><span class="sc11">OutputStream</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">java</span><span class="sc10">.</span><span class="sc11">util</span><span class="sc10">.</span><span class="sc11">TooManyListenersException</span><span class="sc10">;</span><span class="sc0">
+
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">gnu</span><span class="sc10">.</span><span class="sc11">io</span><span class="sc10">.*;</span><span class="sc0">
+
+
+</span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">class</span><span class="sc0"> </span><span class="sc11">MspPort</span><span class="sc0"> </span><span class="sc5">implements</span><span class="sc0"> </span><span class="sc11">SerialPortEventListener</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">baud_rate</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc4">9600</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc2">//private int baud_rate = 115200;
+</span><span class="sc0">    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">stop_bits</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">SerialPort</span><span class="sc10">.</span><span class="sc11">STOPBITS_1</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">flow_control</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">SerialPort</span><span class="sc10">.</span><span class="sc11">FLOWCONTROL_NONE</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">data_bits</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">SerialPort</span><span class="sc10">.</span><span class="sc11">DATABITS_8</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">parity_bits</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">SerialPort</span><span class="sc10">.</span><span class="sc11">PARITY_NONE</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc11">SerialPort</span><span class="sc0"> </span><span class="sc11">serial_port</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc11">InputStream</span><span class="sc0"> </span><span class="sc11">input</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc11">OutputStream</span><span class="sc0"> </span><span class="sc11">output</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc11">String</span><span class="sc0"> </span><span class="sc11">port_name</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">connected</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc11">String</span><span class="sc0"> </span><span class="sc11">buffer</span><span class="sc10">;</span><span class="sc0">
     
-    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">static</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">main</span><span class="sc10">(</span><span class="sc11">String</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">args</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
-        </span><span class="sc2">//open Enumeration for ports
-</span><span class="sc0">        </span><span class="sc11">Enumeration</span><span class="sc10">&lt;?&gt;</span><span class="sc0"> </span><span class="sc11">port_list</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">CommPortIdentifier</span><span class="sc10">.</span><span class="sc11">getPortIdentifiers</span><span class="sc10">();</span><span class="sc0">
-        </span><span class="sc2">//while we have a list
-</span><span class="sc0">        </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">port_list</span><span class="sc10">.</span><span class="sc11">hasMoreElements</span><span class="sc10">())</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
-            </span><span class="sc2">//get the element
-</span><span class="sc0">            </span><span class="sc11">CommPortIdentifier</span><span class="sc0"> </span><span class="sc11">port_id</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">CommPortIdentifier</span><span class="sc10">)</span><span class="sc11">port_list</span><span class="sc10">.</span><span class="sc11">nextElement</span><span class="sc10">();</span><span class="sc0">
-            </span><span class="sc2">//got a serial? add it to the list!
-</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">port_id</span><span class="sc10">.</span><span class="sc11">getPortType</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc11">CommPortIdentifier</span><span class="sc10">.</span><span class="sc11">PORT_SERIAL</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
-                </span><span class="sc11">MspPort</span><span class="sc0"> </span><span class="sc11">found_port</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">MspPort</span><span class="sc10">(</span><span class="sc11">port_id</span><span class="sc10">);</span><span class="sc0">
-                </span><span class="sc11">MSP_port_list</span><span class="sc10">.</span><span class="sc11">add</span><span class="sc10">(</span><span class="sc11">found_port</span><span class="sc10">);</span><span class="sc0">
-            </span><span class="sc10">}</span><span class="sc0">
-        </span><span class="sc10">}</span><span class="sc2">//end while (port_list.hasmoreelemtns
-</span><span class="sc0">        
-        </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">=</span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc11">MSP_port_list</span><span class="sc10">.</span><span class="sc11">size</span><span class="sc10">();</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
-            </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc11">i</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">" : "</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc11">MSP_port_list</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">(</span><span class="sc11">i</span><span class="sc10">).</span><span class="sc11">get_port_name</span><span class="sc10">());</span><span class="sc0">
-        </span><span class="sc10">}</span><span class="sc0">
-        </span><span class="sc2">//lauch the gui
-</span><span class="sc0">        </span><span class="sc11">GUI</span><span class="sc10">.</span><span class="sc11">main</span><span class="sc10">(</span><span class="sc11">args</span><span class="sc10">);</span><span class="sc0">
-    </span><span class="sc10">}</span><span class="sc2">//end main()
-</span><span class="sc0">
-</span><span class="sc10">}</span><span class="sc2">//end JavaMsp
-</span><span class="sc0">
-</pre>
-        </div>
-        <div class="smallSpace"></div>
-        <p>The MspPort class implements the <a href="http://docs.oracle.com/cd/E17802_01/products/products/javacomm/reference/api/javax/comm/SerialPortEventListener.html"target="_blank">SerialPortEventListener</a> 
-            class which is required to handle the callbacks that will be produced by the Serial Port. We also handle all of the opening of the port with the MspPort constructor, 
-            while also getting the required input/output streams. </p>
-        <div class="codeBoxN">
-            <pre>
-                
+    
     </span><span class="sc2">//open and return an object of MspPort. This is a SerialPort object.
 </span><span class="sc0">    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc11">MspPort</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">CommPortIdentifier</span><span class="sc0"> </span><span class="sc11">commPortId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
         </span><span class="sc5">try</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
@@ -84,19 +87,13 @@
             </span><span class="sc11">buffer</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">String</span><span class="sc10">(</span><span class="sc6">""</span><span class="sc10">);</span><span class="sc0">
         </span><span class="sc10">}</span><span class="sc2">//end try 
 </span><span class="sc0">        </span><span class="sc5">catch</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">PortInUseException</span><span class="sc0"> </span><span class="sc10">|</span><span class="sc0"> </span><span class="sc11">IOException</span><span class="sc0"> </span><span class="sc10">|</span><span class="sc0"> </span><span class="sc11">TooManyListenersException</span><span class="sc0"> </span><span class="sc11">e</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">// TODO Auto-generated catch block
 </span><span class="sc0">            </span><span class="sc11">e</span><span class="sc10">.</span><span class="sc11">printStackTrace</span><span class="sc10">();</span><span class="sc0">
             </span><span class="sc11">connected</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
         </span><span class="sc10">}</span><span class="sc2">//end catch
 </span><span class="sc0">    </span><span class="sc10">}</span><span class="sc2">//end constructor
-</span><span class="sc0">        
-</pre><div class="caption">Here we see the constructor for the MspPort object.</div>
-        </div>
-        <div class="smallSpace"></div>
-        <p>Once the MspPort object is created, its callback is itself. During a callback event the object will attempt to read the data sent and also make a call to the GUI class
-            to update the 'displayInputField' text area which will display the data found at the Serial Port. </p>
-        <div class="codeBoxN">
-            <pre>
-                    
+</span><span class="sc0">    
+    
     </span><span class="sc2">//method to catch and incoming data from the port
 </span><span class="sc0">    </span><span class="sc11">@Override</span><span class="sc0">
     </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">serialEvent</span><span class="sc10">(</span><span class="sc11">SerialPortEvent</span><span class="sc0"> </span><span class="sc11">arg0</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
@@ -112,17 +109,6 @@
         </span><span class="sc10">}</span><span class="sc0">
     </span><span class="sc10">}</span><span class="sc0">
     
-</pre><div class="caption">Here we see the method that is called when a Serial Port event is received.</div>
-        </div>
-        <div class="smallSpace"></div>
-            <p>
-                The MspPort object also implements two different sending methods to send data to the Serial Port. There is a method that will send a String object; this is
-                done by forming a new byte array by calling 'getBytes()' method of class String. The byte array is then sent to the Serial Port while also checking for Exceptions.
-            Finally, the MspPort is loaded with all of the required 'get' and 'set' methods that are required to change and access the communication settings.
-            </p>
-        <div class="codeBoxN">
-            <pre>
-                 
     </span><span class="sc2">//method to send data to serial port
 </span><span class="sc0">    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">sendData</span><span class="sc10">(</span><span class="sc11">String</span><span class="sc0"> </span><span class="sc11">outputString</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
         </span><span class="sc16">byte</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">byteString</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">outputString</span><span class="sc10">.</span><span class="sc11">getBytes</span><span class="sc10">();</span><span class="sc0">
@@ -158,51 +144,58 @@
             </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
         </span><span class="sc10">}</span><span class="sc2">//end catch Unsupported 
 </span><span class="sc0">        </span><span class="sc5">catch</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">IOException</span><span class="sc0"> </span><span class="sc11">e</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">// TODO Auto-generated catch block
 </span><span class="sc0">            </span><span class="sc11">e</span><span class="sc10">.</span><span class="sc11">printStackTrace</span><span class="sc10">();</span><span class="sc0">
             </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
         </span><span class="sc10">}</span><span class="sc0">
         </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc5">true</span><span class="sc10">;</span><span class="sc0">
     </span><span class="sc10">}</span><span class="sc0">
     
-</pre>
-        </div>
-        <div class="space"></div>
-        <h2>Conclusion</h2>
-        <p>
-            The application was fun to build, besides the initial research into getting the javax.comm API back into my libraries. The application has helped with a few microcontroller
-            projects that I worked on and performed great. There are a few changes I would like to make; such as, doing away with the default values entered for communication. 
-            I would like to set this up so the application does not automatically connect to the Serial Port, but instead waits to connect until all of the settings have been changed.
-            I would also like to see any exceptions thrown to be placed into the text area. Besides a couple changes, I am very happy with how it tunred out, it has helped with
-            both projects listed under my 'Embedded Systems' page; including the programming of the BLTE module I used for my RC car.
-        </p>
-        <p style="text-align:center;"><a href="https://github.com/dusanders/dusanders.github.io/tree/master/JAVA/Source/SerialComm/GUI.java" target="_blank">GUI.java</a></p>
-        <p style="text-align:center;"><a href="https://github.com/dusanders/dusanders.github.io/tree/master/JAVA/Source/SerialComm/JavaMsp.java" target="_blank">JavaMsp.java</a></p>
-        <p style="text-align:center;"><a href="https://github.com/dusanders/dusanders.github.io/tree/master/JAVA/Source/SerialComm/MspPort.java" target="_blank">MspPort.java</a></p>
-            <p style="text-align:center;"><a href="https://github.com/dusanders/dusanders.github.io/tree/master/JAVA/Source/SerialComm/" target="_blank">Source Files Folder</a></p>
-            <div id="footer">
-                <div id="copyright">
-                    <p>Copyright &copy; 2015 Dustin Anderson</p>
-                </div>
-                <div id="aboutButton">
-                    <p><a href="../index.html">About</a></p>
-                </div>
-            </div>
-        </div><!--End content-div-->
-            <div id="sideBar">
-                <ul id="sideBarList">
-                    <p style="text-align:center; text-decoration:underline;">Projects</p>
-                    <li class="sideBarItem" id="ScrollProject"><a href="SerialComm.html">Serial Communication</a></li>
-                </ul>
-            </div>
-            <div id="menuBar">
-                <ul id="menuList">
-                    <li class="menuItem"><a href="../CPP/CPP.html">C++</a></li>
-                    <li class="menuItem"><a href="../CSHARP/CSharp.html">C#</a></li>
-                    <li class="menuItem" style="color: #80CC80;">Java</li>
-                    <li class="menuItem"><a href="../ASM/ASM.html">Embedded Systems</a></li>
-                    <li class="menuItem"><a href="../ANDROID/AndroidHome.html">Android</a></li>
-                </ul>
-            </div>
-        </div><!--end container-->
-</body>
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc11">SerialPort</span><span class="sc0"> </span><span class="sc11">get_serial_port</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">serial_port</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">get_baud_rate</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">baud_rate</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">get_data_bits</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">data_bits</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">get_stop_bits</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">stop_bits</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">get_flow_control</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">flow_control</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">get_parity_bits</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">parity_bits</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc11">String</span><span class="sc0"> </span><span class="sc11">get_port_name</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">port_name</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc11">InputStream</span><span class="sc0"> </span><span class="sc11">get_input_stream</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">input</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc11">OutputStream</span><span class="sc0"> </span><span class="sc11">get_output_stream</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">output</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">get_connected</span><span class="sc10">(){</span><span class="sc0">
+        </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">connected</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">set_baud_rate</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">inBaudRate</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc11">baud_rate</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inBaudRate</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">set_data_bits</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">inDataBits</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc11">data_bits</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inDataBits</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">set_parity_bits</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">inParityBits</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc11">parity_bits</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inParityBits</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">set_stop_bits</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">inStopBits</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc11">stop_bits</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inStopBits</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">set_flow_control</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">inFlowControl</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc11">flow_control</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inFlowControl</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+</span></div></body>
 </html>
