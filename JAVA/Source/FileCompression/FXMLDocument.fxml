@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="anchorPane" maxHeight="506.0" maxWidth="405.0" minHeight="285.0" minWidth="393.0" prefHeight="506.0" prefWidth="393.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFileCompress.FXMLDocumentController">
+   <children>
+      <TabPane prefHeight="497.0" prefWidth="394.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Compress">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <FlowPane fx:id="flowPane" prefHeight="263.0" prefWidth="392.0">
+                           <children>
+                              <Label prefHeight="41.0" prefWidth="393.0" text="Compress File:" />
+                              <Separator prefHeight="55.0" prefWidth="393.0" />
+                              <Label prefHeight="21.0" prefWidth="56.0" text="Input File:" />
+                              <TextField prefHeight="25.0" prefWidth="218.0" fx:id="compressInputField" />
+                              <Separator orientation="VERTICAL" prefHeight="16.0" prefWidth="1.0" />
+                              <Button fx:id="compressInputBrowse" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Browse" />
+                              <Separator prefHeight="123.0" prefWidth="391.0" />
+                              <Label prefHeight="17.0" prefWidth="67.0" text="Output Directory:" />
+                              <TextField fx:id="compressOutputField" prefHeight="25.0" prefWidth="206.0" />
+                              <Separator orientation="VERTICAL" prefHeight="16.0" prefWidth="1.0" />
+                              <Button fx:id="compressOutputBrowse" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Browse" />
+                              <Separator prefHeight="43.0" prefWidth="392.0" />
+                              <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="273.0" />
+                              <Button fx:id="compressButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" text="Compress" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Decompress">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <FlowPane fx:id="flowPane1" prefHeight="263.0" prefWidth="392.0">
+                           <children>
+                              <Label prefHeight="41.0" prefWidth="393.0" text="Decompress File:" />
+                              <Separator prefHeight="55.0" prefWidth="393.0" />
+                              <Label prefHeight="21.0" prefWidth="56.0" text="Input File:" />
+                              <TextField fx:id="decompressInputField" prefHeight="25.0" prefWidth="218.0" />
+                              <Separator orientation="VERTICAL" prefHeight="16.0" prefWidth="1.0" />
+                              <Button fx:id="decompressInputBrowse" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Browse" />
+                              <Separator prefHeight="123.0" prefWidth="391.0" />
+                              <Label prefHeight="17.0" prefWidth="67.0" text="Output File:" />
+                              <TextField fx:id="decompressOutputField" prefHeight="25.0" prefWidth="206.0" />
+                              <Separator orientation="VERTICAL" prefHeight="16.0" prefWidth="1.0" />
+                              <Button fx:id="decompressOutputBrowse" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Browse" />
+                              <Separator prefHeight="43.0" prefWidth="392.0" />
+                              <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="273.0" />
+                              <Button fx:id="decompressButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" text="Decompress" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
