@@ -19,7 +19,6 @@ public class MspPort implements SerialPortEventListener {
 	private OutputStream output;
 	private String port_name;
 	private boolean connected;
-	private String buffer;
 	
 	
 	//open and return an object of MspPort. This is a SerialPort object.
@@ -34,7 +33,6 @@ public class MspPort implements SerialPortEventListener {
 			serialPort.notifyOnDataAvailable(true);
 			serial_port = serialPort;
 			connected = true;
-			buffer = new String("");
 		}//end try 
 		catch (PortInUseException | IOException | TooManyListenersException e) {
 			// TODO Auto-generated catch block
@@ -49,28 +47,8 @@ public class MspPort implements SerialPortEventListener {
 	public void serialEvent(SerialPortEvent arg0) {
 		InputStream eventData = this.get_input_stream();
 		try {
-			byte eventByte = (byte)eventData.read();
-			byte[] eventArr = {eventByte};
-			//did we get a text echo?
-			if(buffer.contains("text")) 
-			{
-				//reset the buffer
-				buffer = new String("");
-				GUI.printInputData(eventByte);
-			}
-			//did we get an adc result?
-			else if(buffer.contains("adc"))
-			{
-				Integer integer = (int)eventByte;
-				//normalize the integer
-				integer *= 8;
-				//reset buffer
-				buffer = new String("");
-				//print the ADC
-				GUI.printADC10Results(integer);
-			}
-			//set the byte
-			buffer = new String(buffer.concat(new String(eventArr)));
+			int eventByte = eventData.read();
+			GUI.printInputData(eventByte);
 		} 
 		catch (IOException e) {
 			System.out.println("IOException!");
@@ -80,15 +58,14 @@ public class MspPort implements SerialPortEventListener {
 	
 	//method to send data to serial port
 	public boolean sendData(String outputString) {
-		byte[] byteString = new byte[outputString.length()];
-		for( int i=0; i < outputString.length(); i++) {
-			byteString[i] = (byte) outputString.charAt(i);
-		}
+		byte[] byteString = outputString.getBytes();
+				
 		try{
 			serial_port.setSerialPortParams(baud_rate, data_bits, stop_bits, parity_bits);
 			serial_port.setFlowControlMode(flow_control);
 			output = serial_port.getOutputStream();
 			output.write(byteString);
+			output.write(new byte[]{'\n'});
 			return true;
 		}
 		catch (UnsupportedCommOperationException e) {
@@ -106,7 +83,8 @@ public class MspPort implements SerialPortEventListener {
 			serial_port.setSerialPortParams(baud_rate, data_bits, stop_bits, parity_bits);
 			serial_port.setFlowControlMode(flow_control);
 			output = serial_port.getOutputStream();
-			output.write(outputInt);			
+			byte[] byteString = {(byte)outputInt};
+			output.write(byteString);		
 		}
 		catch (UnsupportedCommOperationException e) {
 			e.printStackTrace();
@@ -119,6 +97,7 @@ public class MspPort implements SerialPortEventListener {
 		}
 		return true;
 	}
+	
 	public SerialPort get_serial_port() {
 		return serial_port;
 	}
