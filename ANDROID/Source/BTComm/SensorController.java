@@ -80,7 +80,6 @@ public class SensorController implements SensorEventListener {
 		Integer x = (int)values[0]; // x plane always 0 index
 		Integer y = (int)values[1]; // y plane always 1 index
 		int z = (int)values[2]; // z plane always 2 index
-        MainActivity.StartTimeout();
         TimeoutTimer timeoutTimer = new TimeoutTimer(5000);
         timeoutTimer.start();
 		if(x == 0 && !stopX)  {
@@ -171,7 +170,6 @@ public class SensorController implements SensorEventListener {
             }
         }
         //shutdown the timer
-        MainActivity.StopTimeout();
         //reset the timeout
         timeout = false;
         //update the GUI with new accel. data
