@@ -169,7 +169,6 @@ public class SensorController implements SensorEventListener {
                 stopY = false;
             }
         }
-        //shutdown the timer
         //reset the timeout
         timeout = false;
         //update the GUI with new accel. data
