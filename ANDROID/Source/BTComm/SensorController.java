@@ -12,9 +12,10 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.os.CountDownTimer;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Zena on 10/11/2014.
@@ -31,6 +32,24 @@ public class SensorController implements SensorEventListener {
 			characteristic = inCharacteristic;
 		}
 	}
+    private class TimeoutTimer extends Thread{
+        private Timer timer;
+        private long delay;
+        protected TimeoutTimer(long inDelay)
+        {
+            delay = inDelay;
+        }
+        @Override
+        public void run(){
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    timeout = true;
+                }
+            }, delay);
+        }
+    }
 
     //class variables
 	private BluetoothGattServerController gattServerController;
@@ -40,11 +59,10 @@ public class SensorController implements SensorEventListener {
 	private ArrayList<Command> commandBuffer;
     private boolean stopX = false;
     private boolean stopY = false;
-    private CountDownTimer timer;
-    private boolean timeout;
+    public static boolean timeout;
 
 	public SensorController(Activity inActivity, BluetoothGattServerController inGattServerController, ArrayList<BluetoothGattCharacteristic> inCharacteristic, BluetoothDevice inDevice) {
-        //set our activity to send GUI updates to
+
 		activity = inActivity;
 		gattServerController = inGattServerController;
 		characteristics = inCharacteristic;
@@ -53,15 +71,6 @@ public class SensorController implements SensorEventListener {
         //timeout if BTLE does not respond, started and stopped by receiving accel. data
         //no need to set repeating
         timeout = false;
-        timer = new CountDownTimer(5000,1) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-            }
-            @Override
-            public void onFinish() {
-                timeout = true;
-            }
-        };
 	}
 	@Override
 	public void onSensorChanged(SensorEvent sensorEvent) {
@@ -71,8 +80,9 @@ public class SensorController implements SensorEventListener {
 		Integer x = (int)values[0]; // x plane always 0 index
 		Integer y = (int)values[1]; // y plane always 1 index
 		int z = (int)values[2]; // z plane always 2 index
-        //start the timeout counter
-        timer.start();
+        MainActivity.StartTimeout();
+        TimeoutTimer timeoutTimer = new TimeoutTimer(5000);
+        timeoutTimer.start();
 		if(x == 0 && !stopX)  {
             //wait for ACK signal, or timeout
             while(!gattServerController.clearToSend && !timeout){
@@ -161,7 +171,7 @@ public class SensorController implements SensorEventListener {
             }
         }
         //shutdown the timer
-        timer.cancel();
+        MainActivity.StopTimeout();
         //reset the timeout
         timeout = false;
         //update the GUI with new accel. data
