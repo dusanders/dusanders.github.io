@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../stylesheet.css">
+
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../script.js"></script>
+    <title>Qt RaspCar</title>
+</head>
+<body>
+    <div id="background" style="padding-top: 200px; padding-left:200px;"><img src="c++-logo.png" /></div>
+    <div id="textBackground"></div>
+    <div id="container">
+        <div class="content-div">
+            <h1 style="text-align:center;">RaspCar</h1>
+            <p>
+				This project started as way for me to learn the Qt platform using C++. Qt is a very
+				powerful framework which uses C++ as its development language. The framework
+				provides cross-platform development and deployment while retaining the performance
+				of native applications. The RaspCar project utilizes the free 'Community' edition
+				of the Qt framework, along with a multimedia package Phonon for the controlling of
+				the multimedia operations of the project. Qt uses the QML markup language for the 
+				GUI elements and allows the use of a 'designer' which allows for drag and drop
+				operations during GUI creation. The designer also provides quick access to all the
+				different actions associated with each element. Qt auto-generates the QML file
+				for the GUI layout and can auto-generate the required method signatures for the 
+				specific actions used by elements within the layout. The Qt framework also uses
+				a very unique system of SIGNALS and SLOTS. Qt objects have the ability to 'emit' 
+				SIGNALS when specific events or conditions are met. These SIGNALS can be 
+				connected to SLOTS by calling the 'connect()' method which will register the 
+				signaling object to the slot object and allows the execution of the SLOT 
+				function once it has received a SIGNAL.
+			</p>
+			<div class='codeBoxN'>
+			<pre><p>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;the&nbsp;music&nbsp;player&nbsp;object&nbsp;and&nbsp;connect&nbsp;audio&nbsp;service</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">MediaObject</span><span class="style_10">(</span><span class="style_5">this</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">connect</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">,&nbsp;</span><span class="style_11">SIGNAL</span><span class="style_10">(</span><span class="style_11">aboutToFinish</span><span class="style_10">()),&nbsp;</span><span class="style_5">this</span><span class="style_10">,&nbsp;</span><span class="style_11">SLOT</span><span class="style_10">(</span><span class="style_11">queueNext</span><span class="style_10">()));</span>
+			</p>
+			</pre><div class='caption'>Here is an example of a SIGNAL and SLOT operation. The MediaObject has many SIGNALS which it can emit, however we
+			only want the 'aboutToFinish()' signal which is emitted when the currently playing
+			media is about to end. We 'connect' this SIGNAL to the SLOT 'queueNext' which is a custom SLOT
+			function written to handle selecting the next song from the directory.</div>
+			</div>
+			<p>
+				The project aims to create an automotive
+				stereo unit using the Raspberry Pi model B+. The unit should be capable of playing
+				audio files from disc, USB, and receive Bluetooth A2DP protocol for streaming
+				music from a smart device. The Pi is loaded with the Raspbian operating system
+				which is based off of the Debian linux distro. This allows the use of the Qt 
+				framework and provides underlying software such as ALSA, BlueZ, and PulseAudio.
+            </p>
+            <div class="space"></div>
+            <h2>Project Overview</h2>
+            <p>
+				The project consists of a main.cpp file which acts as the starting point of the
+				application. This file's only purpose is to create the GUI application and close
+				the application when we are finished. The main.cpp file calls the 'mainwindow.cpp'
+				file which holds the majority of the functionality. The project also uses a 
+				'Clock.cpp' class which extends the Thread class and acts as the time clock
+				for the application, this obviously runs within its own thread. The animations of the program
+				are handled with a 'movieplayer.cpp' class which holds the functionality and
+				animation references used by the application. The program also contains a 
+				'bluetoothcontroller.cpp' class which handles the operations of connecting
+				A2DP protocol streams to the Raspbian operating system. Qt does not provide a 
+				native A2DP handling class, so the application uses system calls to the BlueZ
+				bluetooth utilities for Raspbian along with PulseAudio utilities for Raspbian.
+            </p>
+            <div class="space"></div>
+            <h2>Program Initialization</h2>
+            <p>
+				The application's main.cpp file acts as the system entry into the program. This
+				file's sole purpose is to create the mainwindow.cpp class and make a call to the
+				Qt 'QApplication' class which begins the procedure of creating the GUI through
+				the system. After the QApplication call, the program creates the mainwindow class
+				and makes a call to 'show()' which begins the main application procedure.
+            </p>
+            <div class="codeBoxN">
+                <pre><p>
+<span class="style_9">#include&nbsp;</span><span class="style_6">&lt;QApplication&gt;</span>
+<span class="style_9">#include&nbsp;</span><span class="style_6">"mainwindow.h"</span>
+
+<span class="style_5">int&nbsp;</span><span class="style_11">main</span><span class="style_10">(</span><span class="style_5">int&nbsp;</span><span class="style_11">argc</span><span class="style_10">,&nbsp;</span><span class="style_5">char&nbsp;</span><span class="style_10">*</span><span class="style_11">argv</span><span class="style_10">[])</span>
+<span class="style_10">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QApplication&nbsp;a</span><span class="style_10">(</span><span class="style_11">argc</span><span class="style_10">,&nbsp;</span><span class="style_11">argv</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">a</span><span class="style_10">.</span><span class="style_11">setApplicationName</span><span class="style_10">(</span><span class="style_6">"RaspCar"</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">MainWindow&nbsp;w</span><span class="style_10">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">w</span><span class="style_10">.</span><span class="style_11">show</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">return&nbsp;</span><span class="style_11">a</span><span class="style_10">.</span><span class="style_11">exec</span><span class="style_10">();</span>
+<span class="style_10">}</span>
+
+</p>
+</pre><div class="caption">Here we see the complete main.cpp file. </div>
+            </div>
+            <div class="smallSpace"></div>
+            <p>
+				As the above code shows, the main.cpp file is only the entry point to the 
+				application. The program logic and functionality is handled within the mainwindow.cpp
+				file. The main class makes a call to QApplication which handles calling the system
+				functions to begin creating an application in the native environment. It then
+				calls the constructor of the mainwindow.cpp, or 'MainWindow' class. The MainWindow
+				class holds the majority of the functionality and objects used within the 
+				application.
+            </p>
+            <h2>MainWindow Constructor</h2>
+            <div class="smallSpace"></div>
+            <div class="codeBoxN">
+                <pre>
+<span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">MainWindow</span><span class="style_10">(</span><span class="style_11">QWidget&nbsp;</span><span class="style_10">*</span><span class="style_11">parent</span><span class="style_10">)&nbsp;:</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QMainWindow</span><span class="style_10">(</span><span class="style_11">parent</span><span class="style_10">),</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">(</span><span class="style_5">new&nbsp;</span><span class="style_11">Ui</span><span class="style_10">::</span><span class="style_11">MainWindow</span><span class="style_10">)</span>
+<span class="style_10">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">setupUi</span><span class="style_10">(</span><span class="style_5">this</span><span class="style_10">);</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;the&nbsp;music&nbsp;directory</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">fileSystemDirectory&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">QDir</span><span class="style_10">(</span><span class="style_6">"/home/pi/Music"</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QStringList&nbsp;filters</span><span class="style_10">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//set&nbsp;the&nbsp;filters</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">filters&nbsp;</span><span class="style_10">&lt;&lt;&nbsp;</span><span class="style_6">"*.mp3"&nbsp;</span><span class="style_10">&lt;&lt;&nbsp;</span><span class="style_6">"*.mp4"</span><span class="style_10">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">setNameFilters</span><span class="style_10">(</span><span class="style_11">filters</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//pull&nbsp;the&nbsp;entries&nbsp;from&nbsp;the&nbsp;QDir</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">filesList&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">entryList</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//add&nbsp;to&nbsp;the&nbsp;list&nbsp;view</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">addItems</span><span class="style_10">(</span><span class="style_11">filesList</span><span class="style_10">);</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;our&nbsp;USB&nbsp;directory</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">usbSystemDirectory&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">QDir</span><span class="style_10">(</span><span class="style_6">"/media"</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">usbFiles&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">entryList</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">addItems</span><span class="style_10">(</span><span class="style_11">usbFiles</span><span class="style_10">);</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//setup&nbsp;the&nbsp;clock&nbsp;thread&nbsp;and&nbsp;display...</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">currentDayLabel</span><span class="style_10">-&gt;</span><span class="style_11">setText</span><span class="style_10">(</span><span class="style_11">QDate</span><span class="style_10">::</span><span class="style_11">currentDate</span><span class="style_10">().</span><span class="style_11">toString</span><span class="style_10">());</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">clockThread&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">Clock</span><span class="style_10">(</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">timeLabel</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">start</span><span class="style_10">();</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;a&nbsp;bluetoothController</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">bluetooth&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">bluetoothController</span><span class="style_10">();</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;the&nbsp;music&nbsp;player&nbsp;object&nbsp;and&nbsp;connect&nbsp;audio&nbsp;service</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">MediaObject</span><span class="style_10">(</span><span class="style_5">this</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">connect</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">,&nbsp;</span><span class="style_11">SIGNAL</span><span class="style_10">(</span><span class="style_11">aboutToFinish</span><span class="style_10">()),&nbsp;</span><span class="style_5">this</span><span class="style_10">,&nbsp;</span><span class="style_11">SLOT</span><span class="style_10">(</span><span class="style_11">queueNext</span><span class="style_10">()));</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">audioOutput&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">AudioOutput</span><span class="style_10">(</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">MusicCategory</span><span class="style_10">,&nbsp;</span><span class="style_5">this</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">createPath</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">,&nbsp;</span><span class="style_11">audioOutput</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">seekSlider</span><span class="style_10">-&gt;</span><span class="style_11">setMediaObject</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">);</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;and&nbsp;setup&nbsp;the&nbsp;movie&nbsp;player&nbsp;for&nbsp;all&nbsp;the&nbsp;animations</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">setBackgroundFile</span><span class="style_10">(</span><span class="style_6">"/home/pi/QtProjects/qtCar/Car/kxc23.gif"</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">setIdleFile</span><span class="style_10">(</span><span class="style_6">"/home/pi/QtProjects/qtCar/Car/idle.gif"</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">setMediaFile</span><span class="style_10">(</span><span class="style_6">"/home/pi/QtProjects/qtCar/Car/bluehyper.gif"</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">backgroundLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">centerMainLabel</span><span class="style_10">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">idleLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">mediaPlayerLabel</span><span class="style_10">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">mediaLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">mediaPlayerLabel</span><span class="style_10">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">playBackground</span><span class="style_10">();</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//setup&nbsp;global&nbsp;logic&nbsp;variables</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">shuffleOn&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">false</span><span class="style_10">;</span>
+<span class="style_10">}</span>
+</pre><div class="caption">Here we see the constructor for the MainWindow class. This
+							class holds the objects used within the application and handles
+							the functionality of the application.</div>
+            </div>
+            <p>
+				The above code shows the constructor for the MainWindow class. The constructor 
+				begins with creating a reference to itself within the Ui namespace. The Ui
+				namespace is the default namespace given to this application by the Qt designer.
+				The call to 'setupUi(this)' is a call to the Qt framework which will translate
+				the QML GUI designer file into C++ code to display within the windows. 
+            </p>
+            <p>
+				The application uses the QDir class to hold the file directory which will store
+				the music files. This location is currently hard coded but additional GUI 
+				implementations could turn this into an additional dialog box which will allow
+				the user to specify thier own location. Since this project is aimed as a car
+				stereo, space and functionality was preferred over customization. 
+				The file location 'fileSystemDirectory' is applied a list of filters that will
+				only display the music files within this location. Finally, the entries within
+				the fileSystemDirectory after the filters are applied, are added to the 
+				ListWidget on the main GUI. The Qt ListWidget class will handle the procedure
+				of correctly inserting the entries into the specified area of the GUI.
+            </p>
+            <p>
+				The application then creates another QDir object to hold the USB location.
+				The Raspbian operating system is based on Debian, so it uses the standard
+				'/media' location for removable media objects. This procedure was put in the
+				constructor mainly to help 'pre-load' the application with the available media
+				before the GUI is visible. This helps with the response time of the ToolBox 
+				selections when changing operation modes. Filters are not applied to this directory
+				as inserted media may have music files located within different folders.
+            </p>
+            <p>
+				The application then creates the Clock object and thread. This is a custom class
+				which extends the QThread class allowing it to run within its own thread. This
+				is used for the GUI clock and date display during execution. The Clock object will also
+				also be used for the shuffle function. The class contains a public function, 
+				'getSeed()' which returns the current milliseconds of the system time; thus allowing
+				the shuffle function to select a random song from within the current directory.
+            </p>
+            <p>
+				The application also opens the custom bluetoothcontroller class. This class
+				handles the Bluetooth communication with smart devices. The Bluetooth is 
+				handled by BlueZ libraries available for Raspbian operating system; so the
+				bluetoothcontroller class makes system calls to Raspbian that handle Bluetooth
+				operation outside of this application. The bluetoothcontroller class also handles
+				switching the PulseAudio source from the system output of the Phonon media
+				object and the BlueZ source for A2DP streams.
+            </p>
+            <p>
+				The application uses the Phonon library to handle the media operations, this
+				allows for easy control of events and objects dealing with the music files.
+				The application opens a Phonon MediaObject and passes a references to itself
+				to the MediaObject as a parent. The MediaObject will handle the operations
+				of opening, closing, and changing the music files; along with emitting  an 'aboutToFinish()'
+				signal when the currently played song is close to ending. We connect this signal
+				to the slot 'queueNext()' which is a function within MainWindow that will handle
+				automatically selecting the next song. We also create the Phonon AudioOutput
+				object which handles all the operations of sending audio from the MediaObject
+				to the native operating system sound drivers. Finally setting up a 'seek' bar
+				for our media.
+            </p>
+            <p>
+				The application then creates and initializes the custom 'movieplayer' class. This
+				class handles all of the animations used in the application. This class is responsible
+				for starting, stoping, and changing the animations used during playback of music
+				files and the background animations. The plans for the application include the
+				ability to change the playback and background animations; which will be much
+				easier to implement if all the animations are handled within a seperate class.
+				Finally, we set the shuffle to the default of 'off'.
+            </p>
+            <div class='smallSpace'></div>
+            <h2>Handling Files</h2>
+            <p>
+				The application's 'File System' tab displays all the music files located
+				on the hard disc of the Raspberry Pi. These files are currently limited to only
+				'*.mp3' and '*.mp4' files and limited to a hard-coded directory location.
+				The tab also has buttons for 'Next'  and 'Previous' functionality allowing
+				for changing the song, these are integrated with the 'Shuffle' button to allow
+				for selection of a random song.
+            </p>
+            
+            <div class="codeBoxN">
+                <pre>
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_prevButton_clicked</span><span class="style_10">()</span>
+<span class="style_10">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">shuffleOn</span><span class="style_10">)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">songCount&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">(</span><span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">getSeed</span><span class="style_10">()&nbsp;%&nbsp;</span><span class="style_11">songCount</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">currentRow</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">((</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">-&nbsp;</span><span class="style_4">1</span><span class="style_10">)%&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">());</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span>
+<span class="style_10">}</span>
+</pre><div class="caption">Here we see the function called when the 'Previous' button is clicked.
+							Notice we check whether the 'Shuffle' button has been activated, and
+							select a random song by calling the 'getSeed()' method of the Clock
+							class and adding this to the current song index while taking this
+							modulo the song list; thus giving us a random selection from the
+							current list of songs.</div>
+            </div>
+<div class='smallSpace'></div>
+<div class='codeBoxN'>
+<pre>
+	<p>		
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_nextButton_clicked</span><span class="style_10">()</span>
+<span class="style_10">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">shuffleOn</span><span class="style_10">)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">songCount&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">(</span><span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">getSeed</span><span class="style_10">()&nbsp;%&nbsp;</span><span class="style_11">songCount</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+</span><span class="style_6">"/"</span><span class="style_10">+&nbsp;</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">currentRow</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">((</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">+&nbsp;</span><span class="style_4">1</span><span class="style_10">)%&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">());</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span>
+<span class="style_10">}</span>
+	</p>
+</pre><div class='caption'>Here we see the function called when the 'Next' button is pressed.
+						Notice the application checks whether the 'Shuffle' button has been
+						activated and selects a random song if it has. The random selection
+						is achieved by calling the Clock class 'getSeed()' method that will 
+						return the current millisecond from the system time. This millisecond
+						value is then added to the current song index and the sum is taken modulo
+						the size of the song list; this allows for a random selection from the
+						list of songs.</div>
+</div>
+<div class='smallSpace'></div>
+			<p>
+				The files within the USB tab are handled in a similar fashion to those located
+				on the hard disk. The next and previous buttons are also integrated in the same
+				fashion with the shuffle button. The main difference is within the directory
+				handling, where it must be possible to navigate different folders within the 
+				usb drive. This allows the user to have seperate folders for placing music files.
+				The directories within the USB tab do not have filters applied to them, this allows
+				for all the files and directories to be displayed.
+			</p>
+			
+			
+			<h2>Bluetooth Integration</h2>
+			<p>
+				I wanted the project to be able to handle A2DP streaming from a Bluetooth device.
+				This uses a small Bluetooth dongle attached to the Raspberry Pi, along with 
+				the Linux BlueZ drivers and PulseAudio drivers. 
+			</p>
+            <p style="text-align:center;"><a href="https://raw.githubusercontent.com/dusanders/dusanders.github.io/master/CPP/Source/Duplicate/Duplicatetree.cpp" target="_blank">Download Duplicatetree.cpp</a></p>
+            <p style="text-align:center;">	<a href="https://github.com/dusanders/dusanders.github.io/tree/master/CPP/Source/Duplicate/" target="_blank">View Source Files Folder</a></p>            <div id="footer">
+                <div id="copyright">
+                    <p>Copyright &copy; 2015 Dustin Anderson</p>
+                </div>
+                <div id="aboutButton">
+                    <p><a href="../index.html">About</a></p>
+                </div>
+            </div>
+        </div>
+        <div id="sideBar">
+            <ul id="sideBarList">
+                <p style="text-align:center; text-decoration:underline;">Snippets</p>
+                <li class="sideBarItem"><a href="Sortable.html">Sortable Vector</a></li>
+                <li class="sideBarItem"><a href="Duplicate.html">Duplicate Nodes</a></li>
+                <p style="text-align:center; text-decoration:underline;">Qt Framework</p>
+                <li class="sideBarItem" style="color: #006600; cursor:default;">RaspCar</li>
+            </ul>
+        </div>
+        <div id="menuBar">
+            <ul id="menuList">
+                <li class="menuItem" style="color: #80CC80;">C++</li>
+                <li class="menuItem"><a href="../CSHARP/CSharp.html">C#</a></li>
+                <li class="menuItem"><a href="../JAVA/Java.html">Java</a></li>
+                <li class="menuItem"><a href="../ASM/ASM.html">Embedded Systems</a></li>
+                <li class="menuItem"><a href="../ANDROID/AndroidHome.html">Android</a></li>
+            </ul>
+        </div>
+    </div><!--end container-->
+</body>
+</html>

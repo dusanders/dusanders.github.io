@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>/media/Stash/CSCI451(OS)/Ex1/JavaShell/src/javashell/JavaShell.java</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 0.21" />
+	<meta name="date" content="2015-06-09T22:32:16-0500" />
+	<style type="text/css">
+	body
+	{
+		font-family: Monospace, monospace;
+		font-size: 10pt;
+	}
+	.style_0
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+	.style_1
+	{
+		color: #d00000;
+		background-color: #ffffff;
+	}
+	.style_2
+	{
+		color: #d00000;
+		background-color: #ffffff;
+	}
+	.style_4
+	{
+		color: #007f00;
+		background-color: #ffffff;
+	}
+	.style_5
+	{
+		color: #00007f;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+	.style_6
+	{
+		color: #ff901e;
+		background-color: #ffffff;
+	}
+	.style_10
+	{
+		color: #301010;
+		background-color: #ffffff;
+	}
+	.style_11
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+	.style_16
+	{
+		color: #991111;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+	.style_19
+	{
+		color: #0000d0;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+
+	</style>
+</head>
+
+<body>
+<p>
+<br />
+<span class="style_1">/*&nbsp;&nbsp;Author:&nbsp;Dustin&nbsp;Anderson</span><br />
+&nbsp;<span class="style_1">*&nbsp;&nbsp;Title:&nbsp;&nbsp;JavaShell</span><br />
+&nbsp;<span class="style_1">*&nbsp;&nbsp;Desc:&nbsp;&nbsp;&nbsp;CSCI451&nbsp;Exam&nbsp;1_1</span><br />
+&nbsp;<span class="style_1">*/</span><br />
+<br />
+<span class="style_5">import&nbsp;</span><span class="style_11">java</span><span class="style_10">.</span><span class="style_11">io</span><span class="style_10">.*;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">java</span><span class="style_10">.</span><span class="style_11">util</span><span class="style_10">.</span><span class="style_11">ArrayList</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">java</span><span class="style_10">.</span><span class="style_11">util</span><span class="style_10">.</span><span class="style_11">Arrays</span><span class="style_10">;</span><br />
+<br />
+<span class="style_5">public&nbsp;class&nbsp;</span><span class="style_19">JavaShell&nbsp;</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//exit&nbsp;string&nbsp;for&nbsp;user&nbsp;to&nbsp;enter</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">private&nbsp;static&nbsp;final&nbsp;</span><span class="style_11">String&nbsp;exitString&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_6">"exit"</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">public&nbsp;static&nbsp;</span><span class="style_16">void&nbsp;</span><span class="style_11">main</span><span class="style_10">(</span><span class="style_11">String</span><span class="style_10">[]&nbsp;</span><span class="style_11">args</span><span class="style_10">)&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//get&nbsp;our&nbsp;System&nbsp;input&nbsp;stream</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">BufferedReader&nbsp;inputReader&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">BufferedReader</span><span class="style_10">(</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">new&nbsp;</span><span class="style_11">InputStreamReader</span><span class="style_10">(</span><span class="style_11">System</span><span class="style_10">.</span><span class="style_11">in</span><span class="style_10">));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ProcessBuilder&nbsp;sendCommands&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">ProcessBuilder</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ArrayList</span><span class="style_10">&lt;</span><span class="style_11">String</span><span class="style_10">&gt;&nbsp;</span><span class="style_11">commands&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">ArrayList</span><span class="style_10">&lt;</span><span class="style_11">String</span><span class="style_10">&gt;();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">while</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">try&nbsp;</span><span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//prompt&nbsp;user</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">print</span><span class="style_10">(</span><span class="style_6">"JavaShell:&nbsp;\n"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//place&nbsp;for&nbsp;user&nbsp;input</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">String&nbsp;inputString&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">inputReader</span><span class="style_10">.</span><span class="style_11">readLine</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//check&nbsp;user&nbsp;input&nbsp;for&nbsp;conditions....</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">inputString</span><span class="style_10">.</span><span class="style_11">equals</span><span class="style_10">(</span><span class="style_6">""</span><span class="style_10">))</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{&nbsp;&nbsp;&nbsp;</span><span class="style_2">//if&nbsp;user&nbsp;hits&nbsp;'enter'&nbsp;without&nbsp;input,&nbsp;continue</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">continue</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">inputString</span><span class="style_10">.</span><span class="style_11">equalsIgnoreCase</span><span class="style_10">(</span><span class="style_11">exitString</span><span class="style_10">))</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{&nbsp;&nbsp;&nbsp;</span><span class="style_2">//if&nbsp;user&nbsp;enters&nbsp;the&nbsp;exit&nbsp;string,&nbsp;close&nbsp;stream&nbsp;and&nbsp;exit</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">inputReader</span><span class="style_10">.</span><span class="style_11">close</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">break</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//parse&nbsp;the&nbsp;input&nbsp;string&nbsp;for&nbsp;our&nbsp;commands</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">String</span><span class="style_10">[]&nbsp;</span><span class="style_11">splitInputString&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">inputString</span><span class="style_10">.</span><span class="style_11">split</span><span class="style_10">(</span><span class="style_6">"&nbsp;"</span><span class="style_10">);&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//check&nbsp;for&nbsp;special&nbsp;commands&nbsp;used</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">((</span><span class="style_11">splitInputString</span><span class="style_10">[</span><span class="style_4">0</span><span class="style_10">].</span><span class="style_11">equals</span><span class="style_10">(</span><span class="style_6">"!!"</span><span class="style_10">)&nbsp;||&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">splitInputString</span><span class="style_10">[</span><span class="style_4">0</span><span class="style_10">].</span><span class="style_11">equals</span><span class="style_10">(</span><span class="style_6">"!"</span><span class="style_10">)&nbsp;||</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">splitInputString</span><span class="style_10">[</span><span class="style_4">0</span><span class="style_10">].</span><span class="style_11">equals</span><span class="style_10">(</span><span class="style_6">"history"</span><span class="style_10">))&nbsp;&amp;&amp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">commands</span><span class="style_10">.</span><span class="style_11">size</span><span class="style_10">()&nbsp;&gt;&nbsp;</span><span class="style_4">0</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//get&nbsp;the&nbsp;oldest&nbsp;command&nbsp;entered</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">splitInputString</span><span class="style_10">[</span><span class="style_4">0</span><span class="style_10">].</span><span class="style_11">equals</span><span class="style_10">(</span><span class="style_6">"!!"</span><span class="style_10">))</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">splitInputString&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">commands</span><span class="style_10">.</span><span class="style_11">get</span><span class="style_10">(</span><span class="style_11">commands</span><span class="style_10">.</span><span class="style_11">size</span><span class="style_10">()-</span><span class="style_4">1</span><span class="style_10">).</span><span class="style_11">split</span><span class="style_10">(</span><span class="style_6">"&nbsp;"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//get&nbsp;the&nbsp;previous&nbsp;command&nbsp;entered</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else&nbsp;if</span><span class="style_10">(</span><span class="style_11">splitInputString</span><span class="style_10">[</span><span class="style_4">0</span><span class="style_10">].</span><span class="style_11">equals</span><span class="style_10">(</span><span class="style_6">"!"</span><span class="style_10">))</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_16">int&nbsp;</span><span class="style_11">index&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">Integer</span><span class="style_10">.</span><span class="style_11">parseInt</span><span class="style_10">(</span><span class="style_11">splitInputString</span><span class="style_10">[</span><span class="style_4">1</span><span class="style_10">]);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">splitInputString&nbsp;</span><span class="style_10">=&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">commands</span><span class="style_10">.</span><span class="style_11">get</span><span class="style_10">(</span><span class="style_11">index</span><span class="style_10">).</span><span class="style_11">split</span><span class="style_10">(</span><span class="style_6">"&nbsp;"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//print&nbsp;all&nbsp;of&nbsp;the&nbsp;previous&nbsp;commands&nbsp;entered&nbsp;and&nbsp;go&nbsp;back</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">(</span><span class="style_11">Arrays</span><span class="style_10">.</span><span class="style_11">toString</span><span class="style_10">(</span><span class="style_11">commands</span><span class="style_10">.</span><span class="style_11">toArray</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">continue</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//check&nbsp;if&nbsp;user&nbsp;wishes&nbsp;to&nbsp;change&nbsp;directory</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">splitInputString</span><span class="style_10">[</span><span class="style_4">0</span><span class="style_10">].</span><span class="style_11">equals</span><span class="style_10">(</span><span class="style_6">"cd"</span><span class="style_10">)&nbsp;&amp;&amp;&nbsp;(</span><span class="style_11">splitInputString</span><span class="style_10">.</span><span class="style_11">length&nbsp;</span><span class="style_10">&gt;&nbsp;</span><span class="style_4">1</span><span class="style_10">))</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">try&nbsp;</span><span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">print</span><span class="style_10">(</span><span class="style_6">"Changing&nbsp;Directory..."</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">String&nbsp;directory&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">splitInputString</span><span class="style_10">[</span><span class="style_4">1</span><span class="style_10">];</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">print</span><span class="style_10">(</span><span class="style_11">directory&nbsp;</span><span class="style_10">+&nbsp;</span><span class="style_6">"\n"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//create&nbsp;file&nbsp;and&nbsp;check&nbsp;for&nbsp;existence</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">File&nbsp;file&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">File</span><span class="style_10">(</span><span class="style_11">directory</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">file</span><span class="style_10">.</span><span class="style_11">exists</span><span class="style_10">())</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">sendCommands</span><span class="style_10">.</span><span class="style_11">directory</span><span class="style_10">(</span><span class="style_5">new&nbsp;</span><span class="style_11">File</span><span class="style_10">(</span><span class="style_11">directory</span><span class="style_10">));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">commands</span><span class="style_10">.</span><span class="style_11">add</span><span class="style_10">(</span><span class="style_11">inputString</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">continue</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">(</span><span class="style_6">"No&nbsp;such&nbsp;directory!"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">continue</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><span class="style_5">catch</span><span class="style_10">(</span><span class="style_11">Exception&nbsp;ex</span><span class="style_10">){}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">try</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">sendCommands</span><span class="style_10">.</span><span class="style_11">redirectOutput</span><span class="style_10">(</span><span class="style_11">ProcessBuilder</span><span class="style_10">.</span><span class="style_11">Redirect</span><span class="style_10">.</span><span class="style_11">INHERIT</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">sendCommands</span><span class="style_10">.</span><span class="style_11">command</span><span class="style_10">(</span><span class="style_11">splitInputString</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">Process&nbsp;externProcess&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">sendCommands</span><span class="style_10">.</span><span class="style_11">start</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">BufferedReader&nbsp;processOutput&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">BufferedReader</span><span class="style_10">(</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">new&nbsp;</span><span class="style_11">InputStreamReader</span><span class="style_10">(</span><span class="style_11">externProcess</span><span class="style_10">.</span><span class="style_11">getInputStream</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">while</span><span class="style_10">(</span><span class="style_11">processOutput</span><span class="style_10">.</span><span class="style_11">ready</span><span class="style_10">())</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">(</span><span class="style_11">processOutput</span><span class="style_10">.</span><span class="style_11">readLine</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}&nbsp;</span><span class="style_5">catch</span><span class="style_10">(</span><span class="style_11">Exception&nbsp;ex</span><span class="style_10">)&nbsp;{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">(</span><span class="style_6">"There&nbsp;was&nbsp;an&nbsp;error&nbsp;with&nbsp;entered&nbsp;data!"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">continue</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">commands</span><span class="style_10">.</span><span class="style_11">add</span><span class="style_10">(</span><span class="style_11">inputString</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}&nbsp;</span><span class="style_5">catch&nbsp;</span><span class="style_10">(</span><span class="style_11">IOException&nbsp;e</span><span class="style_10">)&nbsp;{}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><span class="style_2">//end&nbsp;while(true)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//close&nbsp;our&nbsp;input&nbsp;stream</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">try&nbsp;</span><span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">inputReader</span><span class="style_10">.</span><span class="style_11">close</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}&nbsp;</span><span class="style_5">catch&nbsp;</span><span class="style_10">(</span><span class="style_11">IOException&nbsp;e</span><span class="style_10">)&nbsp;{}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><span class="style_2">//end&nbsp;main()</span><br />
+<span class="style_10">}</span><span class="style_2">//end&nbsp;class&nbsp;</span><br />
+
+</p>
+</body>
+</html>

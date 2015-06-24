@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>/home/pi/QtProjects/qtCar/Car/bluetoothcontroller.cpp</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 1.22" />
+	<meta name="date" content="2015-05-28T19:32:26-0500" />
+	<style type="text/css">
+	body
+	{
+		font-family: Monospace, monospace;
+		font-size: 10pt;
+	}
+	.style_0
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+	.style_2
+	{
+		color: #d00000;
+		background-color: #ffffff;
+	}
+	.style_4
+	{
+		color: #007f00;
+		background-color: #ffffff;
+	}
+	.style_5
+	{
+		color: #00007f;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+	.style_6
+	{
+		color: #ff8000;
+		background-color: #ffffff;
+	}
+	.style_9
+	{
+		color: #007f7f;
+		background-color: #ffffff;
+	}
+	.style_10
+	{
+		color: #301010;
+		background-color: #ffffff;
+	}
+	.style_11
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+
+	</style>
+</head>
+
+<body>
+<p>
+<span class="style_9">#include&nbsp;</span><span class="style_6">"bluetoothcontroller.h"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QDebug"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QProcess"</span><br />
+<br />
+<span class="style_11">bluetoothController</span><span class="style_10">::</span><span class="style_11">bluetoothController</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//do&nbsp;nothing&nbsp;here</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">hciProcess&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">QProcess</span><span class="style_10">();</span><br />
+<span class="style_10">}</span><br />
+<span class="style_11">bluetoothController</span><span class="style_10">::~</span><span class="style_11">bluetoothController</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">state</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_11">QProcess</span><span class="style_10">::</span><span class="style_11">Running</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">close</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">pulseaudioProcess</span><span class="style_10">.</span><span class="style_11">state</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_11">QProcess</span><span class="style_10">::</span><span class="style_11">Running</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">pulseaudioProcess</span><span class="style_10">.</span><span class="style_11">close</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">bool&nbsp;</span><span class="style_11">bluetoothController</span><span class="style_10">::</span><span class="style_11">scanDevices</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">setReadChannel</span><span class="style_10">(</span><span class="style_11">QProcess</span><span class="style_10">::</span><span class="style_11">StandardOutput</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">connect</span><span class="style_10">(</span><span class="style_11">hciProcess</span><span class="style_10">,&nbsp;</span><span class="style_11">SIGNAL</span><span class="style_10">(</span><span class="style_11">readyReadStandardOutput</span><span class="style_10">()),&nbsp;</span><span class="style_5">this</span><span class="style_10">,&nbsp;</span><span class="style_11">SLOT</span><span class="style_10">(</span><span class="style_11">parseMAC</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">start</span><span class="style_10">(</span><span class="style_6">"hcitool&nbsp;con"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">waitForFinished</span><span class="style_10">(</span><span class="style_4">5000</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">disconnect</span><span class="style_10">(</span><span class="style_11">hciProcess</span><span class="style_10">,&nbsp;</span><span class="style_11">SIGNAL</span><span class="style_10">(</span><span class="style_11">readyReadStandardOutput</span><span class="style_10">()),&nbsp;</span><span class="style_5">this</span><span class="style_10">,&nbsp;</span><span class="style_11">SLOT</span><span class="style_10">(</span><span class="style_11">parseMAC</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">qDebug</span><span class="style_10">()&nbsp;&lt;&lt;&nbsp;</span><span class="style_11">connectedMAC</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">connectedMAC&nbsp;</span><span class="style_10">!=&nbsp;</span><span class="style_6">"null"</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">setReadChannel</span><span class="style_10">(</span><span class="style_11">QProcess</span><span class="style_10">::</span><span class="style_11">StandardOutput</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">connect</span><span class="style_10">(</span><span class="style_11">hciProcess</span><span class="style_10">,&nbsp;</span><span class="style_11">SIGNAL</span><span class="style_10">(</span><span class="style_11">readyReadStandardOutput</span><span class="style_10">()),&nbsp;</span><span class="style_5">this</span><span class="style_10">,&nbsp;</span><span class="style_11">SLOT</span><span class="style_10">(</span><span class="style_11">parseName</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QString&nbsp;getName&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_6">"hcitool&nbsp;name&nbsp;"</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">getName&nbsp;</span><span class="style_10">+=&nbsp;</span><span class="style_11">connectedMAC</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">start</span><span class="style_10">(</span><span class="style_11">getName</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">waitForFinished</span><span class="style_10">(</span><span class="style_4">5000</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">disconnect</span><span class="style_10">(</span><span class="style_11">hciProcess</span><span class="style_10">,&nbsp;</span><span class="style_11">SIGNAL</span><span class="style_10">(</span><span class="style_11">readyReadStandardOutput</span><span class="style_10">()),</span><span class="style_5">this</span><span class="style_10">,&nbsp;</span><span class="style_11">SLOT</span><span class="style_10">(</span><span class="style_11">parseName</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">return&nbsp;true</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">return&nbsp;false</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">bluetoothController</span><span class="style_10">::</span><span class="style_11">disconnectAudio</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+<br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">bluetoothController</span><span class="style_10">::</span><span class="style_11">connectAudio</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+<br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">bluetoothController</span><span class="style_10">::</span><span class="style_11">parseMAC</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//hcitool&nbsp;has&nbsp;returned&nbsp;an&nbsp;output.&nbsp;The&nbsp;output&nbsp;will&nbsp;always&nbsp;begin</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;with&nbsp;'Connections:&nbsp;\n'&nbsp;regardless&nbsp;of&nbsp;connected&nbsp;devices.</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;If&nbsp;a&nbsp;device&nbsp;is&nbsp;connected,&nbsp;the&nbsp;output&nbsp;of&nbsp;the&nbsp;device&nbsp;params</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;will&nbsp;follow&nbsp;after&nbsp;the&nbsp;'\n'.&nbsp;We&nbsp;need&nbsp;to&nbsp;isolate&nbsp;this&nbsp;string</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;and&nbsp;'parse'&nbsp;it&nbsp;by&nbsp;spliting&nbsp;along&nbsp;the&nbsp;'space'&nbsp;characters.</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;Currently&nbsp;the&nbsp;device&nbsp;MAC&nbsp;will&nbsp;always&nbsp;return&nbsp;as&nbsp;the&nbsp;2nd&nbsp;index</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;after&nbsp;the&nbsp;split.</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QStringList&nbsp;output</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">output&nbsp;</span><span class="style_10">&lt;&lt;&nbsp;</span><span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">readAllStandardOutput</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QStringList&nbsp;output1&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">output</span><span class="style_10">.</span><span class="style_11">at</span><span class="style_10">(</span><span class="style_4">0</span><span class="style_10">).</span><span class="style_11">split</span><span class="style_10">(</span><span class="style_6">"\n"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//Program&nbsp;will&nbsp;crash&nbsp;if&nbsp;we&nbsp;parse&nbsp;an&nbsp;empty&nbsp;connection</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">output1</span><span class="style_10">.</span><span class="style_11">length</span><span class="style_10">()&nbsp;&gt;&nbsp;</span><span class="style_4">2</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{&nbsp;&nbsp;&nbsp;</span><span class="style_2">//split&nbsp;the&nbsp;device&nbsp;params&nbsp;into&nbsp;a&nbsp;QStringList</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QStringList&nbsp;output2&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">output1</span><span class="style_10">.</span><span class="style_11">at</span><span class="style_10">(</span><span class="style_4">1</span><span class="style_10">).</span><span class="style_11">split</span><span class="style_10">(</span><span class="style_6">"&nbsp;"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">connectedMAC&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">output2</span><span class="style_10">.</span><span class="style_11">at</span><span class="style_10">(</span><span class="style_4">2</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">return</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">connectedMAC&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_6">"null"</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+<span class="style_2">//We&nbsp;need&nbsp;to&nbsp;get&nbsp;the&nbsp;human&nbsp;friendly&nbsp;name&nbsp;of&nbsp;the&nbsp;connected&nbsp;device.</span><br />
+<span class="style_2">//&nbsp;&nbsp;This&nbsp;will&nbsp;be&nbsp;returned&nbsp;from&nbsp;our&nbsp;launched&nbsp;'hcitool&nbsp;name&nbsp;&lt;MAC&gt;'</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">bluetoothController</span><span class="style_10">::</span><span class="style_11">parseName</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QStringList&nbsp;output</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">output&nbsp;</span><span class="style_10">&lt;&lt;&nbsp;</span><span class="style_11">hciProcess</span><span class="style_10">-&gt;</span><span class="style_11">readAllStandardOutput</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">output&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">output</span><span class="style_10">.</span><span class="style_11">at</span><span class="style_10">(</span><span class="style_4">0</span><span class="style_10">).</span><span class="style_11">split</span><span class="style_10">(</span><span class="style_6">"\n"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">connectedName&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">output</span><span class="style_10">.</span><span class="style_11">at</span><span class="style_10">(</span><span class="style_4">0</span><span class="style_10">);</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">bluetoothController</span><span class="style_10">::</span><span class="style_11">pulseaudioReady</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+<br />
+<span class="style_10">}</span><br />
+
+</p>
+</body>
+</html>

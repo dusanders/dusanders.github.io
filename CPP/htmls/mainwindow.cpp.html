@@ -1,0 +1,420 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>/home/pi/QtProjects/qtCar/Car/mainwindow.cpp</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 1.22" />
+	<meta name="date" content="2015-05-28T19:30:56-0500" />
+	<style type="text/css">
+	body
+	{
+		font-family: Monospace, monospace;
+		font-size: 10pt;
+	}
+	.style_0
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+	.style_1
+	{
+		color: #d00000;
+		background-color: #ffffff;
+	}
+	.style_2
+	{
+		color: #d00000;
+		background-color: #ffffff;
+	}
+	.style_4
+	{
+		color: #007f00;
+		background-color: #ffffff;
+	}
+	.style_5
+	{
+		color: #00007f;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+	.style_6
+	{
+		color: #ff8000;
+		background-color: #ffffff;
+	}
+	.style_9
+	{
+		color: #007f7f;
+		background-color: #ffffff;
+	}
+	.style_10
+	{
+		color: #301010;
+		background-color: #ffffff;
+	}
+	.style_11
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+
+	</style>
+</head>
+
+<body>
+<p>
+<span class="style_9">#include&nbsp;</span><span class="style_6">"mainwindow.h"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"ui_mainwindow.h"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QMovie"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QLabel"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QList"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QDir"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QFile"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QStringList"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QDebug"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QDate"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QTimer"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QProcess"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"Clock.h"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QThread"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QMovie"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"phonon"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"Phonon/VideoPlayer"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"Phonon/BackendCapabilities"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"movieplayer.h"</span><br />
+<br />
+<span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">MainWindow</span><span class="style_10">(</span><span class="style_11">QWidget&nbsp;</span><span class="style_10">*</span><span class="style_11">parent</span><span class="style_10">)&nbsp;:</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QMainWindow</span><span class="style_10">(</span><span class="style_11">parent</span><span class="style_10">),</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">(</span><span class="style_5">new&nbsp;</span><span class="style_11">Ui</span><span class="style_10">::</span><span class="style_11">MainWindow</span><span class="style_10">)</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">setupUi</span><span class="style_10">(</span><span class="style_5">this</span><span class="style_10">);</span><br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;the&nbsp;music&nbsp;directory</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">fileSystemDirectory&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">QDir</span><span class="style_10">(</span><span class="style_6">"/home/pi/Music"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QStringList&nbsp;filters</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//set&nbsp;the&nbsp;filters</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">filters&nbsp;</span><span class="style_10">&lt;&lt;&nbsp;</span><span class="style_6">"*.mp3"&nbsp;</span><span class="style_10">&lt;&lt;&nbsp;</span><span class="style_6">"*.mp4"</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">setNameFilters</span><span class="style_10">(</span><span class="style_11">filters</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//pull&nbsp;the&nbsp;entries&nbsp;from&nbsp;the&nbsp;QDir</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">filesList&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">entryList</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//add&nbsp;to&nbsp;the&nbsp;list&nbsp;view</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">addItems</span><span class="style_10">(</span><span class="style_11">filesList</span><span class="style_10">);</span><br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;our&nbsp;USB&nbsp;directory</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">usbSystemDirectory&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">QDir</span><span class="style_10">(</span><span class="style_6">"/media"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">usbFiles&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">entryList</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">addItems</span><span class="style_10">(</span><span class="style_11">usbFiles</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//setup&nbsp;the&nbsp;clock&nbsp;thread&nbsp;and&nbsp;display...</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">currentDayLabel</span><span class="style_10">-&gt;</span><span class="style_11">setText</span><span class="style_10">(</span><span class="style_11">QDate</span><span class="style_10">::</span><span class="style_11">currentDate</span><span class="style_10">().</span><span class="style_11">toString</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">clockThread&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">Clock</span><span class="style_10">(</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">timeLabel</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">start</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;a&nbsp;bluetoothController</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">bluetooth&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">bluetoothController</span><span class="style_10">();</span><br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;the&nbsp;music&nbsp;player&nbsp;object&nbsp;and&nbsp;connect&nbsp;audio&nbsp;service</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">MediaObject</span><span class="style_10">(</span><span class="style_5">this</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">connect</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">,&nbsp;</span><span class="style_11">SIGNAL</span><span class="style_10">(</span><span class="style_11">aboutToFinish</span><span class="style_10">()),&nbsp;</span><span class="style_5">this</span><span class="style_10">,&nbsp;</span><span class="style_11">SLOT</span><span class="style_10">(</span><span class="style_11">queueNext</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">audioOutput&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">AudioOutput</span><span class="style_10">(</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">MusicCategory</span><span class="style_10">,&nbsp;</span><span class="style_5">this</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">createPath</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">,&nbsp;</span><span class="style_11">audioOutput</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">seekSlider</span><span class="style_10">-&gt;</span><span class="style_11">setMediaObject</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">);</span><br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;and&nbsp;setup&nbsp;the&nbsp;movie&nbsp;player&nbsp;for&nbsp;all&nbsp;the&nbsp;animations</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">setBackgroundFile</span><span class="style_10">(</span><span class="style_6">"/home/pi/QtProjects/qtCar/Car/kxc23.gif"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">setIdleFile</span><span class="style_10">(</span><span class="style_6">"/home/pi/QtProjects/qtCar/Car/idle.gif"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">setMediaFile</span><span class="style_10">(</span><span class="style_6">"/home/pi/QtProjects/qtCar/Car/bluehyper.gif"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">backgroundLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">centerMainLabel</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">idleLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">mediaPlayerLabel</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">mediaLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">mediaPlayerLabel</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">playBackground</span><span class="style_10">();</span><br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//setup&nbsp;global&nbsp;logic&nbsp;variables</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">shuffleOn&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">false</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+<br />
+<br />
+<span class="style_11">MainWindow</span><span class="style_10">::~</span><span class="style_11">MainWindow</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">delete&nbsp;</span><span class="style_11">ui</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_toolBox_currentChanged</span><span class="style_10">(</span><span class="style_5">int&nbsp;</span><span class="style_11">index</span><span class="style_10">)</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//we&nbsp;need&nbsp;to&nbsp;check&nbsp;the&nbsp;state&nbsp;of&nbsp;Bluetooth&nbsp;when&nbsp;user&nbsp;selects&nbsp;Bluetooth&nbsp;tab.</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;This&nbsp;is&nbsp;best&nbsp;done&nbsp;every&nbsp;time&nbsp;user&nbsp;selects&nbsp;Bluetooth&nbsp;tab&nbsp;as&nbsp;this&nbsp;state&nbsp;may</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;change&nbsp;dynamically;&nbsp;hence&nbsp;we&nbsp;place&nbsp;the&nbsp;procedure&nbsp;here&nbsp;instead&nbsp;during&nbsp;'start&nbsp;up'</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;We&nbsp;need&nbsp;to&nbsp;check&nbsp;for&nbsp;connected&nbsp;devices&nbsp;and&nbsp;switch&nbsp;our&nbsp;audio&nbsp;sources&nbsp;at&nbsp;PulseAudio.</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">index&nbsp;</span><span class="style_10">==&nbsp;</span><span class="style_4">1</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">bluetooth</span><span class="style_10">-&gt;</span><span class="style_11">scanDevices</span><span class="style_10">())</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QString&nbsp;foundDevice&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">bluetooth</span><span class="style_10">-&gt;</span><span class="style_11">connectedMAC</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">foundDevice&nbsp;</span><span class="style_10">+=&nbsp;</span><span class="style_6">"&nbsp;"</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">foundDevice&nbsp;</span><span class="style_10">+=&nbsp;</span><span class="style_11">bluetooth</span><span class="style_10">-&gt;</span><span class="style_11">connectedName</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">bluetoothDeviceLabel</span><span class="style_10">-&gt;</span><span class="style_11">setText</span><span class="style_10">(</span><span class="style_11">foundDevice</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_listWidget_itemClicked</span><span class="style_10">(</span><span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">item</span><span class="style_10">)</span><br />
+<span class="style_10">{&nbsp;&nbsp;&nbsp;</span><span class="style_2">//clicked&nbsp;on&nbsp;list&nbsp;view&nbsp;item,&nbsp;change&nbsp;the&nbsp;song&nbsp;to&nbsp;what&nbsp;was&nbsp;selected.</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QString&nbsp;selected&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_6">"/home/pi/Music/"&nbsp;</span><span class="style_10">+&nbsp;</span><span class="style_11">item</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">selected</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">playMedia</span><span class="style_10">();</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_pushButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><span class="style_1">/*Enable&nbsp;Background&nbsp;Button*/</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">isVisible</span><span class="style_10">())</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">setBackgroundVisible</span><span class="style_10">(</span><span class="style_5">false</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">pushButton</span><span class="style_10">-&gt;</span><span class="style_11">setText</span><span class="style_10">(</span><span class="style_6">"Enable&nbsp;Background"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">setBackgroundVisible</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">pushButton</span><span class="style_10">-&gt;</span><span class="style_11">setText</span><span class="style_10">(</span><span class="style_6">"Disable&nbsp;Background"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">playBackground</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_coolButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">playBackground</span><span class="style_10">();</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_muteButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(!</span><span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">isMuted</span><span class="style_10">())</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">setMuted</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">muteButton</span><span class="style_10">-&gt;</span><span class="style_11">setStyleSheet</span><span class="style_10">(</span><span class="style_6">"background-color:&nbsp;qlineargradient(spread:pad,&nbsp;x1:0,&nbsp;y1:0,&nbsp;x2:1,&nbsp;y2:0,&nbsp;stop:0&nbsp;rgba(0,&nbsp;0,&nbsp;0,&nbsp;255),&nbsp;stop:1&nbsp;rgba(0,&nbsp;0,150,&nbsp;255));"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">setMuted</span><span class="style_10">(</span><span class="style_5">false</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">muteButton</span><span class="style_10">-&gt;</span><span class="style_11">setStyleSheet</span><span class="style_10">(</span><span class="style_6">"background-color:&nbsp;qlineargradient(spread:pad,&nbsp;x1:0,&nbsp;y1:0,&nbsp;x2:1,&nbsp;y2:0,&nbsp;stop:0&nbsp;rgba(0,&nbsp;0,&nbsp;0,&nbsp;255),&nbsp;stop:1&nbsp;rgba(150,&nbsp;0,0,&nbsp;255));"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">setVolume</span><span class="style_10">(</span><span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">volume</span><span class="style_10">()+</span><span class="style_4">0.10</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_volumeUpButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">setVolume</span><span class="style_10">(</span><span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">volume</span><span class="style_10">()+</span><span class="style_4">0.10</span><span class="style_10">);</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_volumeDownButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">setVolume</span><span class="style_10">(</span><span class="style_11">audioOutput</span><span class="style_10">-&gt;</span><span class="style_11">volume</span><span class="style_10">()-</span><span class="style_4">0.10</span><span class="style_10">);</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_pauseButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">state</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">PlayingState</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">pause</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">pauseMedia</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">pauseButton</span><span class="style_10">-&gt;</span><span class="style_11">setStyleSheet</span><span class="style_10">(</span><span class="style_6">"background-color:&nbsp;qlineargradient(spread:pad,&nbsp;x1:0,&nbsp;y1:0,&nbsp;x2:1,&nbsp;y2:0,&nbsp;stop:1&nbsp;rgba(0,&nbsp;0,&nbsp;0,&nbsp;255),&nbsp;stop:0&nbsp;rgba(0,&nbsp;0,150,&nbsp;255));"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else&nbsp;if</span><span class="style_10">(</span><span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">state</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_11">Phonon</span><span class="style_10">::</span><span class="style_11">PausedState</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">pauseMedia</span><span class="style_10">(</span><span class="style_5">false</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">pauseButton</span><span class="style_10">-&gt;</span><span class="style_11">setStyleSheet</span><span class="style_10">(</span><span class="style_6">"background-color:&nbsp;qlineargradient(spread:pad,&nbsp;x1:0,&nbsp;y1:0,&nbsp;x2:1,&nbsp;y2:0,&nbsp;stop:1&nbsp;rgba(0,&nbsp;0,&nbsp;0,&nbsp;255),&nbsp;stop:0&nbsp;rgba(150,&nbsp;0,0,&nbsp;255));"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_shuffleButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">shuffleOn</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">shuffleOn&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">false</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">shuffleButton</span><span class="style_10">-&gt;</span><span class="style_11">setStyleSheet</span><span class="style_10">(</span><span class="style_6">"background-color:&nbsp;qlineargradient(spread:pad,&nbsp;x1:0,&nbsp;y1:0,&nbsp;x2:1,&nbsp;y2:0,&nbsp;stop:0&nbsp;rgba(0,&nbsp;0,&nbsp;0,&nbsp;255),&nbsp;stop:1&nbsp;rgba(150,&nbsp;0,0,&nbsp;255));"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">shuffleOn&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">true</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">shuffleButton</span><span class="style_10">-&gt;</span><span class="style_11">setStyleSheet</span><span class="style_10">(</span><span class="style_6">"background-color:&nbsp;qlineargradient(spread:pad,&nbsp;x1:0,&nbsp;y1:0,&nbsp;x2:1,&nbsp;y2:0,&nbsp;stop:0&nbsp;rgba(0,&nbsp;0,&nbsp;0,&nbsp;255),&nbsp;stop:1&nbsp;rgba(0,&nbsp;0,150,&nbsp;255));"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">queueNext</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">shuffleOn</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">toolBox</span><span class="style_10">-&gt;</span><span class="style_11">currentIndex</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_4">0&nbsp;</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">songCount&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">(</span><span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">getSeed</span><span class="style_10">()&nbsp;%&nbsp;</span><span class="style_11">songCount</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else&nbsp;if</span><span class="style_10">(</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">toolBox</span><span class="style_10">-&gt;</span><span class="style_11">currentIndex</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_4">2</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">songCount&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">(</span><span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">getSeed</span><span class="style_10">()&nbsp;%&nbsp;</span><span class="style_11">songCount</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">toolBox</span><span class="style_10">-&gt;</span><span class="style_11">currentIndex</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_4">0</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">currentRow</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">((</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">+&nbsp;</span><span class="style_4">1</span><span class="style_10">)%(</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else&nbsp;if</span><span class="style_10">(</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">toolBox</span><span class="style_10">-&gt;</span><span class="style_11">currentIndex</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_4">2</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">currentRow</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">((</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">+&nbsp;</span><span class="style_4">1</span><span class="style_10">)%(</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">()));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_prevButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">shuffleOn</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">songCount&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">(</span><span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">getSeed</span><span class="style_10">()&nbsp;%&nbsp;</span><span class="style_11">songCount</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">currentRow</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">((</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">-&nbsp;</span><span class="style_4">1</span><span class="style_10">)%&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_nextButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">shuffleOn</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">songCount&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">(</span><span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">getSeed</span><span class="style_10">()&nbsp;%&nbsp;</span><span class="style_11">songCount</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+</span><span class="style_6">"/"</span><span class="style_10">+&nbsp;</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">currentRow</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">((</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">+&nbsp;</span><span class="style_4">1</span><span class="style_10">)%&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_listWidget_2_itemClicked</span><span class="style_10">(</span><span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">item</span><span class="style_10">)</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//single&nbsp;click&nbsp;-&nbsp;do&nbsp;nothing&nbsp;as&nbsp;they&nbsp;may&nbsp;want&nbsp;to&nbsp;'transfer'&nbsp;selected&nbsp;media.</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_usbNextButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">shuffleOn</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">songCount&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">(</span><span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">getSeed</span><span class="style_10">()&nbsp;%&nbsp;</span><span class="style_11">songCount</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+</span><span class="style_6">"/"</span><span class="style_10">+&nbsp;</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">currentRow</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">((</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">+&nbsp;</span><span class="style_4">1</span><span class="style_10">)%&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_usbPrevButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">shuffleOn</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">songCount&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">(</span><span class="style_11">clockThread</span><span class="style_10">-&gt;</span><span class="style_11">getSeed</span><span class="style_10">()&nbsp;%&nbsp;</span><span class="style_11">songCount</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">int&nbsp;</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">currentRow</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">nextSong&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">item</span><span class="style_10">((</span><span class="style_11">currentIndex&nbsp;</span><span class="style_10">-&nbsp;</span><span class="style_4">1</span><span class="style_10">)%&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">count</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentItem</span><span class="style_10">(</span><span class="style_11">nextSong</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">nextSong</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_transferButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QString&nbsp;program&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_6">"sudo&nbsp;cp&nbsp;\""</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">program&nbsp;</span><span class="style_10">+=&nbsp;</span><span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">currentItem</span><span class="style_10">()-&gt;</span><span class="style_11">text</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">program&nbsp;</span><span class="style_10">+=&nbsp;</span><span class="style_6">"\"&nbsp;"</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">program&nbsp;</span><span class="style_10">+=&nbsp;</span><span class="style_11">fileSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">qDebug</span><span class="style_10">()&nbsp;&lt;&lt;&nbsp;</span><span class="style_11">program</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QProcess&nbsp;process</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">process</span><span class="style_10">.</span><span class="style_11">setWorkingDirectory</span><span class="style_10">(</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">qDebug</span><span class="style_10">()&nbsp;&lt;&lt;&nbsp;</span><span class="style_11">process</span><span class="style_10">.</span><span class="style_11">workingDirectory</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">process</span><span class="style_10">.</span><span class="style_11">start</span><span class="style_10">(</span><span class="style_11">program</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">process</span><span class="style_10">.</span><span class="style_11">waitForFinished</span><span class="style_10">(</span><span class="style_4">30000</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">process</span><span class="style_10">.</span><span class="style_11">close</span><span class="style_10">();</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_minimizeButton_clicked</span><span class="style_10">()</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">this</span><span class="style_10">-&gt;</span><span class="style_11">setWindowState</span><span class="style_10">(</span><span class="style_11">Qt</span><span class="style_10">::</span><span class="style_11">WindowMinimized</span><span class="style_10">);</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MainWindow</span><span class="style_10">::</span><span class="style_11">on_listWidget_2_itemDoubleClicked</span><span class="style_10">(</span><span class="style_11">QListWidgetItem&nbsp;</span><span class="style_10">*</span><span class="style_11">item</span><span class="style_10">)</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QString&nbsp;newDir&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">path</span><span class="style_10">()&nbsp;+&nbsp;</span><span class="style_6">"/"</span><span class="style_10">+</span><span class="style_11">item</span><span class="style_10">-&gt;</span><span class="style_11">text</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">qDebug</span><span class="style_10">()&nbsp;&lt;&lt;&nbsp;</span><span class="style_11">newDir</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">QDir</span><span class="style_10">(</span><span class="style_11">newDir</span><span class="style_10">).</span><span class="style_11">exists</span><span class="style_10">())</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">clear</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">usbSystemDirectory&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">QDir</span><span class="style_10">(</span><span class="style_11">newDir</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">ui</span><span class="style_10">-&gt;</span><span class="style_11">listWidget_2</span><span class="style_10">-&gt;</span><span class="style_11">addItems</span><span class="style_10">(</span><span class="style_11">usbSystemDirectory</span><span class="style_10">.</span><span class="style_11">entryList</span><span class="style_10">());</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else&nbsp;if</span><span class="style_10">(</span><span class="style_11">newDir</span><span class="style_10">.</span><span class="style_11">contains</span><span class="style_10">(</span><span class="style_6">".mp3"</span><span class="style_10">)&nbsp;||&nbsp;</span><span class="style_11">newDir</span><span class="style_10">.</span><span class="style_11">contains</span><span class="style_10">(</span><span class="style_6">".mp4"</span><span class="style_10">))</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">setCurrentSource</span><span class="style_10">(</span><span class="style_11">newDir</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">music</span><span class="style_10">-&gt;</span><span class="style_11">play</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">moviePlayer</span><span class="style_10">-&gt;</span><span class="style_11">playMedia</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">updateBluetoothDevice</span><span class="style_10">(</span><span class="style_11">QStringList&nbsp;params</span><span class="style_10">)</span><br />
+<span class="style_10">{&nbsp;&nbsp;&nbsp;</span><span class="style_2">//MAC&nbsp;will&nbsp;be&nbsp;0&nbsp;index,&nbsp;device&nbsp;name&nbsp;will&nbsp;be&nbsp;1&nbsp;index,&nbsp;called&nbsp;from&nbsp;bluetoothcontroller</span><br />
+<br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">bluetoothError</span><span class="style_10">(</span><span class="style_11">QStringList&nbsp;errors</span><span class="style_10">)</span><br />
+<span class="style_10">{</span><br />
+<br />
+<span class="style_10">}</span><br />
+
+</p>
+</body>
+</html>

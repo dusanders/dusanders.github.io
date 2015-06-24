@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc1 {
+	color: #008000;
+}
+.sc2 {
+	color: #008000;
+}
+.sc4 {
+	color: #FF8000;
+}
+.sc5 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc6 {
+	color: #808080;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc11 {
+}
+.sc16 {
+	color: #8000FF;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc0">
+</span><span class="sc1">/* Author:  Dustin Anderson
+*  Title:   Hw3_1
+*  Class:   CSCI 451
+*  Desc:    This program is intended to make HardwareData thread safe.
+*/</span><span class="sc0">
+</span><span class="sc16">package</span><span class="sc0"> </span><span class="sc11">hardwaredata</span><span class="sc10">;</span><span class="sc0">
+
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">java</span><span class="sc10">.</span><span class="sc11">util</span><span class="sc10">.</span><span class="sc11">Scanner</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">java</span><span class="sc10">.</span><span class="sc11">util</span><span class="sc10">.</span><span class="sc11">concurrent</span><span class="sc10">.</span><span class="sc11">Semaphore</span><span class="sc10">;</span><span class="sc0">
+
+</span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">class</span><span class="sc0"> </span><span class="sc11">HardwareSync</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">static</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">main</span><span class="sc10">(</span><span class="sc11">String</span><span class="sc0"> </span><span class="sc11">args</span><span class="sc10">[])</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">
+      </span><span class="sc2">//create the shared mutex object
+</span><span class="sc0">    </span><span class="sc11">HardwareData</span><span class="sc0"> </span><span class="sc11">lock</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">HardwareData</span><span class="sc10">(</span><span class="sc5">false</span><span class="sc10">);</span><span class="sc0">
+    
+    </span><span class="sc2">//gather user input
+</span><span class="sc0">    </span><span class="sc11">Scanner</span><span class="sc0"> </span><span class="sc11">scanner</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Scanner</span><span class="sc10">(</span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">in</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">choice</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc5">do</span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"1: Run getandset()"</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"2: Run swap()"</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Enter Choice: "</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc11">choice</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">scanner</span><span class="sc10">.</span><span class="sc11">nextInt</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc5">while</span><span class="sc10">((</span><span class="sc11">choice</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)||(</span><span class="sc11">choice</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc4">2</span><span class="sc10">));</span><span class="sc0">
+
+    </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">=</span><span class="sc4">0</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">&lt;</span><span class="sc4">5</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc11">i</span><span class="sc10">++)</span><span class="sc0">       </span><span class="sc2">// create and start 5 threads
+</span><span class="sc0">    </span><span class="sc10">{</span><span class="sc0">
+       </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Thread</span><span class="sc10">(</span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Worker</span><span class="sc10">(</span><span class="sc11">i</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">lock</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">choice</span><span class="sc10">)).</span><span class="sc11">start</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc16">class</span><span class="sc0"> </span><span class="sc11">Worker</span><span class="sc0"> </span><span class="sc5">implements</span><span class="sc0"> </span><span class="sc11">Runnable</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc2">//id of the Thread
+</span><span class="sc0">  </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">final</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc2">//shred mutex object
+</span><span class="sc0">  </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc11">HardwareData</span><span class="sc0"> </span><span class="sc11">mutex</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc2">//store the run version the user chose.
+</span><span class="sc0">  </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">final</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">runVersion</span><span class="sc10">;</span><span class="sc0">
+
+  </span><span class="sc2">//constructor expects an id, mutex, and run version for each
+</span><span class="sc0">  </span><span class="sc2">//    thread.
+</span><span class="sc0">  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc11">Worker</span><span class="sc10">(</span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">HardwareData</span><span class="sc0"> </span><span class="sc11">mutex</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">inRunVersion</span><span class="sc10">)</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">id</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">mutex</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">mutex</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">runVersion</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">inRunVersion</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+  </span><span class="sc11">@Override</span><span class="sc0">
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">run</span><span class="sc10">()</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">runVersion</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">1</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Running getandset()!"</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc5">true</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+      </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Thread "</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">" wants to enter critical section!"</span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc2">//wait for access
+</span><span class="sc0">      </span><span class="sc5">try</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">mutex</span><span class="sc10">.</span><span class="sc11">access</span><span class="sc10">.</span><span class="sc11">acquire</span><span class="sc10">();</span><span class="sc0">
+      </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc5">catch</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">InterruptedException</span><span class="sc0"> </span><span class="sc11">ex</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+      </span><span class="sc11">mutex</span><span class="sc10">.</span><span class="sc11">getAndSet</span><span class="sc10">(</span><span class="sc5">true</span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Thread "</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">" in critical section"</span><span class="sc0"> </span><span class="sc10">);</span><span class="sc0">
+          
+          </span><span class="sc2">//do work
+</span><span class="sc0">      </span><span class="sc5">try</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">Thread</span><span class="sc10">.</span><span class="sc11">sleep</span><span class="sc10">(</span><span class="sc4">3500</span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc5">catch</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">InterruptedException</span><span class="sc0"> </span><span class="sc11">ex</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+      </span><span class="sc2">//exit critical section
+</span><span class="sc0">      </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Thread "</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">" out of critical section\n"</span><span class="sc0"> </span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc11">mutex</span><span class="sc10">.</span><span class="sc11">set</span><span class="sc10">(</span><span class="sc5">false</span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc11">mutex</span><span class="sc10">.</span><span class="sc11">access</span><span class="sc10">.</span><span class="sc11">release</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc5">else</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Running swap()!"</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc11">swap</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc10">}</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+
+
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">swap</span><span class="sc10">()</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc11">HardwareData</span><span class="sc0"> </span><span class="sc11">key</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">HardwareData</span><span class="sc10">(</span><span class="sc5">true</span><span class="sc10">);</span><span class="sc0">
+    </span><span class="sc5">while</span><span class="sc10">(</span><span class="sc5">true</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc10">{</span><span class="sc0">
+      </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Thread "</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">" wants to enter critical section!"</span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc2">//wait for access
+</span><span class="sc0">      </span><span class="sc5">try</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+          </span><span class="sc11">mutex</span><span class="sc10">.</span><span class="sc11">access</span><span class="sc10">.</span><span class="sc11">acquire</span><span class="sc10">();</span><span class="sc0">
+      </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc5">catch</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">InterruptedException</span><span class="sc0"> </span><span class="sc11">ex</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+
+      </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Thread "</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">" in critical section"</span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc5">while</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc5">true</span><span class="sc10">)</span><span class="sc0">
+      </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc11">mutex</span><span class="sc10">.</span><span class="sc11">swap</span><span class="sc10">(</span><span class="sc11">key</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">key</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc5">true</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc5">break</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc2">//do work
+</span><span class="sc0">        </span><span class="sc5">try</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc11">Thread</span><span class="sc10">.</span><span class="sc11">sleep</span><span class="sc10">(</span><span class="sc4">3500</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc5">catch</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">InterruptedException</span><span class="sc0"> </span><span class="sc11">ex</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc11">ex</span><span class="sc10">.</span><span class="sc11">printStackTrace</span><span class="sc10">();}</span><span class="sc0">
+      </span><span class="sc10">}</span><span class="sc0">
+      </span><span class="sc11">mutex</span><span class="sc10">.</span><span class="sc11">set</span><span class="sc10">(</span><span class="sc5">false</span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc11">System</span><span class="sc10">.</span><span class="sc11">out</span><span class="sc10">.</span><span class="sc11">println</span><span class="sc10">(</span><span class="sc6">"Thread "</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc11">id</span><span class="sc0"> </span><span class="sc10">+</span><span class="sc0"> </span><span class="sc6">" out of critical section\n"</span><span class="sc10">);</span><span class="sc0">
+      </span><span class="sc11">mutex</span><span class="sc10">.</span><span class="sc11">access</span><span class="sc10">.</span><span class="sc11">release</span><span class="sc10">();</span><span class="sc0">
+
+    </span><span class="sc10">}</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc10">}</span><span class="sc0">
+
+</span><span class="sc2">// implementation of hardware-based implementation
+</span><span class="sc16">class</span><span class="sc0"> </span><span class="sc11">HardwareData</span><span class="sc0">
+</span><span class="sc10">{</span><span class="sc0">
+  </span><span class="sc16">private</span><span class="sc0"> </span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">value</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc11">Semaphore</span><span class="sc0"> </span><span class="sc11">access</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Semaphore</span><span class="sc10">(</span><span class="sc4">1</span><span class="sc10">);</span><span class="sc0">
+
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc11">HardwareData</span><span class="sc10">(</span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">value</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">get</span><span class="sc10">()</span><span class="sc0"> 
+  </span><span class="sc10">{</span><span class="sc0"> 
+      </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">value</span><span class="sc10">;</span><span class="sc0"> 
+  </span><span class="sc10">}</span><span class="sc0">
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">set</span><span class="sc10">(</span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0"> 
+  </span><span class="sc10">{</span><span class="sc0"> 
+      </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">value</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">;</span><span class="sc0"> 
+  </span><span class="sc10">}</span><span class="sc0">
+
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">getAndSet</span><span class="sc10">(</span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">oldValue</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">value</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">value</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">;</span><span class="sc0">
+    </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">oldValue</span><span class="sc10">;</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+
+  </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">swap</span><span class="sc10">(</span><span class="sc11">HardwareData</span><span class="sc0"> </span><span class="sc11">other</span><span class="sc10">)</span><span class="sc0">
+  </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc16">boolean</span><span class="sc0"> </span><span class="sc11">temp</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">();</span><span class="sc0">
+    </span><span class="sc5">this</span><span class="sc10">.</span><span class="sc11">set</span><span class="sc10">(</span><span class="sc11">other</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">());</span><span class="sc0">
+    </span><span class="sc11">other</span><span class="sc10">.</span><span class="sc11">set</span><span class="sc10">(</span><span class="sc11">temp</span><span class="sc10">);</span><span class="sc0">
+  </span><span class="sc10">}</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+
+</span></div></body>
+</html>

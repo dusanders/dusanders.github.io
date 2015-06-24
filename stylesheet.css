@@ -97,6 +97,15 @@ body, html{
     border-radius: 5px;
     clear:both;
 }
+/*CSS for Geany Exports*/
+.style_0{color: #000000;}
+.style_2{color: #0C685D;}
+.style_5{color: #00007f;font-weight: bold;}
+.style_6{color: #1000C0;}
+.style_9{color: #007f7f;}
+.style_10{color: #301010;}
+.style_11{color: #000000;}
+
 .caption{
     background-color: #555555;
     border-radius: 5px;

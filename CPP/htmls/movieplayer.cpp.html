@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>/home/pi/QtProjects/qtCar/Car/movieplayer.cpp</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 1.22" />
+	<meta name="date" content="2015-05-28T19:31:46-0500" />
+	<style type="text/css">
+	body
+	{
+		font-family: Monospace, monospace;
+		font-size: 10pt;
+	}
+	.style_0
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+	.style_5
+	{
+		color: #00007f;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+	.style_6
+	{
+		color: #ff8000;
+		background-color: #ffffff;
+	}
+	.style_9
+	{
+		color: #007f7f;
+		background-color: #ffffff;
+	}
+	.style_10
+	{
+		color: #301010;
+		background-color: #ffffff;
+	}
+	.style_11
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+
+	</style>
+</head>
+
+<body>
+<p>
+<span class="style_9">#include&nbsp;</span><span class="style_6">"movieplayer.h"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QLabel"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"QMovie"</span><br />
+<span class="style_9">#include&nbsp;</span><span class="style_6">"mainwindow.h"</span><br />
+<span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">MoviePlayer</span><span class="style_10">(</span><span class="style_11">QWidget&nbsp;</span><span class="style_10">*</span><span class="style_11">parent</span><span class="style_10">)</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundVisible&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">true</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+<span class="style_11">MoviePlayer</span><span class="style_10">::~</span><span class="style_11">MoviePlayer</span><span class="style_10">(){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundGif</span><span class="style_10">-&gt;</span><span class="style_11">deleteLater</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">idleGif</span><span class="style_10">-&gt;</span><span class="style_11">deleteLater</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaGif</span><span class="style_10">-&gt;</span><span class="style_11">deleteLater</span><span class="style_10">();</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">setBackgroundLabel</span><span class="style_10">(</span><span class="style_11">QLabel&nbsp;</span><span class="style_10">*</span><span class="style_11">Label</span><span class="style_10">){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">Label</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">setIdleLabel</span><span class="style_10">(</span><span class="style_11">QLabel&nbsp;</span><span class="style_10">*</span><span class="style_11">Label</span><span class="style_10">){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">idleLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">Label</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">setMediaLabel</span><span class="style_10">(</span><span class="style_11">QLabel&nbsp;</span><span class="style_10">*</span><span class="style_11">Label</span><span class="style_10">){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaLabel&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">Label</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">setBackgroundFile</span><span class="style_10">(</span><span class="style_11">QString&nbsp;fileName</span><span class="style_10">){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundGif&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">QMovie</span><span class="style_10">(</span><span class="style_11">fileName</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundGif</span><span class="style_10">-&gt;</span><span class="style_11">setCacheMode</span><span class="style_10">(</span><span class="style_11">QMovie</span><span class="style_10">::</span><span class="style_11">CacheAll</span><span class="style_10">);</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">setIdleFile</span><span class="style_10">(</span><span class="style_11">QString&nbsp;fileName</span><span class="style_10">){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">idleGif&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">QMovie</span><span class="style_10">(&nbsp;</span><span class="style_11">fileName</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">idleGif</span><span class="style_10">-&gt;</span><span class="style_11">setCacheMode</span><span class="style_10">(</span><span class="style_11">QMovie</span><span class="style_10">::</span><span class="style_11">CacheAll</span><span class="style_10">);</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">setMediaFile</span><span class="style_10">(</span><span class="style_11">QString&nbsp;fileName</span><span class="style_10">){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaGif&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;&nbsp;</span><span class="style_11">QMovie</span><span class="style_10">(</span><span class="style_11">fileName</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaGif</span><span class="style_10">-&gt;</span><span class="style_11">setCacheMode</span><span class="style_10">(</span><span class="style_11">QMovie</span><span class="style_10">::</span><span class="style_11">CacheAll</span><span class="style_10">);</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">playBackground</span><span class="style_10">(){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">backgroundVisible&nbsp;</span><span class="style_10">==&nbsp;</span><span class="style_5">false</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">setVisible</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">setMovie</span><span class="style_10">(</span><span class="style_11">backgroundGif</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundGif</span><span class="style_10">-&gt;</span><span class="style_11">start</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">QObject</span><span class="style_10">::</span><span class="style_11">connect</span><span class="style_10">(</span><span class="style_11">backgroundGif</span><span class="style_10">,</span><span class="style_11">SIGNAL</span><span class="style_10">(</span><span class="style_11">finished</span><span class="style_10">()),</span><span class="style_5">this</span><span class="style_10">,</span><span class="style_11">SLOT</span><span class="style_10">(</span><span class="style_11">backgroundFinished</span><span class="style_10">()));</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">playMedia</span><span class="style_10">(){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaLabel</span><span class="style_10">-&gt;</span><span class="style_11">setMovie</span><span class="style_10">(</span><span class="style_11">mediaGif</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaGif</span><span class="style_10">-&gt;</span><span class="style_11">start</span><span class="style_10">();</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">playIdle</span><span class="style_10">(){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">idleGif</span><span class="style_10">-&gt;</span><span class="style_11">state</span><span class="style_10">()&nbsp;!=&nbsp;</span><span class="style_11">QMovie</span><span class="style_10">::</span><span class="style_11">Running</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">idleLabel</span><span class="style_10">-&gt;</span><span class="style_11">setMovie</span><span class="style_10">(</span><span class="style_11">idleGif</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">idleGif</span><span class="style_10">-&gt;</span><span class="style_11">start</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">pauseMedia</span><span class="style_10">(</span><span class="style_5">bool&nbsp;</span><span class="style_11">pause</span><span class="style_10">){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">mediaGif</span><span class="style_10">-&gt;</span><span class="style_11">state</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_11">QMovie</span><span class="style_10">::</span><span class="style_11">Running&nbsp;</span><span class="style_10">&amp;&amp;&nbsp;</span><span class="style_11">pause</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaGif</span><span class="style_10">-&gt;</span><span class="style_11">setPaused</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">else</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaGif</span><span class="style_10">-&gt;</span><span class="style_11">start</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">backgroundFinished</span><span class="style_10">(){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">mediaGif</span><span class="style_10">-&gt;</span><span class="style_11">state</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_11">QMovie</span><span class="style_10">::</span><span class="style_11">Running&nbsp;</span><span class="style_10">||</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">mediaGif</span><span class="style_10">-&gt;</span><span class="style_11">state</span><span class="style_10">()&nbsp;==&nbsp;</span><span class="style_11">QMovie</span><span class="style_10">::</span><span class="style_11">Paused</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">setVisible</span><span class="style_10">(</span><span class="style_11">backgroundVisible</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">return</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">setVisible</span><span class="style_10">(</span><span class="style_11">backgroundVisible</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">playIdle</span><span class="style_10">();</span><br />
+<span class="style_10">}</span><br />
+<span class="style_5">void&nbsp;</span><span class="style_11">MoviePlayer</span><span class="style_10">::</span><span class="style_11">setBackgroundVisible</span><span class="style_10">(</span><span class="style_5">bool&nbsp;</span><span class="style_11">visible</span><span class="style_10">){</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(</span><span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">isVisible</span><span class="style_10">()&nbsp;&amp;&amp;&nbsp;</span><span class="style_11">visible&nbsp;</span><span class="style_10">==&nbsp;</span><span class="style_5">false</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">setVisible</span><span class="style_10">(</span><span class="style_5">false</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">if</span><span class="style_10">(!</span><span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">isVisible</span><span class="style_10">()&nbsp;&amp;&amp;&nbsp;</span><span class="style_11">visible&nbsp;</span><span class="style_10">==&nbsp;</span><span class="style_5">true</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundLabel</span><span class="style_10">-&gt;</span><span class="style_11">setVisible</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">backgroundVisible&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">visible</span><span class="style_10">;</span><br />
+<span class="style_10">}</span><br />
+
+</p>
+</body>
+</html>

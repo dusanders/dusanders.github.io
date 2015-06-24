@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>/media/Stash/CSCI451(OS)/ThreadedEncrypt.java</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 0.21" />
+	<meta name="date" content="2015-06-11T20:37:33-0500" />
+	<style type="text/css">
+	body
+	{
+		font-family: Monospace, monospace;
+		font-size: 10pt;
+	}
+	.style_0
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+	.style_1
+	{
+		color: #d00000;
+		background-color: #ffffff;
+	}
+	.style_2
+	{
+		color: #d00000;
+		background-color: #ffffff;
+	}
+	.style_4
+	{
+		color: #007f00;
+		background-color: #ffffff;
+	}
+	.style_5
+	{
+		color: #00007f;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+	.style_6
+	{
+		color: #ff901e;
+		background-color: #ffffff;
+	}
+	.style_7
+	{
+		color: #ff901e;
+		background-color: #ffffff;
+	}
+	.style_10
+	{
+		color: #301010;
+		background-color: #ffffff;
+	}
+	.style_11
+	{
+		color: #000000;
+		background-color: #ffffff;
+	}
+	.style_16
+	{
+		color: #991111;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+	.style_19
+	{
+		color: #0000d0;
+		background-color: #ffffff;
+		font-weight: bold;
+	}
+
+	</style>
+</head>
+
+<body>
+<p>
+<span class="style_1">/*&nbsp;&nbsp;Author:&nbsp;Dustin&nbsp;Anderson</span><br />
+<span class="style_1">**&nbsp;&nbsp;Title:&nbsp;&nbsp;Ex3_1</span><br />
+<span class="style_1">**&nbsp;&nbsp;Class:&nbsp;&nbsp;CSCI&nbsp;451</span><br />
+<span class="style_1">**&nbsp;&nbsp;Desc:&nbsp;&nbsp;&nbsp;Implement&nbsp;two&nbsp;threads;&nbsp;one&nbsp;for&nbsp;receiving&nbsp;input,&nbsp;the&nbsp;other&nbsp;for</span><br />
+<span class="style_1">**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;encrypting&nbsp;the&nbsp;input&nbsp;recieved.&nbsp;The&nbsp;input&nbsp;thread&nbsp;will&nbsp;print&nbsp;the</span><br />
+<span class="style_1">**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;encryption&nbsp;key&nbsp;before&nbsp;the&nbsp;second&nbsp;thread&nbsp;prints&nbsp;the&nbsp;input&nbsp;message.</span><br />
+<span class="style_1">**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;encryption&nbsp;method&nbsp;used&nbsp;will&nbsp;be&nbsp;AES.</span><br />
+&nbsp;<span class="style_1">*/</span><br />
+<br />
+<span class="style_5">import&nbsp;</span><span class="style_11">java</span><span class="style_10">.</span><span class="style_11">security</span><span class="style_10">.</span><span class="style_11">InvalidKeyException</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">java</span><span class="style_10">.</span><span class="style_11">security</span><span class="style_10">.</span><span class="style_11">NoSuchAlgorithmException</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">java</span><span class="style_10">.</span><span class="style_11">security</span><span class="style_10">.</span><span class="style_11">SecureRandom</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">java</span><span class="style_10">.</span><span class="style_11">util</span><span class="style_10">.</span><span class="style_11">Scanner</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">javax</span><span class="style_10">.</span><span class="style_11">crypto</span><span class="style_10">.</span><span class="style_11">BadPaddingException</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">javax</span><span class="style_10">.</span><span class="style_11">crypto</span><span class="style_10">.</span><span class="style_11">Cipher</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">javax</span><span class="style_10">.</span><span class="style_11">crypto</span><span class="style_10">.</span><span class="style_11">IllegalBlockSizeException</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">javax</span><span class="style_10">.</span><span class="style_11">crypto</span><span class="style_10">.</span><span class="style_11">KeyGenerator</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">javax</span><span class="style_10">.</span><span class="style_11">crypto</span><span class="style_10">.</span><span class="style_11">NoSuchPaddingException</span><span class="style_10">;</span><br />
+<span class="style_5">import&nbsp;</span><span class="style_11">javax</span><span class="style_10">.</span><span class="style_11">crypto</span><span class="style_10">.</span><span class="style_11">SecretKey</span><span class="style_10">;</span><br />
+<br />
+<span class="style_5">public&nbsp;class&nbsp;</span><span class="style_19">ThreadedEncrypt&nbsp;</span><br />
+<span class="style_10">{</span><br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">public&nbsp;static&nbsp;</span><span class="style_16">void&nbsp;</span><span class="style_11">main</span><span class="style_10">(</span><span class="style_11">String</span><span class="style_10">[]&nbsp;</span><span class="style_11">args</span><span class="style_10">)&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;the&nbsp;output&nbsp;thread&nbsp;object</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_19">OutputThread&nbsp;</span><span class="style_11">output&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_19">OutputThread</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//open&nbsp;the&nbsp;input&nbsp;thread,&nbsp;needs&nbsp;a&nbsp;reference&nbsp;to&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//&nbsp;&nbsp;the&nbsp;output&nbsp;thread&nbsp;so&nbsp;it&nbsp;can&nbsp;pass&nbsp;objects</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_19">InputThread&nbsp;</span><span class="style_11">input&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_19">InputThread</span><span class="style_10">(</span><span class="style_11">output</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//start&nbsp;the&nbsp;threads</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">output</span><span class="style_10">.</span><span class="style_11">start</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">input</span><span class="style_10">.</span><span class="style_11">start</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_2">//class&nbsp;to&nbsp;handle&nbsp;the&nbsp;input&nbsp;thread</span><br />
+<span class="style_5">class&nbsp;</span><span class="style_19">InputThread&nbsp;</span><span class="style_5">extends&nbsp;</span><span class="style_11">Thread</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">private&nbsp;</span><span class="style_11">KeyGenerator&nbsp;keyMaker</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//reference&nbsp;to&nbsp;the&nbsp;output&nbsp;thread&nbsp;to&nbsp;pass&nbsp;objects&nbsp;to</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">private&nbsp;</span><span class="style_19">OutputThread&nbsp;</span><span class="style_11">output</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">public&nbsp;</span><span class="style_19">InputThread</span><span class="style_10">(</span><span class="style_19">OutputThread&nbsp;</span><span class="style_11">passedOutput</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">output&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">passedOutput</span><span class="style_10">;&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">try&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{&nbsp;&nbsp;&nbsp;</span><span class="style_2">//request&nbsp;AES&nbsp;from&nbsp;Java</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">keyMaker&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">KeyGenerator</span><span class="style_10">.</span><span class="style_11">getInstance</span><span class="style_10">(</span><span class="style_6">"AES"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">catch&nbsp;</span><span class="style_10">(</span><span class="style_11">NoSuchAlgorithmException&nbsp;ex</span><span class="style_10">)&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">(</span><span class="style_11">ex</span><span class="style_10">.</span><span class="style_11">toString</span><span class="style_10">());}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">@Override</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">public&nbsp;</span><span class="style_16">void&nbsp;</span><span class="style_11">run</span><span class="style_10">()</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{&nbsp;&nbsp;&nbsp;</span><span class="style_2">//run&nbsp;until&nbsp;user&nbsp;exits</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">while</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">try&nbsp;</span><span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//prompt&nbsp;for&nbsp;and&nbsp;gather&nbsp;user&nbsp;input</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">print</span><span class="style_10">(</span><span class="style_6">"Enter&nbsp;message:&nbsp;"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">Scanner&nbsp;inputScanner&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">Scanner</span><span class="style_10">(</span><span class="style_11">System</span><span class="style_10">.</span><span class="style_11">in</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">String&nbsp;inputString&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">inputScanner</span><span class="style_10">.</span><span class="style_11">nextLine</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//ask&nbsp;Java&nbsp;for&nbsp;a&nbsp;'secure'&nbsp;random&nbsp;number</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">SecureRandom&nbsp;random&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_5">new&nbsp;</span><span class="style_11">SecureRandom</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//start&nbsp;the&nbsp;key&nbsp;maker</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">keyMaker</span><span class="style_10">.</span><span class="style_11">init</span><span class="style_10">(</span><span class="style_11">random</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">SecretKey&nbsp;key&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">keyMaker</span><span class="style_10">.</span><span class="style_11">generateKey</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">Cipher&nbsp;cipher&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">Cipher</span><span class="style_10">.</span><span class="style_11">getInstance</span><span class="style_10">(</span><span class="style_6">"AES"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">cipher</span><span class="style_10">.</span><span class="style_11">init</span><span class="style_10">(</span><span class="style_11">Cipher</span><span class="style_10">.</span><span class="style_11">ENCRYPT_MODE</span><span class="style_10">,&nbsp;</span><span class="style_11">key</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//display&nbsp;key&nbsp;to&nbsp;user</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">printKey</span><span class="style_10">(</span><span class="style_11">key</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//encrypt&nbsp;message</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_16">byte</span><span class="style_10">[]&nbsp;</span><span class="style_11">encryptedMessage&nbsp;</span><span class="style_10">=&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">cipher</span><span class="style_10">.</span><span class="style_11">doFinal</span><span class="style_10">(</span><span class="style_11">inputString</span><span class="style_10">.</span><span class="style_11">getBytes</span><span class="style_10">());&nbsp;&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//pass&nbsp;message&nbsp;to&nbsp;the&nbsp;output&nbsp;thread</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">output</span><span class="style_10">.</span><span class="style_11">decryptMessage</span><span class="style_10">(</span><span class="style_11">encryptedMessage</span><span class="style_10">,&nbsp;</span><span class="style_11">key</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">catch&nbsp;</span><span class="style_10">(</span><span class="style_11">NoSuchAlgorithmException&nbsp;</span><span class="style_10">|&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">NoSuchPaddingException&nbsp;</span><span class="style_10">|</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">InvalidKeyException&nbsp;ex</span><span class="style_10">)&nbsp;{}&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">catch&nbsp;</span><span class="style_10">(</span><span class="style_11">IllegalBlockSizeException&nbsp;</span><span class="style_10">|&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">BadPaddingException&nbsp;ex</span><span class="style_10">)&nbsp;{}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//method&nbsp;to&nbsp;print&nbsp;keys&nbsp;and&nbsp;encrytion&nbsp;in&nbsp;HEX&nbsp;form.</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">private&nbsp;</span><span class="style_16">void&nbsp;</span><span class="style_11">printKey</span><span class="style_10">(</span><span class="style_11">SecretKey&nbsp;key</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_16">byte</span><span class="style_10">[]&nbsp;</span><span class="style_11">keyBytes&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">key</span><span class="style_10">.</span><span class="style_11">getEncoded</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_16">char</span><span class="style_10">[]&nbsp;</span><span class="style_11">hexCodes&nbsp;</span><span class="style_10">=&nbsp;{</span><span class="style_7">'0'</span><span class="style_10">,&nbsp;</span><span class="style_7">'1'</span><span class="style_10">,&nbsp;</span><span class="style_7">'2'</span><span class="style_10">,&nbsp;</span><span class="style_7">'3'</span><span class="style_10">,&nbsp;</span><span class="style_7">'4'</span><span class="style_10">,&nbsp;</span><span class="style_7">'5'</span><span class="style_10">,&nbsp;</span><span class="style_7">'6'</span><span class="style_10">,&nbsp;</span><span class="style_7">'7'</span><span class="style_10">,&nbsp;</span><span class="style_7">'8'</span><span class="style_10">,&nbsp;</span><span class="style_7">'9'</span><span class="style_10">,</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_7">'A'</span><span class="style_10">,&nbsp;</span><span class="style_7">'B'</span><span class="style_10">,&nbsp;</span><span class="style_7">'C'</span><span class="style_10">,&nbsp;</span><span class="style_7">'D'</span><span class="style_10">,&nbsp;</span><span class="style_7">'E'</span><span class="style_10">,&nbsp;</span><span class="style_7">'F'</span><span class="style_10">};</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">for&nbsp;</span><span class="style_10">(</span><span class="style_16">int&nbsp;</span><span class="style_11">i</span><span class="style_10">=</span><span class="style_4">0</span><span class="style_10">;&nbsp;</span><span class="style_11">i</span><span class="style_10">&lt;</span><span class="style_11">keyBytes</span><span class="style_10">.</span><span class="style_11">length</span><span class="style_10">;&nbsp;</span><span class="style_11">i</span><span class="style_10">++)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_16">int&nbsp;</span><span class="style_11">b&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">Math</span><span class="style_10">.</span><span class="style_11">abs</span><span class="style_10">(</span><span class="style_11">keyBytes</span><span class="style_10">[</span><span class="style_11">i</span><span class="style_10">]);&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">print</span><span class="style_10">((</span><span class="style_11">hexCodes</span><span class="style_10">[</span><span class="style_11">b</span><span class="style_10">/</span><span class="style_4">16</span><span class="style_10">]+</span><span class="style_6">""</span><span class="style_10">)&nbsp;+&nbsp;(</span><span class="style_11">hexCodes</span><span class="style_10">[</span><span class="style_11">b&nbsp;</span><span class="style_10">&amp;&nbsp;</span><span class="style_4">15</span><span class="style_10">]+</span><span class="style_6">""</span><span class="style_10">)&nbsp;+&nbsp;</span><span class="style_6">"&nbsp;"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">();</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+<br />
+<span class="style_2">//class&nbsp;to&nbsp;handle&nbsp;the&nbsp;output</span><br />
+<span class="style_5">class&nbsp;</span><span class="style_19">OutputThread&nbsp;</span><span class="style_5">extends&nbsp;</span><span class="style_11">Thread</span><br />
+<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">private&nbsp;</span><span class="style_11">Cipher&nbsp;cipher</span><span class="style_10">;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">public&nbsp;</span><span class="style_19">OutputThread</span><span class="style_10">()</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{&nbsp;&nbsp;&nbsp;</span><span class="style_2">//ask&nbsp;Java&nbsp;for&nbsp;a&nbsp;Cipher&nbsp;for&nbsp;AES</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">try&nbsp;</span><span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">cipher&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">Cipher</span><span class="style_10">.</span><span class="style_11">getInstance</span><span class="style_10">(</span><span class="style_6">"AES"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}&nbsp;</span><span class="style_5">catch&nbsp;</span><span class="style_10">(</span><span class="style_11">NoSuchAlgorithmException&nbsp;</span><span class="style_10">|&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">NoSuchPaddingException&nbsp;ex</span><span class="style_10">)&nbsp;{}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">@Override</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">public&nbsp;</span><span class="style_16">void&nbsp;</span><span class="style_11">run</span><span class="style_10">()</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">while</span><span class="style_10">(</span><span class="style_5">true</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//wait&nbsp;for&nbsp;inputThread</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">public&nbsp;</span><span class="style_16">void&nbsp;</span><span class="style_11">decryptMessage</span><span class="style_10">(</span><span class="style_16">byte</span><span class="style_10">[]&nbsp;</span><span class="style_11">message</span><span class="style_10">,&nbsp;</span><span class="style_11">SecretKey&nbsp;key</span><span class="style_10">)</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">try&nbsp;</span><span class="style_10">{</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">cipher</span><span class="style_10">.</span><span class="style_11">init</span><span class="style_10">(</span><span class="style_11">Cipher</span><span class="style_10">.</span><span class="style_11">DECRYPT_MODE</span><span class="style_10">,&nbsp;</span><span class="style_11">key</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//display&nbsp;encrypted&nbsp;to&nbsp;user</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">(</span><span class="style_6">"Encrypted&nbsp;Message:"</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">(</span><span class="style_5">new&nbsp;</span><span class="style_11">String</span><span class="style_10">(</span><span class="style_11">message</span><span class="style_10">));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_16">byte</span><span class="style_10">[]&nbsp;</span><span class="style_11">decrypted&nbsp;</span><span class="style_10">=&nbsp;</span><span class="style_11">cipher</span><span class="style_10">.</span><span class="style_11">doFinal</span><span class="style_10">(</span><span class="style_11">message</span><span class="style_10">);</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_2">//display&nbsp;decrypted&nbsp;message</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">System</span><span class="style_10">.</span><span class="style_11">out</span><span class="style_10">.</span><span class="style_11">println</span><span class="style_10">(</span><span class="style_5">new&nbsp;</span><span class="style_11">String</span><span class="style_10">(</span><span class="style_11">decrypted</span><span class="style_10">));</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">catch&nbsp;</span><span class="style_10">(</span><span class="style_11">InvalidKeyException&nbsp;ex</span><span class="style_10">)&nbsp;{}&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_5">catch&nbsp;</span><span class="style_10">(</span><span class="style_11">IllegalBlockSizeException&nbsp;</span><span class="style_10">|&nbsp;</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_11">BadPaddingException&nbsp;ex</span><span class="style_10">)&nbsp;{}</span><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="style_10">}</span><br />
+<span class="style_10">}</span><br />
+
+</p>
+</body>
+</html>
