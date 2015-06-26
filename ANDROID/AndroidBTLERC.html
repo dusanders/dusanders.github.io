@@ -301,8 +301,7 @@
                 BluetoothGattServerController class when a successfull connection is made to a device, the SensorController class implements SensorEvenListener, so the 
                 accelerometer sensor is opened within the 'BluetoothGattServerController' class and is registered to the 'SensorController' class. This means the SensorController
                 class will recieve all system broadcasts when the opened sensor sends out new data. We also include a private class 'Command' that will allow us to build a 
-                'buffer' of events in the case that we would wish to buffer the events. My implementation simply 'waits' for the ACK, which I need to fix considering it freezes the
-                UI in the case of a disconnect before actually closing the app.
+                'buffer' of events in the case that we would wish to buffer the events. My implementation simply checks for the ACK and skips sending a new value if we did not recieve ACK.
             </p>
             <div class="codeBox">
                 <pre>
@@ -334,61 +333,73 @@
             <p>
                 The SensorController checks whether the BluetoothGattServerController is in ACK'd state and is ready to send another command; if the BluetoothGattServerController
                 responds with an ACK'd state, then we proceed and send the command to the device. Otherwise we could buffer the command and it will get passed when the 
-                BluetoothGattServerController calls our 'notifyClearToSend' method that will send the oldest command within the buffer. My implementation has a 'wait' state that
-                it enters if the BluetoothGattServerController is not in an ACK'd state, this means it currently freezes the UI if the connected device does not ACK a command. 
-                This has caused issues with sudden disconnects freezing my UI; it is something I intend to change in the near future. 
+                BluetoothGattServerController calls our 'notifyClearToSend' method that will send the oldest command within the buffer. 
             </p>
-            <div class="codeBox">
-                <pre>
-<a name="l44"><span class="ln">44   </span></a>    @Override 
-<a name="l45"><span class="ln">45   </span></a>    </span><span class="s0">public void </span><span class="s1">onSensorChanged(SensorEvent sensorEvent) { 
-<a name="l46"><span class="ln">46   </span></a>        </span><span class="s0">float</span><span class="s1">[] values = sensorEvent.values</span><span class="s0">;</span><span class="s1"> 
-<a name="l47"><span class="ln">47   </span></a>        Integer x = (</span><span class="s0">int</span><span class="s1">)values[</span><span class="s3">0</span><span class="s1">]</span><span class="s0">;</span><span class="s1"> 
-<a name="l48"><span class="ln">48   </span></a>        Integer y = (</span><span class="s0">int</span><span class="s1">)values[</span><span class="s3">1</span><span class="s1">]</span><span class="s0">;</span><span class="s1"> 
-<a name="l49"><span class="ln">49   </span></a>        </span><span class="s0">int </span><span class="s1">z = (</span><span class="s0">int</span><span class="s1">)values[</span><span class="s3">2</span><span class="s1">]</span><span class="s0">;</span><span class="s1"> 
-<a name="l50"><span class="ln">50   </span></a> 
-<a name="l51"><span class="ln">51   </span></a> 
-<a name="l52"><span class="ln">52   </span></a>        </span><span class="s0">if</span><span class="s1">(x == </span><span class="s3">0 </span><span class="s1">&amp;&amp; !stopX)  { 
-<a name="l53"><span class="ln">53   </span></a>            </span><span class="s4">//wait for an ACK from the Car</span><span class="s1"> 
-<a name="l54"><span class="ln">54   </span></a>            </span><span class="s0">while</span><span class="s1">(!gattServerController.clearToSend){ 
-<a name="l55"><span class="ln">55   </span></a>               stopX = </span><span class="s0">true;</span><span class="s1"> 
-<a name="l56"><span class="ln">56   </span></a>            } 
-<a name="l57"><span class="ln">57   </span></a>            </span><span class="s4">//ensure we got an ACK</span><span class="s1"> 
-<a name="l58"><span class="ln">58   </span></a>            </span><span class="s0">if</span><span class="s1">(gattServerController.clearToSend) { 
-<a name="l59"><span class="ln">59   </span></a>                </span><span class="s4">//send the value</span><span class="s1"> 
-<a name="l60"><span class="ln">60   </span></a>                characteristics.get(</span><span class="s3">0</span><span class="s1">).setValue(</span><span class="s0">new byte</span><span class="s1">[]{x.byteValue()})</span><span class="s0">;</span><span class="s1"> 
-<a name="l61"><span class="ln">61   </span></a>                gattServerController.notifyCharacteristic(characteristics.get(</span><span class="s3">0</span><span class="s1">))</span><span class="s0">;</span><span class="s1"> 
-<a name="l62"><span class="ln">62   </span></a>                stopX = </span><span class="s0">true;</span><span class="s1"> 
-<a name="l63"><span class="ln">63   </span></a>            } 
-<a name="l64"><span class="ln">64   </span></a>        } 
-<a name="l65"><span class="ln">65   </span></a>        </span><span class="s0">if </span><span class="s1">(x &gt; </span><span class="s3">0</span><span class="s1">) { 
-<a name="l66"><span class="ln">66   </span></a>            Command command = </span><span class="s0">new </span><span class="s1">Command(</span><span class="s0">new byte</span><span class="s1">[]{x.byteValue()}</span><span class="s0">, </span><span class="s1">characteristics.get(</span><span class="s3">1</span><span class="s1">))</span><span class="s0">;</span><span class="s1"> 
-<a name="l67"><span class="ln">67   </span></a>            </span><span class="s0">while</span><span class="s1">(!gattServerController.clearToSend){ 
-<a name="l68"><span class="ln">68   </span></a>                stopX = </span><span class="s0">false;</span><span class="s1"> 
-<a name="l69"><span class="ln">69   </span></a>            } 
-<a name="l70"><span class="ln">70   </span></a>             </span><span class="s0">if</span><span class="s1">(gattServerController.clearToSend) { 
-<a name="l71"><span class="ln">71   </span></a>                 command.characteristic.setValue(command.value)</span><span class="s0">;</span><span class="s1"> 
-<a name="l72"><span class="ln">72   </span></a>                 gattServerController.notifyCharacteristic(characteristics.get(</span><span class="s3">1</span><span class="s1">))</span><span class="s0">;</span><span class="s1"> 
-<a name="l73"><span class="ln">73   </span></a>                 stopX = </span><span class="s0">false;</span><span class="s1"> 
-<a name="l74"><span class="ln">74   </span></a>             } 
-<a name="l75"><span class="ln">75   </span></a>        } 
+            <div class="codeBoxN">
+                <pre><span class="sc11">@Override</span><span class="sc0">
+    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">onSensorChanged</span><span class="sc10">(</span><span class="sc11">SensorEvent</span><span class="sc0"> </span><span class="sc11">sensorEvent</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc2">//get the values from the sensor
+</span><span class="sc0">        </span><span class="sc16">float</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc11">values</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">sensorEvent</span><span class="sc10">.</span><span class="sc11">values</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc2">//parse the proper coordinates from the returned array.
+</span><span class="sc0">        </span><span class="sc11">Integer</span><span class="sc0"> </span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc10">)</span><span class="sc11">values</span><span class="sc10">[</span><span class="sc4">0</span><span class="sc10">];</span><span class="sc0"> </span><span class="sc2">// x plane always 0 index
+</span><span class="sc0">        </span><span class="sc11">Integer</span><span class="sc0"> </span><span class="sc11">y</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc10">)</span><span class="sc11">values</span><span class="sc10">[</span><span class="sc4">1</span><span class="sc10">];</span><span class="sc0"> </span><span class="sc2">// y plane always 1 index
+</span><span class="sc0">        </span><span class="sc16">int</span><span class="sc0"> </span><span class="sc11">z</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc16">int</span><span class="sc10">)</span><span class="sc11">values</span><span class="sc10">[</span><span class="sc4">2</span><span class="sc10">];</span><span class="sc0"> </span><span class="sc2">// z plane always 2 index
+</span><span class="sc0">
+
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc0"> </span><span class="sc10">&amp;&amp;</span><span class="sc0"> </span><span class="sc10">!</span><span class="sc11">stopX</span><span class="sc10">)</span><span class="sc0">  </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//set the values and stopX, as we got a 0 value from sensor,
+</span><span class="sc0">            </span><span class="sc2">//stopX will be sent to true so don't continually send '0' to car. only need to send
+</span><span class="sc0">            </span><span class="sc2">//once.
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">gattServerController</span><span class="sc10">.</span><span class="sc11">clearToSend</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">characteristics</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">).</span><span class="sc11">setValue</span><span class="sc10">(</span><span class="sc5">new</span><span class="sc0"> </span><span class="sc16">byte</span><span class="sc10">[]{</span><span class="sc11">x</span><span class="sc10">.</span><span class="sc11">byteValue</span><span class="sc10">()});</span><span class="sc0">
+                </span><span class="sc11">gattServerController</span><span class="sc10">.</span><span class="sc11">notifyCharacteristic</span><span class="sc10">(</span><span class="sc11">characteristics</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">));</span><span class="sc0">
+                </span><span class="sc11">stopX</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">true</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">&gt;</span><span class="sc0"> </span><span class="sc4">2</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//create Command object to hold update value
+</span><span class="sc0">             </span><span class="sc11">Command</span><span class="sc0"> </span><span class="sc11">command</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Command</span><span class="sc10">(</span><span class="sc5">new</span><span class="sc0"> </span><span class="sc16">byte</span><span class="sc10">[]{</span><span class="sc11">x</span><span class="sc10">.</span><span class="sc11">byteValue</span><span class="sc10">()},</span><span class="sc0"> </span><span class="sc11">characteristics</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">(</span><span class="sc4">1</span><span class="sc10">));</span><span class="sc0">
+            </span><span class="sc2">//wait for ACK signal, or timeout
+</span><span class="sc0">            </span><span class="sc2">//we got an acceptable command to move, so switch our stopX to allow
+</span><span class="sc0">            </span><span class="sc2">// sending a new '0' value when we are requested to stop.
+</span><span class="sc0">             </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">gattServerController</span><span class="sc10">.</span><span class="sc11">clearToSend</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                 </span><span class="sc2">//update Command object's characteristic value &amp; notify of change
+</span><span class="sc0">                 </span><span class="sc11">command</span><span class="sc10">.</span><span class="sc11">characteristic</span><span class="sc10">.</span><span class="sc11">setValue</span><span class="sc10">(</span><span class="sc11">command</span><span class="sc10">.</span><span class="sc11">value</span><span class="sc10">);</span><span class="sc0">
+                 </span><span class="sc2">//gattServerController.notifyCharacteristic(characteristics.get(1));
+</span><span class="sc0">                 </span><span class="sc11">gattServerController</span><span class="sc10">.</span><span class="sc11">notifyCharacteristic</span><span class="sc10">(</span><span class="sc11">command</span><span class="sc10">.</span><span class="sc11">characteristic</span><span class="sc10">);</span><span class="sc0">
+                 </span><span class="sc11">stopX</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0"> </span><span class="sc2">//reset or stop, we are moving now so the next '0' will need to
+</span><span class="sc0">                                    </span><span class="sc2">//be sent.
+</span><span class="sc0">             </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">&lt;</span><span class="sc0"> </span><span class="sc10">-</span><span class="sc4">2</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">//phone axis returns negative, we need absolute value for car.
+</span><span class="sc0">            </span><span class="sc11">x</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">Math</span><span class="sc10">.</span><span class="sc11">abs</span><span class="sc10">(</span><span class="sc11">x</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc2">//create the Command object
+</span><span class="sc0">            </span><span class="sc11">Command</span><span class="sc0"> </span><span class="sc11">command</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">new</span><span class="sc0"> </span><span class="sc11">Command</span><span class="sc10">(</span><span class="sc5">new</span><span class="sc0"> </span><span class="sc16">byte</span><span class="sc10">[]</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc11">x</span><span class="sc10">.</span><span class="sc11">byteValue</span><span class="sc10">()},</span><span class="sc0"> </span><span class="sc11">characteristics</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">));</span><span class="sc0">
+            </span><span class="sc2">//wait for ACK or time out
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">gattServerController</span><span class="sc10">.</span><span class="sc11">clearToSend</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//update characteristic value and notify of change.
+</span><span class="sc0">                </span><span class="sc11">command</span><span class="sc10">.</span><span class="sc11">characteristic</span><span class="sc10">.</span><span class="sc11">setValue</span><span class="sc10">(</span><span class="sc11">command</span><span class="sc10">.</span><span class="sc11">value</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">gattServerController</span><span class="sc10">.</span><span class="sc11">notifyCharacteristic</span><span class="sc10">(</span><span class="sc11">command</span><span class="sc10">.</span><span class="sc11">characteristic</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">stopX</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc5">false</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">}</span>
 </pre><div class="caption">Here we see part of the sensor event procedure that is called when the sensor reports new data. We check whether we can send a command or
-                not, and send or store a Command for when we can send. My implementation simply waits for an ACK.</div>
+                not, and send or store a Command for when we can send. My implementation simply checks for an ACK.</div>
             </div>
             <div class="smallSpace"></div>
-            <div class="codeBox">
-                <pre>
-<a name="l130"><span class="ln">130  </span></a> 
-<a name="l131"><span class="ln">131  </span></a>    </span><span class="s0">public void </span><span class="s1">notifyClearToSend(){ 
-<a name="l132"><span class="ln">132  </span></a>        </span><span class="s4">//make sure we have a command to send</span><span class="s1"> 
-<a name="l133"><span class="ln">133  </span></a>        </span><span class="s0">if</span><span class="s1">(commandBuffer.size() != </span><span class="s3">0</span><span class="s1">){ 
-<a name="l134"><span class="ln">134  </span></a>            </span><span class="s4">//send the oldest command</span><span class="s1"> 
-<a name="l135"><span class="ln">135  </span></a>            commandBuffer.get(</span><span class="s3">0</span><span class="s1">).characteristic.setValue(commandBuffer.get(</span><span class="s3">0</span><span class="s1">).value)</span><span class="s0">;</span><span class="s1"> 
-<a name="l136"><span class="ln">136  </span></a>            gattServerController.notifyCharacteristic(commandBuffer.get(</span><span class="s3">0</span><span class="s1">).characteristic)</span><span class="s0">;</span><span class="s1"> 
-<a name="l137"><span class="ln">137  </span></a>            commandBuffer.remove(</span><span class="s3">0</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
-<a name="l138"><span class="ln">138  </span></a>        } 
-<a name="l139"><span class="ln">139  </span></a>    } 
-<a name="l140"><span class="ln">140  </span></a> 
+            <div class="codeBoxN">
+                <pre><span class="sc2">//method will be called be the BluetoothGattServerController class once an 'ACK' is received
+</span><span class="sc0">    </span><span class="sc2">// from the rc car. If we have Commands within the buffer awaiting sending, send them.
+</span><span class="sc0">    </span><span class="sc2">//          --currently we do not 'buffer' these commands as once the car does recover from
+</span><span class="sc0">    </span><span class="sc2">//              a 'frozen' state, it is bombarded with move commands and not this is not desirable.
+</span><span class="sc0">    </span><span class="sc16">public</span><span class="sc0"> </span><span class="sc16">void</span><span class="sc0"> </span><span class="sc11">notifyClearToSend</span><span class="sc10">(){</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">commandBuffer</span><span class="sc10">.</span><span class="sc11">size</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">!=</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">){</span><span class="sc0">
+            </span><span class="sc11">commandBuffer</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">).</span><span class="sc11">characteristic</span><span class="sc10">.</span><span class="sc11">setValue</span><span class="sc10">(</span><span class="sc11">commandBuffer</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">).</span><span class="sc11">value</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc11">gattServerController</span><span class="sc10">.</span><span class="sc11">notifyCharacteristic</span><span class="sc10">(</span><span class="sc11">commandBuffer</span><span class="sc10">.</span><span class="sc11">get</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">).</span><span class="sc11">characteristic</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc11">commandBuffer</span><span class="sc10">.</span><span class="sc11">remove</span><span class="sc10">(</span><span class="sc4">0</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc10">}</span>
 </pre><div class="caption">This is the method that is called when the BluetoothGattServerController recieves an ACK and is ready to send another command.</div>
             </div>
             <div class="space"></div>
@@ -397,10 +408,7 @@
             very interesting, though somewhat difficult as Android documentation on GattServers and how they operate is currently very limited. The communication protocol 
             works great when properly executed, I had to implement the ACK state scheme because the phone was pushing sensor events to the RC car so fast that the 
             microcontroller could not properly finish setting up the PWM for the drive wheels. Also learning the different callbacks of the GattServer class was a fun
-            experience, though the Android docs could have been better. I plan to fix the freeze issue with a disconnected device becuase of the waiting period that was
-            put into the SensorController class. The buffer idea for this app is not very well executed due to the nature of the application; when I stop moving the phone
-            i expect to stop the car, however if there was a build up of buffer messages, the most recent would be the one last to fire which would cause a 'lag' to the car.
-            Also after a reset/brownout event on the RC car, the phone would push a buffer to the car once it was successfully connected. I plan to fix this in the near future. </p>
+            experience, though the Android docs could have been better. </p>
 
 <p style="text-align:center;">
             <p style="text-align:center;">	<a href="https://raw.githubusercontent.com/dusanders/dusanders.github.io/master/ANDROID/Source/BTComm/MainActivity.java" target="_blank">Download MainActivity.java</a></p>
