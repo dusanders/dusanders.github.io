@@ -22,26 +22,15 @@ import java.util.TimerTask;
  */
 public class SensorController implements SensorEventListener {
 
-    //class to hold values to be sent to rc car. used for storing the
-    //commands within a dynamic array
-	private class Command{
-		public byte[] value;
-		public BluetoothGattCharacteristic characteristic;
-		public Command(byte[] inValue, BluetoothGattCharacteristic inCharacteristic){
-			value = inValue;
-			characteristic = inCharacteristic;
-		}
-	}
 
     //class variables
 	private BluetoothGattServerController gattServerController;
 	private Activity activity;
 	private ArrayList<BluetoothGattCharacteristic> characteristics;
 	private BluetoothDevice device;
-	private ArrayList<Command> commandBuffer;
     private boolean stopX = false;
     private boolean stopY = false;
-    public static boolean timeout;
+    private int lastSent;
 
 	public SensorController(Activity inActivity,
                             BluetoothGattServerController inGattServerController,
@@ -52,7 +41,6 @@ public class SensorController implements SensorEventListener {
 		gattServerController = inGattServerController;
 		characteristics = inCharacteristic;
 		device = inDevice;
-		commandBuffer = new ArrayList<Command>();
 	}
 	@Override
 	public void onSensorChanged(SensorEvent sensorEvent) {
@@ -71,20 +59,20 @@ public class SensorController implements SensorEventListener {
 			if(gattServerController.clearToSend) {
 				characteristics.get(0).setValue(new byte[]{x.byteValue()});
 				gattServerController.notifyCharacteristic(characteristics.get(0));
+                lastSent = 0;
                 stopX = true;
 			}
 		}
 		else if (x > 2) {
             //create Command object to hold update value
-			 Command command = new Command(new byte[]{x.byteValue()}, characteristics.get(1));
+            characteristics.get(1).setValue(new byte[] {x.byteValue()});
             //wait for ACK signal, or timeout
             //we got an acceptable command to move, so switch our stopX to allow
             // sending a new '0' value when we are requested to stop.
 			 if(gattServerController.clearToSend) {
-                 //update Command object's characteristic value & notify of change
-				 command.characteristic.setValue(command.value);
-				 //gattServerController.notifyCharacteristic(characteristics.get(1));
-                 gattServerController.notifyCharacteristic(command.characteristic);
+                 //update characteristic value & notify of change
+				 gattServerController.notifyCharacteristic(characteristics.get(1));
+                 lastSent = 1;
                  stopX = false; //reset or stop, we are moving now so the next '0' will need to
                                     //be sent.
 			 }
@@ -92,13 +80,12 @@ public class SensorController implements SensorEventListener {
         else if(x < -2) {
             //phone axis returns negative, we need absolute value for car.
             x = Math.abs(x);
-            //create the Command object
-            Command command = new Command(new byte[] {x.byteValue()}, characteristics.get(0));
+            characteristics.get(0).setValue(new byte[] {x.byteValue()});
             //wait for ACK or time out
             if(gattServerController.clearToSend) {
                 //update characteristic value and notify of change.
-                command.characteristic.setValue(command.value);
-                gattServerController.notifyCharacteristic(command.characteristic);
+                gattServerController.notifyCharacteristic(characteristics.get(0));
+                lastSent = 0;
                 stopX = false;
             }
         }
@@ -110,25 +97,26 @@ public class SensorController implements SensorEventListener {
                 //update the characteristic and notify of change
 				characteristics.get(2).setValue(new byte[]{y.byteValue()});
 				gattServerController.notifyCharacteristic(characteristics.get(2));
+                lastSent = 2;
                 //no need to send this continually, will skip next '0' value
                 stopY = true;
 			}
 		}
         //got acceptable move signal
 		else if (y > 2) {
-			 Command command = new Command(new byte[]{y.byteValue()}, characteristics.get(3));
+            characteristics.get(3).setValue(new byte[] {y.byteValue()});
 			 if(gattServerController.clearToSend) {
-				 command.characteristic.setValue(command.value);
 				 gattServerController.notifyCharacteristic(characteristics.get(3));
+                 lastSent = 3;
                  stopY = false; // reset our stopY as we are moving, next '0' will need to be sent.
 			 }
 		}
         else if(y < -2 ) {
             y = Math.abs(y);
-            Command command = new Command(new byte[]{y.byteValue()}, characteristics.get(2));
+            characteristics.get(2).setValue(new byte[] {y.byteValue()});
             if(gattServerController.clearToSend) {
-                command.characteristic.setValue(command.value);
                 gattServerController.notifyCharacteristic(characteristics.get(2));
+                lastSent = 2;
                 stopY = false;
             }
         }
@@ -140,18 +128,14 @@ public class SensorController implements SensorEventListener {
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int i) {
+        //NOT USED///
 	}
 
-    //method will be called be the BluetoothGattServerController class once an 'ACK' is received
-    // from the rc car. If we have Commands within the buffer awaiting sending, send them.
-    //          --currently we do not 'buffer' these commands as once the car does recover from
-    //              a 'frozen' state, it is bombarded with move commands and not this is not desirable.
-	public void notifyClearToSend(){
-		if(commandBuffer.size() != 0){
-			commandBuffer.get(0).characteristic.setValue(commandBuffer.get(0).value);
-			gattServerController.notifyCharacteristic(commandBuffer.get(0).characteristic);
-			commandBuffer.remove(0);
-		}
-	}
-
+    //method to stop the car when the app loses focus, or the user exits the app.
+    //     --'stops' the last characteristic sent to the car.
+    public void stopSensor() {
+        byte[] stopByte = {0};
+        characteristics.get(lastSent).setValue(stopByte);
+        gattServerController.notifyCharacteristic(characteristics.get(lastSent));
+    }
 }

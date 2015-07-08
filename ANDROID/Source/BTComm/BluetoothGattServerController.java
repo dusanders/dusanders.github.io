@@ -33,7 +33,7 @@ public class BluetoothGattServerController {
 	private BluetoothGattServer gattServer;
 	private BluetoothDevice bluetoothDevice;
 	private SensorManager sensorManager;
-	private SensorController sensorController;
+	public  SensorController sensorController;
 	private Sensor sensor;
 	private Activity activity;
 	private ArrayList<BluetoothGattCharacteristic> characteristics;
@@ -82,12 +82,12 @@ public class BluetoothGattServerController {
 						sensorController = new SensorController(activity, gattServerController, characteristics, device);
                         //register the listener with a 250000 sampling rate. Changes to the sampling rate affect the
                         //  rate at which the OS reads the sensor, too low and we receive excessive amounts of updates.
-						sensorManager.registerListener(sensorController, sensor, 250000);
+						sensorManager.registerListener(sensorController, sensor, 25000);
                         //Toast user that we activated the Sensor.
 						activity.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								Toast toast = Toast.makeText(activity, device.getName() + " Sensor Activated!", Toast.LENGTH_SHORT);
+								Toast toast = Toast.makeText(activity," Sensor Activated!", Toast.LENGTH_SHORT);
 								toast.show();
 							}
 						});
@@ -96,7 +96,7 @@ public class BluetoothGattServerController {
 					clearToSend = true;
 				}
                 //connection state is no longer 'Connected'
-				else {
+				else if(newState == 0) {
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -132,9 +132,6 @@ public class BluetoothGattServerController {
 				super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
                 //we got an ACK
                 clearToSend = true;
-                //notify the SensorController we are now clear to send. This is used if the SensorController has 'pending' commands to send
-                //  to the car. Currently does not implement a buffer of events; we wait till 'clearToSend' is true before firing a value to the car.
-                sensorController.notifyClearToSend();
 			}
             //  NOT USED    //
 			@Override
@@ -204,7 +201,6 @@ public class BluetoothGattServerController {
     //general method to connect to device
 	public void connect(BluetoothDevice inDevice, boolean autoConnect) {
 		gattServer.addService(gattService);
-
 		if(gattServer.connect(inDevice, autoConnect)) {
 			bluetoothDevice = inDevice;
 		}
@@ -216,4 +212,20 @@ public class BluetoothGattServerController {
 		if(sensor != null)
 			sensorManager.unregisterListener(sensorController);
 	}
+    //called from MainActivity during 'onPause()'
+    public void stopSensor() {
+        //send '0' command to car
+        sensorController.stopSensor();
+        if(sensor != null)
+        {   //stop the sensor
+            sensorManager.unregisterListener(sensorController);
+        }
+    }
+    //called from MAinActivity during 'onResume()'
+    public void resumeSensor() {
+        if(sensorManager != null) {
+            //restart the sensor
+            sensorManager.registerListener(sensorController, sensor, 25000);
+        }
+    }
 }

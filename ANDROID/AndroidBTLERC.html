@@ -32,7 +32,7 @@
                 accelerometer sensor, this is all handled by a cutom 'BluetoothGattServerController' class that I created. Once the sensor is started, it begins reading data and sending
                 values to the car; this communication is a state-based communication scheme, where the phone will not send a new command until it gets an 'acknowledge' signal
                 from the car. The communication is performed with a set of BTLE Characteristics with the app itself serving as the BTLE Service. No encryption is used over the
-                BTLE link, neither is pairing performed. The phone automatically reconnect to the car when there is disconnection.
+                BTLE link, neither is pairing performed. The phone automatically reconnects to the car when there is disconnection.
             </p>
             <div class="smallSpace"></div>
             <h2>Starting Procedure</h2>
@@ -287,8 +287,7 @@
 <a name="l103"><span class="ln">103  </span></a>            @Override 
 <a name="l104"><span class="ln">104  </span></a>            </span><span class="s0">public void </span><span class="s1">onCharacteristicWriteRequest(BluetoothDevice device</span><span class="s0">, final int </span><span class="s1">requestId</span><span class="s0">, final </span><span class="s1">BluetoothGattCharacteristic characteristic</span><span class="s0">, final boolean </span><span class="s1">preparedWrite</span><span class="s0">, boolean </span><span class="s1">responseNeeded</span><span class="s0">, int </span><span class="s1">offset</span><span class="s0">, byte</span><span class="s1">[] value) { 
 <a name="l105"><span class="ln">105  </span></a>                </span><span class="s0">super</span><span class="s1">.onCharacteristicWriteRequest(device</span><span class="s0">, </span><span class="s1">requestId</span><span class="s0">, </span><span class="s1">characteristic</span><span class="s0">, </span><span class="s1">preparedWrite</span><span class="s0">, </span><span class="s1">responseNeeded</span><span class="s0">, </span><span class="s1">offset</span><span class="s0">, </span><span class="s1">value)</span><span class="s0">;</span><span class="s1"> 
-<a name="l106"><span class="ln">106  </span></a>                    clearToSend = </span><span class="s0">true;</span><span class="s1"> 
-<a name="l107"><span class="ln">107  </span></a>                    sensorController.notifyClearToSend()</span><span class="s0">;</span><span class="s1"> 
+<a name="l106"><span class="ln">106  </span></a>                    clearToSend = </span><span class="s0">true;</span>
 <a name="l108"><span class="ln">108  </span></a>            } 
 <a name="l109"><span class="ln">109  </span></a> 
 </pre><div class="caption">Here is the method that is called when the connected device sends us an 'ACK' signal. For simplicity I have my device write an 
@@ -300,22 +299,8 @@
                 The app contains a class that I made, 'SensorController', which is responsible for all of the sensor events of the accelerometer. The controller is created by the 
                 BluetoothGattServerController class when a successfull connection is made to a device, the SensorController class implements SensorEvenListener, so the 
                 accelerometer sensor is opened within the 'BluetoothGattServerController' class and is registered to the 'SensorController' class. This means the SensorController
-                class will recieve all system broadcasts when the opened sensor sends out new data. We also include a private class 'Command' that will allow us to build a 
-                'buffer' of events in the case that we would wish to buffer the events. My implementation simply checks for the ACK and skips sending a new value if we did not recieve ACK.
+                class will recieve all system broadcasts when the opened sensor sends out new data. 
             </p>
-            <div class="codeBox">
-                <pre>
-<a name="l20"><span class="ln">20   </span></a></span><span class="s0">public class </span><span class="s1">SensorController </span><span class="s0">implements </span><span class="s1">SensorEventListener { 
-<a name="l21"><span class="ln">21   </span></a>    </span><span class="s0">private class </span><span class="s1">Command{ 
-<a name="l22"><span class="ln">22   </span></a>        </span><span class="s0">public byte</span><span class="s1">[] value</span><span class="s0">;</span><span class="s1"> 
-<a name="l23"><span class="ln">23   </span></a>        </span><span class="s0">public </span><span class="s1">BluetoothGattCharacteristic characteristic</span><span class="s0">;</span><span class="s1"> 
-<a name="l24"><span class="ln">24   </span></a>        </span><span class="s0">public </span><span class="s1">Command(</span><span class="s0">byte</span><span class="s1">[] inValue</span><span class="s0">, </span><span class="s1">BluetoothGattCharacteristic inCharacteristic){ 
-<a name="l25"><span class="ln">25   </span></a>            value = inValue</span><span class="s0">;</span><span class="s1"> 
-<a name="l26"><span class="ln">26   </span></a>            characteristic = inCharacteristic</span><span class="s0">;</span><span class="s1"> 
-<a name="l27"><span class="ln">27   </span></a>        } 
-<a name="l28"><span class="ln">28   </span></a>    } 
-</pre><div class="caption">Here we see the SensorController definition, with the Command class for storing our events into a buffer.</div>
-            </div>
             <div class="smallSpace"></div>
             <div class="codeBox">
                 <pre>
@@ -324,16 +309,15 @@
 <a name="l38"><span class="ln">38   </span></a>        activity = inActivity</span><span class="s0">;</span><span class="s1"> 
 <a name="l39"><span class="ln">39   </span></a>        gattServerController = inGattServerController</span><span class="s0">;</span><span class="s1"> 
 <a name="l40"><span class="ln">40   </span></a>        characteristics = inCharacteristic</span><span class="s0">;</span><span class="s1"> 
-<a name="l41"><span class="ln">41   </span></a>        device = inDevice</span><span class="s0">;</span><span class="s1"> 
-<a name="l42"><span class="ln">42   </span></a>        commandBuffer = </span><span class="s0">new </span><span class="s1">ArrayList&lt;Command&gt;()</span><span class="s0">;</span><span class="s1"> 
+<a name="l41"><span class="ln">41   </span></a>        device = inDevice</span><span class="s0">;</span>
 <a name="l43"><span class="ln">43   </span></a>    } 
-</pre><div class="caption">Here we see the constructor for the SensorController class along with the creation of our buffer.</div>
+</pre><div class="caption">Here we see the constructor for the SensorController class.</div>
             </div>
             <div class="smallSpace"></div>
             <p>
                 The SensorController checks whether the BluetoothGattServerController is in ACK'd state and is ready to send another command; if the BluetoothGattServerController
-                responds with an ACK'd state, then we proceed and send the command to the device. Otherwise we could buffer the command and it will get passed when the 
-                BluetoothGattServerController calls our 'notifyClearToSend' method that will send the oldest command within the buffer. 
+                responds with an ACK'd state, then we proceed and send the command to the device. Otherwise we skip sending this value and wait for another sensor event, where the
+                program will repeat the process.
             </p>
             <div class="codeBoxN">
                 <pre><span class="sc11">@Override</span><span class="sc0">

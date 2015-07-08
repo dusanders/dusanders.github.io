@@ -25,6 +25,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -146,6 +148,27 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+    //Android calls this method when the app 'loses' focus, such as navigating away or
+    //  obscuring the app view.
+    @Override
+    public void onPause() {
+        super.onPause();
+        //if we have a sensor, stop it
+        if(mGattServerController != null) {
+            mGattServerController.stopSensor();
+        }
+    }
+
+    //Android calls this method when the app returns from a paused or stopped state.
+    //  restart our sensor if we have one.
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mGattServerController != null) {
+            mGattServerController.resumeSensor();
+        }
+    }
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -156,7 +179,7 @@ public class MainActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			mGattServerController.close();
-			this.finish(); //Android will clean us up.
+			finish(); //Android will clean us up.
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
