@@ -90,12 +90,15 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <h2>About Me</h2>
-                <p>I recently obtained my Bachelor's of Science in Computer Science from the University of Wisconsin - Superior .</p>
-                <p>I also hold an Associate's of Applied Science in Automotive Technology.</p>
-                <p>I like to build things with my hands and have a strong passion for embedded applications. The ability 
-                	to create physical interaction with devices through software fascinates me.</p>
-                <p>In my free time I enjoy exploring and hiking, nothing beats a Neil Gaiman book, and 
-                 	my Texas Instruments MSP430 is never far away.</p>
+                <p>BSc. in Computer Science minoring in Information Technology  from the University of Wisconsin - Superior.</p>
+                <p>Three years experience in a fast-paced, dynamic start-up; gaining experience in leadership, 
+			interpersonal communication, and fluid project development processes.</p>
+		<p>Responsibilities range from; project management, bringing embedded devices to viable 
+			market stage, and working trade shows.</p>
+                <p>I love to build things with my hands and have a strong passion for embedded applications. The ability 
+                	to create physical interactions with devices through software fascinates me.</p>
+                <p>In my free time I enjoy exploring and travel, avid PC gamer, and 
+                 	experimenting with different software technologies.</p>
                 <p>I can be reached at <a href="mailto:dusanders@gmail.com" target="_blank">dusanders@gmail.com</a></p>
                 <p>I am also on <a href="https://www.linkedin.com/in/dustin-anderson-37a798b2" target="_blank">LinkedIn</a>.</p>
                 <p>Check out my <a href="https://github.com/dusanders" target="_blank">GitHub</a> account.</p>
@@ -109,11 +112,11 @@
             <div class="container">
                 <div class="col-lg-8 col-lg-offset-2">
                     <h2>Projects</h2>
-                    <p>A small collection of projects I have completed.<br/> These are only the 'highlights' of the various projects I am working on.</p>
+                    <p>General overview of the projects and technologies I have worked with.</p>
                     <ul class="list-group">
-                    <li><a href="#embedded" class="btn btn-default btn-lg page-scroll" style="margin:20px 0px 20px 0px">C / Embedded</a></li>
-                    <li><a href="#csharp" class="btn btn-default btn-lg page-scroll"style="margin:20px 0px 20px 0px">C# / .NET</a></li>
-                    <li><a href="#java" class="btn btn-default btn-lg page-scroll"style="margin:20px 0px 20px 0px">Java / Android</a></li>
+                    <li><a href="#embedded" class="btn btn-default btn-lg page-scroll" style="margin:20px 0px 20px 0px">Embedded Devices</a></li>
+                    <li><a href="#csharp" class="btn btn-default btn-lg page-scroll"style="margin:20px 0px 20px 0px">C# / ASP.NET</a></li>
+                    <li><a href="#java" class="btn btn-default btn-lg page-scroll"style="margin:20px 0px 20px 0px">Mobile Applications</a></li>
                     </ul>
                 </div>
             </div>
@@ -130,86 +133,6 @@
                 netbook and Rasberry Pi.</p>
             </div>
         </div>
-        <div class="panel panel-default" style="background-color:#333333">
-	        	<div class="panel-heading" style="background-color:#666666">
-	        		<h3 style="color:white">Bluetooth Low Energy RC Car</h3>
-	        		<img class="img-responsive center-block" src="img/rcCar1 (2).jpg" width="400" height="400" alt="RC Car Image">
-	        	</div>
-	        	<div class="panel-body">
-	        	<h4 style="color:white">Main Components</h4>
-	        	<ul class="list-inline">
-                	<li style="color:white">Microchip RN4020 BTLE Module &nbsp; | </li>
-                	<li style="color:white">TI MSP430G2553 MCU &nbsp; | </li>
-                	<li style="color:white">2x TI DRV8833 H-Bridge Drivers &nbsp; | </li>
-                	<li style="color:white">6v to 3.3v Step-down converter</li>
-                </ul>
-				<h4 style="color:white; margin-top:30px;">Protocols Used</h4>
-				<ul class="list-inline">
-                	<li style="color:white">UART between MSP430 and RN4020 &nbsp; | </li>
-                	<li style="color:white">PWM between MSP430 and H-Bridge Drivers &nbsp; | </li>
-                	<li style="color:white">Bluetooth Low Energy between Galaxy S5 and RN4020 &nbsp;</li>
-                </ul>
-				<h4 style="color:white; margin-top:30px"><u>Overview</u></h4>
-				<p>This project used a Samsung Galaxy S5 Sport with an Android application utilizing the accelerometer sensor as the controller.<br/>
-				The Android device connected with the RN4020 over Bluetooth Low Energy and sent commands over BTLE where the RN4020 would forward the commands to the MSP430 via UART at 9600 baud rate.<br/>
-				The MSP430 would provide logic based on the commands received and appropriately control the PWM signal send to the drivers based on what information was recieved.<br/>
-				The MSP430 also contained logic to stop the car if communication was lost for whatever reason.</p>
-	        	</div>
-            </div>
-		<div class="panel panel-default" style="background-color:#333333">
-	        	<div class="panel-heading" style="background-color:#666666">
-	        		<h3 style="color:white">Scrolling Display</h3>
-	        		<img class="img-responsive center-block" src="img/p1.jpg" width="400" height="400" alt="RC Car Image">
-	        	</div>
-	        	<div class="panel-body">
-	        	<h4 style="color:white">Main Components</h4>
-	        	<ul class="list-inline">
-                	<li style="color:white">Newhaven 2x16 LCD Display Module &nbsp; | </li>
-                	<li style="color:white">Renesas RL-78 MCU &nbsp; | </li>
-                	<li style="color:white">Cypress 64Kbit F-RAM Module &nbsp; | </li>
-                	<li style="color:white">Silicon Labs CP2104 USB-to-UART Bridge</li>                
-                </ul>
-				<h4 style="color:white; margin-top:30px;">Protocols Used</h4>
-				<ul class="list-inline">
-                	<li style="color:white">UART between CP2104 and RL78 &nbsp; | </li>
-                	<li style="color:white">I2C between RL78 and LCD Display &nbsp; | </li>
-                	<li style="color:white">I2C between RL78 and F-RAM Module &nbsp;</li>
-                </ul>
-				<h4 style="color:white; margin-top:30px"><u>Overview</u></h4>
-				<p>This project was completed as part of a class on embedded systems. The RL78 is programmed entirely in Assembly using IAR Embedded Workbench IDE. <br/>
-					The system is powered from a single AAA battery and has an external power switch for on/off operation. <br/>
-					The device is a simple scrolling display which reads from the internal 64Kbit F-RAM module. The device continually cycles the stored text.<br/>
-					The device attaches to a host machine via a USB cord, where a terminal application can deliver text to the device.<br/>
-					During a 'load' operation via a terminal application, the USB-to-UART bridge forwards typed characters to the RL78 which then takes those characters and writes them to the F-RAM module for future use.</p>
-	        	</div>
-            </div>
-
-		<div class="panel panel-default" style="background-color:#333333">
-	        	<div class="panel-heading" style="background-color:#666666">
-	        		<h3 style="color:white">'Phone Mouse'</h3>
-	        	</div>
-	        	<div class="panel-body">
-	        	<h4 style="color:white">Main Components</h4>
-	        	<ul class="list-inline">
-                	<li style="color:white">Linux 'uevent' system file &nbsp; | </li>
-                	<li style="color:white">Local Network Connection &nbsp; | </li>
-                	<li style="color:white">Android Application </li>               
-                </ul>
-				<h4 style="color:white; margin-top:30px;">Protocols Used</h4>
-				<ul class="list-inline">
-                	<li style="color:white">Linux kernel logic with C and 'uevent' file &nbsp; | </li>
-                	<li style="color:white">UDP stream from Android to Linux machine &nbsp; | </li>
-                	<li style="color:white">Touch events within Android &nbsp;</li>
-                </ul>
-				<h4 style="color:white; margin-top:30px"><u>Overview</u></h4>
-				<p>This project allows an Android device to act as the mouse and keyboard input for a Linux machine by utilizing the 'uevent' system file within Linux.<br/>
-					The project creates a UDP stream across the local network between the Android device and the Linux machine. The Android device will scan the local network
-					for available IP addresses and displays a list to the user, where they can choose the appropriate machine. The connection is performed with UDP to allow for a
-					streaming connection, avoiding packet construction and associated overhead. The Android application captures touch events and uses a text input box for keyboard
-					events which allows the user to view input on the Android device.
-				</p>
-				</div>
-            </div>
 
     </section>
 
@@ -222,156 +145,86 @@
                 </p>
 			</div>
         </div>
-        
-        <div class="panel panel-default" style="background-color:#333333">
-	        	<div class="panel-heading" style="background-color:#666666">
-	        		<h3 style="color:white">File Compression</h3>
-	        	</div>
-	        	<div class="panel-body">
-	        	<h4 style="color:white">Main Components</h4>
-	        	<ul class="list-inline">
-                	<li style="color:white">Input File (text) &nbsp; | </li>
-                	<li style="color:white">Command Line &nbsp; | </li>
-                	<li style="color:white">Output File (text) </li>               
-                </ul>
-				<h4 style="color:white; margin-top:30px;">Protocols Used</h4>
-				<ul class="list-inline">
-                	<li style="color:white">File Input/Output &nbsp; | </li>
-                	<li style="color:white">Binary File Streams &nbsp; | </li>
-                	<li style="color:white">'Huffman' Algorithm &nbsp;</li>
-                </ul>
-				<h4 style="color:white; margin-top:30px"><u>Overview</u></h4>
-				<p>This project was created during a Data Structures and Algorithm course. The program is a command line utility that compresses a text file using the 'Huffman' algorithm.
-					The program uses file I/O operations to read an input file; where the text is analyzed according to the 'Huffman' algorithm and uses a rooted binary tree for storage of
-					'codewords'. These 'codewords' are then written to the output file within a binary stream to achieve a 57% compression ratio. Decompression is handled with file I/O and
-					read in as a binary stream which gets deciphered and written back as the original plain text.
-				</p>
-				</div>
-            </div>
-            
-            <div class="panel panel-default" style="background-color:#333333">
-	        	<div class="panel-heading" style="background-color:#666666">
-	        		<h3 style="color:white">Iris</h3>
-	        		<img class="img-responsive center-block" src="img/SignInScreen.png" width="400" height="400" alt="RC Car Image">
-	        	</div>
-	        	<div class="panel-body">
-	        	<h4 style="color:white">Main Components</h4>
-	        	<ul class="list-inline">
-                	<li style="color:white">Microsoft SQL Server &nbsp; | </li>
-                	<li style="color:white">Webpage Hosting Server &nbsp; | </li>
-                	<li style="color:white">Web Browser </li>               
-                </ul>
-				<h4 style="color:white; margin-top:30px;">Technologies Used</h4>
-				<ul class="list-inline">
-                	<li style="color:white">MVC &nbsp; | </li>
-                	<li style="color:white">SQL &nbsp; | </li>
-                	<li style="color:white">Ajax &nbsp; | </li>
-                	<li style="color:white">JavaScript &nbsp; | </li>
-                	<li style="color:white">JQuery &nbsp; | </li>
-                	<li style="color:white">HTML5 &nbsp; | </li>
-                	<li style="color:white">CSS3 &nbsp; | </li>
-                	<li style="color:white">Bootstrap</li>
-                </ul>
-				<h4 style="color:white; margin-top:30px"><u>Overview</u></h4>
-				<p>This project was created during my senior Capstone course for the Superior Police Department. The project uses .NET with MVC4 to create a web application allowing
-				access from any device. The project aims to be an investigative tool for the detectives and other investigators within the police department. The application uses Microsoft
-				SQL Server for database storage. The application is capable of storing all relevant information pertaining to people, along with the ability to store media objects, 
-				create and analyze networks of associates, and information relevant to incidents/crimes.
-				</p>
-				</div>
-            </div>
-
     </section>
     
       
     <!-- Java Section -->
     <section id="java" class="container content-section text-center">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h2><u>Java and Android</u></h2>
-                <p>I have been playing with Android applications since my first year of college. Java is a great OOP language and with Android tools being freely available, the
-                awesome onboard sensors of Android devices, and the various communication options of devices have made 
-                creating applications for mobile devices is one of the easiest things I have come to love.</p>
-            </div>
-        </div>
         
+		<div class="row">
+			<div class="col-lg-8 col-lg-offset-2">
+				<h2><u>Mobile Device Development</u></h2>
+			</div>
+		</div>
         <div class="panel panel-default" style="background-color:#333333">
 	        	<div class="panel-heading" style="background-color:#666666">
-	        		<h3 style="color:white">BTLE RC Car Controller</h3>
-	        		<img class="img-responsive center-block" src="img/connected.jpg" width="400" height="400" alt="RC Car Image">
+	        		<h3 style="color:white">Cordova Edge-Computing Platform</h3>
 	        	</div>
 	        	<div class="panel-body">
-	        	<h4 style="color:white">Main Components</h4>
-	        	<ul class="list-inline">
-                	<li style="color:white">Bluetooth Low Energy RC Car&nbsp; | </li>
-                	<li style="color:white">BTLE Android Device</li>
-                </ul>
 				<h4 style="color:white; margin-top:30px;">Technologies Used</h4>
 				<ul class="list-inline">
-                	<li style="color:white">BTLE Communication &nbsp; | </li>
-                	<li style="color:white">Android Accelerometer I/O </li>
+                	<li style="color:white">Cordova &nbsp; | </li>
+                	<li style="color:white">AngularJS &nbsp; | </li>
+                	<li style="color:white">Node.js</li>
                 </ul>
 				<h4 style="color:white; margin-top:30px"><u>Overview</u></h4>
-				<p>This project was created to act as the controller for my BTLE RC Car. The application accesses the Android accelerometer sensor with the device and uses the
-				tilting of the device as the input control for the RC car. Communication is performed over 5 different BTLE characteristics. The device will scan for nearby BTLE
-				receivers and display a list to the user. Once connected, the device will access the accelerometer and begin reading the current 'tilt' of the device and send the
-				appropriate signal to the RC car. The 'zero' reading is when the device is held flat, 'forward' recorded when the user rotates the device forward, 'backward' when
-				the user rotates the phone backwards, and 'left'/'right' when the user rotates the devices in the respective direction.
+				<p>
+					Developed a Cordova mobile application capable of supporting edge-computing technology for file sharing and communication
+					without relience on internet connectivity.
+				</p>
+				<p>
+					Implement a Node.js REST server on mobile devices capable of cross-platform file transfer and communication over a local 
+					WiFi or Hotspot from within the device itself.
+				</p>
+				<p>
+					Implement reliable server functionality within the tight security constraints of today's mobile operating systems such as Android.
+				</p>
+				<p>
+					Implement account, file, and communication security within a localized client-server REST API.
+				</p>
+				<p>
+					Implement an application platform which allows install, uninstall, and runtime management from a central web application.
+					Implement functionality that provides the ability to support SSO between the different web applications 
+					running within the platform.
 				</p>
 				</div>
             </div>
             
             <div class="panel panel-default" style="background-color:#333333">
 	        	<div class="panel-heading" style="background-color:#666666">
-	        		<h3 style="color:white">'Phone Mouse'</h3>
-	        		<img class="img-responsive center-block" src="img/device-2016-02-02-100351.png" width="200" height="400" alt="RC Car Image">
+	        		<h3 style="color:white">Xamarin Mobile Development</h3>
 	        	</div>
 	        	<div class="panel-body">
-	        	<h4 style="color:white">Main Components</h4>
-	        	<ul class="list-inline">
-                	<li style="color:white">Android Device &nbsp; | </li>
-                	<li style="color:white">Local Network Access &nbsp; | </li>
-                	<li style="color:white">Linux Host Machine </li>               
-                </ul>
 				<h4 style="color:white; margin-top:30px;">Technologies Used</h4>
 				<ul class="list-inline">
-                	<li style="color:white">Android Touch Events &nbsp; | </li>
-                	<li style="color:white">Android Keyboard Events &nbsp; | </li>
-                	<li style="color:white">Android UDP Connection</li>
+						<li style="color:white">Android, iOS, UWP platforms &nbsp; | </li>
+						<li style="color:white">RESTful Cloud API</li>   
                 </ul>
 				<h4 style="color:white; margin-top:30px"><u>Overview</u></h4>
-				<p>This project was created in order to easily control a Linux netbook attached to my television that acts as a 'media center'. The application was produced on an
-				older Android device (Motorola Photon) that I had laying around. The application will scan the currently connected Wifi network for available IPs where the Linux
-				host can be selected. A UDP connection is established between the devices to allow for a 'stream' connection which is appropriate for continous input events like 
-				mouse control. The Android device captures touch event on the screen and reports them to the Linux machine as a mouse movement. A text area is available on the Android
-				device which provides the user with a keyboard and the ability to easily read typed characters; this keyboard input is reported to the Linux machine as keyboard input.
-				</p>
+				<p>Developed mobile application across Android, iOS, and Universal Windows Platform devices targeting a cloud-based 
+					file storage and communication platform.</p>
+				<p>Implement large file CRUD operations with a cloud-based REST API server.</p>
+				<p>Implement cross-platform communication functionality.</p>
+				<p>Handle account management and cloud security.</p>
 				</div>
             </div>
 
             
             <div class="panel panel-default" style="background-color:#333333">
 	        	<div class="panel-heading" style="background-color:#666666">
-	        		<h3 style="color:white">Android Dashcam</h3>
-	        		<img class="img-responsive center-block" src="img/device-2015-01-14-131619.jpg" width="400" height="400" alt="RC Car Image">
+	        		<h3 style="color:white">Soft Skills</h3>
 	        	</div>
 	        	<div class="panel-body">
-	        	<h4 style="color:white">Main Components</h4>
-	        	<ul class="list-inline">
-                	<li style="color:white">Android Device</li>              
-                </ul>
-				<h4 style="color:white; margin-top:30px;">Technologies Used</h4>
-				<ul class="list-inline">
-                	<li style="color:white">Android Camera Operation &nbsp; | </li>
-                	<li style="color:white">Android File I/O &nbsp; | </li>
-                	<li style="color:white">Android Timer Events </li>
-                </ul>
-				<h4 style="color:white; margin-top:30px"><u>Overview</u></h4>
-				<p>This project was created as a way to utilize an old Android device I had laying around. The application uses the main camera of the device and records both audio and
-				video. The application records roughly three minutes of video; after the three minutes are recorded, the device will save the file and begin a new three minute recording.
-				The device saves upto three files during operation, if the users presses the 'Save' button then the files are tagged as persistant, otherwise the device will overwrite 
-				the files on the next iteration. The overwrite operation was created to save memory on the device during extended periods of driving; allowing for continous recording without
-				worry of available memory. The application also uses the accelerometer of the device to 'Save' the recordings in the event of an accident or major disruptive event.
+	        	<h4 style="color:white">Interpersonal and Professional Skills</h4>
+				<p>Experience with working in dynamic teams, both in office and remote employees. Coordinated with teams across countries 
+					and through out the United States. Project management between various departments from hardware engineers, software teams, and C-level oversight.
+				</p>
+				<p>
+					Experience with work sponsored travel across countries and various locations within the United States.
+				</p>
+				<p>
+					Experience with communicating with company investors. Working company booths at large trade shows including CES; 
+					promoting company product, strategic partnerships, and product demonstrations with large groups of potential leads.
 				</p>
 				</div>
             </div>
@@ -388,69 +241,50 @@
                 <h1><u>Skills</u></h1>
                 <div class="panel panel-default" style="background-color:#333333">
 	                <div class="panel-heading" style="background-color:#666666">
-	                <h3 style="color:white">Languages</h3>
-		                <ul class="list-inline">
-		                	<li style="color:white">Assembly &nbsp; | </li>
-		                	<li style="color:white">C &nbsp; | </li>
-		                	<li style="color:white">C++ &nbsp; | </li>
-		                	<li style="color:white">C# &nbsp; | </li>
-		                	<li style="color:white">Java &nbsp; |</li>
-		                	<li style="color:white">MS SQL</li>
-		                </ul>
-		                <ul class="list-inline">
-		                	<li style="color:white">HTML5 &nbsp; | </li>
-		                	<li style="color:white">CSS3 &nbsp; | </li>
-		                	<li style="color:white">JQuery &nbsp; | </li>
-		                	<li style="color:white">JavaScript &nbsp; | </li>
-		                	<li style="color:white">AJAX &nbsp; | </li>
-		                	<li style="color:white">Bootstrap</li>
-		                </ul>
-					<h4 style="color:white;margin-top:20px;">Embedded Protocols</h4>
-						<ul class="list-inline">
-		                	<li style="color:white">I2C &nbsp; | </li>
-		                	<li style="color:white">PWM &nbsp; | </li>
-		                	<li style="color:white">UART &nbsp; | </li>
-		                	<li style="color:white">ADC </li>
-		                </ul>
-
+	                	<h3 style="color:white">Languages</h3>
+							<ul class="list-inline">
+								<li style="color:white">C &nbsp; | </li>
+								<li style="color:white">C++ &nbsp; | </li>
+								<li style="color:white">C# &nbsp; | </li>
+								<li style="color:white">Java &nbsp; |</li>
+								<li style="color:white">TypeScript/JavaScript &nbsp; |</li>
+								<li style="color:white">SQL</li>
+							</ul>
+						<h3 style="color:white;margin-top:20px;">Embedded Protocols</h3>
+							<ul class="list-inline">
+								<li style="color:white">I2C &nbsp; | </li>
+								<li style="color:white">PWM &nbsp; | </li>
+								<li style="color:white">UART &nbsp; | </li>
+								<li style="color:white">ADC </li>
+							</ul>
 		             </div>
-		             <div class="panel-body">
-	                	<p>Assembly within Linux and 32-bit microcontrollers.</p>
-						<p>C within Linux and TI MSP430 16-bit microcontrollers.</p>                
-						<p>C# within Windows and .NET applications.</p>
-						<p>Java within Android, Linux, and Windows applications.</p>
-						<p>Microsoft SQL within .NET web applications.</p>
-						<p>Web development with HTML5, CSS3, JavaScript, JQuery, AJAX, and Bootstrap</p>
-					</div>
-					</div>
-					<div class="panel panel-default" style="background-color:#333333">
-				<div class="panel-heading" style="background-color:#666666">
-					<h3 style="color:white">Development Tools</h3>
-					<ul class="list-inline">
-	                	<li style="color:white">Visual Studio &nbsp; | </li>
-	                	<li style="color:white">Qt Creator &nbsp; | </li>
-	                	<li style="color:white">Netbeans &nbsp; | </li>
-	                	<li style="color:white">Eclipse &nbsp; | </li>
-	                	<li style="color:white">IAR Embedded Workbench</li>
-	                </ul>
-	                <ul class="list-inline">
-	                	<li style="color:white">Expression Web &nbsp; | </li>
-	                	<li style="color:white">Code Composer Studio &nbsp; | </li>
-	                	<li style="color:white">Android Studio</li>
-	                </ul>
-	                <h3 style="color:white; margin-top:20px;">Frameworks</h3>
-					<ul class="list-inline">
-	                	<li style="color:white">MVC &nbsp; | </li>
-	                	<li style="color:white">.NET &nbsp; | </li>
-	                	<li style="color:white">Entity Framework</li>
-	                </ul>
-
+				</div>
+				<div class="panel panel-default" style="background-color:#333333">
+					<div class="panel-heading" style="background-color:#666666">
+						<h3 style="color:white">Development Tools</h3>
+							<ul class="list-inline">
+								<li style="color:white">Visual Studio &nbsp; | </li>
+								<li style="color:white">Qt Creator &nbsp; | </li>
+								<li style="color:white">Eclipse &nbsp; | </li>
+								<li style="color:white">IAR Embedded Workbench</li>
+							</ul>
+							<ul class="list-inline">
+								<li style="color:white">Code Composer Studio &nbsp; | </li>
+								<li style="color:white">Android Studio &nbsp; | </li>
+								<li style="color:white">Git</li>
+							</ul>
+						<h3 style="color:white; margin-top:20px;">Frameworks</h3>
+							<ul class="list-inline">
+								<li style="color:white">MVC &nbsp; | </li>
+								<li style="color:white">.NET/ASP.NET &nbsp; | </li>
+								<li style="color:white">Entity Framework &nbsp; | </li>
+								<li style="color:white">Cordova &nbsp; | </li>
+								<li style="color:white">Xamarin &nbsp; | </li>
+								<li style="color:white">AngularJS &nbsp; | </li>
+								<li style="color:white">Node.js</li>
+							</ul>
 	                </div>
-					<div class="panel-body" style="background-color:#333333">
-						<h3 style="color:white">Version Control</h3>						
-						<p>Experience with Git using Visual Studio, GitHub and SourceTree.</p>
-					</div>
-					</div>
+				</div>
 					<div class="panel panel-default" style="background-color:#333333">
 					<div class="panel-heading" style="background-color:#666666">
 						<h3 style="color:white">Academics</h3>						
@@ -462,14 +296,6 @@
 	                	<li style="color:white">Netcentric Computing </li>
 	                </ul>
 	                </div>
-	                <div class="panel-body">
-						<p>BSc. in Computer Science with a minor in Information Technology</p>
-						<p>Studied data structures and the algorithms that make them possible.</p>
-						<p>General algorithm desgin and analysis such as; network flows, dynamic programming, and graph theory.</p>
-						<p>Operating system concepts and integration; utilizing Java to create applications demonstrating multi-threading and concurrency, file system structures, and CPU scheduling algorithms.</p>
-						<p>Embedded systems with Renesas RL-78 microcontroller; utilizing data sheets to design supporting circuits while utilizing Assembly language for logic.</p>
-						<p>Network programming focusing on low-level TCP/IP, UDP, WiFi, Bluetooth, and other communication protocols. Packet construction, transmission techniques, and security aspects were covered and implemented within Java.</p>
-					</div>
 				</div>
             </div>
         </div>
