@@ -1,5 +1,8 @@
 import React from "react";
 import { Strings } from "../../context/locale/Locale";
+import { Container, Link, Typography } from "@mui/material";
+import { LinkConstants } from "../../types/types";
+import { Email, GitHub, LinkedIn } from "@mui/icons-material";
 
 export interface HeadingProps {
   locale: Strings
@@ -17,6 +20,25 @@ export function Heading(props: HeadingProps) {
       <span className="desc-text">
         {props.locale.myJobTitle}
       </span>
+      <Container maxWidth={'xs'}
+        className="link-div">
+        <Link
+          href={LinkConstants.LinkedInUrl}
+          rel={'noopener'}
+          target={'_blank'}>
+          <LinkedIn />
+        </Link>
+        <Link
+          href={LinkConstants.MyGithubUrl}
+          rel={'noopener'}
+          target={'_blank'}>
+          <GitHub />
+        </Link>
+        <Link
+          href={'mailto:dusanders@gmail.com'}>
+          <Email />
+        </Link>
+      </Container>
     </div>
   )
 }

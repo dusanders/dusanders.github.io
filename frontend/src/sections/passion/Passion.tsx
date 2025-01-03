@@ -5,6 +5,7 @@ import { Card, Container, Divider, Link, Typography } from "@mui/material";
 import { StaticAssets } from "../../assets";
 import { BackgroundImage } from "../../components/backgroundImage/backgroundImage";
 import { Masonry } from "@mui/lab";
+import { LinkConstants } from "../../types/types";
 
 export interface PassionProps {
   // Nothing at this time
@@ -62,7 +63,7 @@ export function PassionSection(props: PassionProps) {
           <Masonry columns={{ md: 2, lg: 3 }}
             className="project-masonry">
             <ProjectCard
-              href="https://github.com/dusanders/forzautils_android"
+              href={LinkConstants.ForzaUtils_Android}
               title={(
                 <>
                   <Typography
@@ -83,7 +84,7 @@ export function PassionSection(props: PassionProps) {
                 </Typography>
               )} />
             <ProjectCard
-              href="https://github.com/dusanders/github-page-react"
+              href={LinkConstants.Github_Pages_Portfolio_Repo}
               title={(
                 <Typography
                   className="project-title-text">

@@ -1,6 +1,7 @@
 import React from "react";
 import './Footer.scss';
 import { Link, Typography } from "@mui/material";
+import { LinkConstants } from "../../types/types";
 
 export interface FooterProps {
   // Nothing yet
@@ -16,13 +17,13 @@ export function FooterSection(props: FooterProps) {
         <Link
           target="_blank"
           rel="noopener"
-          href={'https://www.linkedin.com/in/dus-anders/'}>
+          href={LinkConstants.LinkedInUrl}>
           LinkedIn
         </Link>
         <Link
           target="_blank"
           rel="noopener"
-          href={'https://www.github.com/dusanders'}>
+          href={LinkConstants.MyGithubUrl}>
           GitHub
         </Link>
       </div>

@@ -11,6 +11,11 @@
   .heading-div {
     align-self: center;
     margin: auto;
+    .link-div {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+    }
   }
 
   .heading-text {

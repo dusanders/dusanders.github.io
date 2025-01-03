@@ -1,5 +1,36 @@
 import React, { Ref, RefObject, useEffect } from "react";
 
+/**
+ * Namespace containing general urls
+ */
+export namespace LinkConstants {
+  /**
+   * GitHub repo for the portfolio site
+   */
+  export const Github_Pages_Portfolio_Repo = "https://github.com/dusanders/dusanders.github.io"
+  /**
+   * My Kotlin Forza project
+   */
+  export const ForzaUtils_Android: string = "https://github.com/dusanders/forzautils_android"
+  /**
+   * My base GitHub page
+   */
+  export const MyGithubUrl: string = 'https://github.com/dusanders';
+  /**
+   * My portfolio site url
+   */
+  export const PortfolioUrl: string = 'https://dusanders.github.io/';
+  /**
+   * My LinkedIn profile url
+   */
+  export const LinkedInUrl: string = 'https://linkedin.com/in/dus-anders';
+}
+
+/**
+ * Constant value to declare the url path selector
+ * of page sections. This is used when the Router
+ * context looks at the page url during a load operation
+ */
 export const UrlPathIdentifier = '#';
 /**
  * Define the available section routes for
