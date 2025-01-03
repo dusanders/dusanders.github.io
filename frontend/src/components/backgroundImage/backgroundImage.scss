@@ -1,0 +1,22 @@
+@use '../../types/colors';
+
+.background-image {
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-attachment: scroll;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  .content-div {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .smoke-screen {
+    background-color: colors.$background_smokeScreen
+  }
+}

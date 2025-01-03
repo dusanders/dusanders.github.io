@@ -1,0 +1,21 @@
+@use '../../types/sizes';
+
+.education-root {
+  width: 100%;
+  padding-top: sizes.$headerHeight;
+  margin-bottom: 2rem;
+
+  .school-container {
+    margin-bottom: 1.2rem;
+
+    .schoolname-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .school-subline {
+      font-size: 0.8rem;
+      font-weight: 400;
+    }
+  }
+}

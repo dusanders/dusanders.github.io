@@ -1,0 +1,80 @@
+@use '../../types/sizes';
+@use '../../types/colors';
+
+.work-root {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: sizes.$headerHeight;
+
+  .work-summary {
+    font-size: 0.9rem;
+    width: 60%;
+    margin-bottom: 1rem;
+    margin: 1rem auto;
+    margin-bottom: 1.4rem;
+  }
+
+  .work-paper {
+    // padding: 1.3rem;
+    width: 100%;
+    .background-content {
+      padding: 1.3rem
+    }
+    .masonry-root {
+      opacity: 0.8;
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+
+    .product-summary {
+      font-size: 0.8rem;
+    }
+
+    .content {
+      width: 90%;
+
+      .column {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .accordian-title {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1.4rem;
+      }
+
+      .accordian-base {
+        border-radius: 1rem;
+        background-color: colors.$background_lightGray;
+        margin-bottom: 0.3rem;
+        .accordian-summary {
+          margin: 0rem;
+        }
+        .accordian-item {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        }
+      }
+
+      .skill-list-item {
+        font-size: 0.8rem;
+      }
+
+      .product-link-item {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+}

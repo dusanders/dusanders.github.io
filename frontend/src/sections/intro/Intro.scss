@@ -1,0 +1,45 @@
+@use '../../types/sizes';
+@use '../../types/colors';
+
+.intro-root {
+  height: 100vh;
+  width: 100%;
+  background-color: colors.$intro_bgColor;
+  display: flex;
+  flex-direction: column;
+
+  .heading-div {
+    align-self: center;
+    margin: auto;
+    .link-div {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+    }
+  }
+
+  .heading-text {
+    &.heading-firstName {
+      margin-bottom: -2rem;
+    }
+    &.heading-lastName {
+      margin-top: -2rem;
+    }
+    font-size: sizes.$textSize_IntroHeader;
+    @include sizes.for-size(tablet) {
+      font-size: sizes.$textSize_IntroHeader_tablet;
+    }
+    margin: 0rem 0rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: default;
+  }
+
+  .desc-text {
+    font-size: sizes.$textSize_xLarge;
+    @include sizes.for-size(tablet) {
+      font-size: sizes.$textSize_xLarge_tablet;
+    }
+    cursor: default;
+  }
+}
