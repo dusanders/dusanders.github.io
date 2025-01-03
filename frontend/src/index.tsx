@@ -11,31 +11,29 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <LoggerContextProvider>
-      <LoggerContext.Consumer>
-        {logger => (
-          <LocaleContextProvider>
-            <LocaleContext.Consumer>
-              {locale => (
-                <RouteContextProvider
-                  logger={logger}>
-                  <RouteContext.Consumer>
-                    {router => (
-                      <App
-                        locale={locale}
-                        logger={logger}
-                        router={router} />
-                    )}
-                  </RouteContext.Consumer>
-                </RouteContextProvider>
-              )}
-            </LocaleContext.Consumer>
-          </LocaleContextProvider>
-        )}
-      </LoggerContext.Consumer>
-    </LoggerContextProvider>
-  </React.StrictMode>
+  <LoggerContextProvider>
+    <LoggerContext.Consumer>
+      {logger => (
+        <LocaleContextProvider>
+          <LocaleContext.Consumer>
+            {locale => (
+              <RouteContextProvider
+                logger={logger}>
+                <RouteContext.Consumer>
+                  {router => (
+                    <App
+                      locale={locale}
+                      logger={logger}
+                      router={router} />
+                  )}
+                </RouteContext.Consumer>
+              </RouteContextProvider>
+            )}
+          </LocaleContext.Consumer>
+        </LocaleContextProvider>
+      )}
+    </LoggerContext.Consumer>
+  </LoggerContextProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

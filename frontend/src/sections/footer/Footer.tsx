@@ -1,6 +1,6 @@
 import React from "react";
 import './Footer.scss';
-import { Link, Typography } from "@mui/material";
+import { Container, Link, Typography } from "@mui/material";
 import { LinkConstants } from "../../types/types";
 
 export interface FooterProps {
@@ -10,23 +10,26 @@ export interface FooterProps {
 export function FooterSection(props: FooterProps) {
   return (
     <section id="contact" className="footer-root">
-      <div className="content">
-        <Typography className="copywrite-text">
+      <Container>
+        <Typography
+        fontSize={'small'}>
           This site created by myself, with help from Material UI React package.
         </Typography>
-        <Link
-          target="_blank"
-          rel="noopener"
-          href={LinkConstants.LinkedInUrl}>
-          LinkedIn
-        </Link>
-        <Link
-          target="_blank"
-          rel="noopener"
-          href={LinkConstants.MyGithubUrl}>
-          GitHub
-        </Link>
-      </div>
+        <Container className="link-container">
+          <Link
+            target="_blank"
+            rel="noopener"
+            href={LinkConstants.LinkedInUrl}>
+            LinkedIn
+          </Link>
+          <Link
+            target="_blank"
+            rel="noopener"
+            href={LinkConstants.MyGithubUrl}>
+            GitHub
+          </Link>
+        </Container>
+      </Container>
     </section>
   )
 }

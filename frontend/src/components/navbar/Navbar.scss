@@ -39,6 +39,9 @@
           flex-direction: row;
           min-width: 3rem;
           justify-content: flex-end;
+          @include sizes.for-size(tablet) {
+            min-width: 1rem;
+          }
         }
       }
     }
@@ -48,6 +51,9 @@
       font-weight: 700;
       letter-spacing: 0.1rem;
       text-size-adjust: 120%;
+      @include sizes.for-size(tablet) {
+        text-size-adjust: 105%;
+      }
     }
 
     .nav-btn {
@@ -57,7 +63,7 @@
       padding: 0rem;
       min-width: 0rem;
       min-height: 0rem;
-      margin-right: 1rem;
+      margin-left: 1rem;
     }
   }
 
