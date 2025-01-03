@@ -18,9 +18,19 @@
   .work-paper {
     // padding: 1.3rem;
     width: 100%;
-    .background-content {
-      padding: 1.3rem
+
+    .background-smart-position {
+      background-position: center;
+
+      @include sizes.for-size(phone) {
+        background-position-x: -100rem;
+      }
     }
+
+    .background-content {
+      padding: 1.3rem;
+    }
+
     .masonry-root {
       opacity: 0.8;
     }
@@ -56,9 +66,11 @@
         border-radius: 1rem;
         background-color: colors.$background_lightGray;
         margin-bottom: 0.3rem;
+
         .accordian-summary {
           margin: 0rem;
         }
+
         .accordian-item {
           width: 100%;
           display: flex;

@@ -8,6 +8,13 @@
   display: flex;
   flex-direction: column;
 
+  .background-smart-position {
+    background-position: center;
+
+    @include sizes.for-size(phone) {
+      background-position-x: -35rem;
+    }
+  }
   .heading-div {
     align-self: center;
     margin: auto;

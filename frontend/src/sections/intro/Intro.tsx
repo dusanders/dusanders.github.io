@@ -14,8 +14,9 @@ export function IntroSection(props: IntroProps) {
   return (
     <section id="intro" className="intro-root">
       <BackgroundImage
-      url={StaticAssets.MeOnPier}>
-      <Heading locale={props.locale.strings}/>
+        className="background-smart-position"
+        url={StaticAssets.MeOnPier}>
+        <Heading locale={props.locale.strings} />
       </BackgroundImage>
     </section>
   )

@@ -258,6 +258,7 @@ export function WorkSection(props: WorkProps) {
     <section id="work" className="work-root">
       <Paper elevation={8} className="work-paper">
         <BackgroundImage
+          className="background-smart-position"
           url={StaticAssets.MeAtGrandCanyon}
           smokeScreen
           contentClassName="background-content">
