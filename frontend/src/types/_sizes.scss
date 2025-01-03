@@ -1,0 +1,30 @@
+$textSize_IntroHeader: 6.2rem;
+$textSize_IntroHeader_tablet: 5.2rem;
+$textSize_GenericHeader: 3.2rem;
+$textSize_GenericHeader_tablet: 2.8rem;
+$textSize_xLarge: 2.6rem;
+$textSize_xLarge_tablet: 2.2rem;
+$textSize_med: 1.3rem;
+$textSize_normal: 1rem;
+$textSize_small: 0.8rem;
+
+$headerHeight: 5rem;
+$footerHeight: 5rem;
+
+$supportedSizes: (
+  phone-sm: 420px,
+  phone: 767px,
+  tablet: 768px,
+  tablet-lg: 1024px,
+  desktop: 1025px,
+  desktop-lg: 1600px
+);
+
+@mixin for-size($size) {
+  @if map-has-key($map: $supportedSizes, $key: $size) {
+    $breakpoint: map-get($map: $supportedSizes, $key: $size);
+    @media screen and (max-width: $breakpoint) {
+      @content;
+    }
+  }
+}

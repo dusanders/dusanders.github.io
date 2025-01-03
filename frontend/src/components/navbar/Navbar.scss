@@ -1,0 +1,90 @@
+@use '../../types/colors';
+@use '../../types/sizes';
+
+.nav-root {
+  width: 100%;
+  height: sizes.$headerHeight;
+  position: absolute;
+  display: flex;
+  z-index: 99;
+
+  .nav-AppBar {
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    padding: 1.5rem 3rem;
+    background-color: inherit;
+
+    &.nav-AppBar-scrolled {
+      background-color: #333;
+    }
+
+    @include sizes.for-size(tablet) {
+      padding: 1.2rem 1.6rem;
+    }
+
+    .nav-Toolbar {
+      min-height: 0rem;
+      width: 100%;
+      padding: 0rem;
+
+      .rightSide {
+        margin-left: auto;
+        margin-right: 0rem;
+        display: flex;
+        flex-direction: row;
+
+        .localeChooserWrapper {
+          display: flex;
+          flex-direction: row;
+          min-width: 3rem;
+          justify-content: flex-end;
+        }
+      }
+    }
+
+    .nav-intro_link {
+      align-self: flex-start;
+      font-weight: 700;
+      letter-spacing: 0.1rem;
+      text-size-adjust: 120%;
+    }
+
+    .nav-btn {
+      color: colors.$textColor_default;
+      font-size: sizes.$textSize_small;
+      text-transform: uppercase;
+      padding: 0rem;
+      min-width: 0rem;
+      min-height: 0rem;
+      margin-right: 1rem;
+    }
+  }
+
+  .locale-icon {
+    height: 0.8em;
+  }
+  .locale-flyoutRoot {
+    height: 5rem;
+    width: 10rem;
+    background-color: #aaa;
+    position: fixed;
+    right: 2rem;
+    top: 3rem;
+    z-index: 9999;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+
+    .item-root {
+      display: flex;
+      flex-direction: row;
+      max-height: 2rem;
+
+      .icon {
+        width: 2rem;
+      }
+    }
+  }
+}
