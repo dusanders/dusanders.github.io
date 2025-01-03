@@ -219,6 +219,37 @@ const products: ProductCardProps[] = [
         href: 'https://www.fasetto.com/flysview'
       }
     ]
+  },
+  {
+    productName: 'Audio Cu',
+    productSummary: (
+      <>
+      <ProductSummary>
+        AUDIO Cu is a Fasetto product that carries digital audio data over power lines. The product consists of a transceiver sending data out and multiple 
+        receivers receiving the signal and powering speakers.
+      </ProductSummary>
+      <ProductSummary>
+        I was tasked with implementing the AUDIO Cu mobile application for controlling the hardware devices.
+      </ProductSummary>
+      </>
+    ),
+    skills: [
+      {
+        skillName: 'React Native',
+        skillPoints: [
+          'Design and implement an iOS and Android application according to UI/UX designed by a team of graphic designers',
+          'Implement functionality that would communicate with the AUDIO Cu transceiver to send and receive commands.',
+          'Implement functionality to perform drag / drop speaker configurations, EQ settings per speaker, and many more \
+          innovative UX requirements.'
+        ]
+      }
+    ],
+    links: [
+      {
+        href: 'https://www.fasetto.com/audiocu',
+        description: 'Please see the product description on Fasetto\'s site.'
+      }
+    ]
   }
 ]
 
