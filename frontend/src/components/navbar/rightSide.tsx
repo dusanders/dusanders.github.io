@@ -10,18 +10,22 @@ import { NavButton } from "./navButton";
 export interface RightSideProps {
   locale: ILocaleContext;
 }
-
+function isScrollAtTop(scrollY: number) {
+  return scrollY > 300;
+}
 export function RightSide(props: RightSideProps) {
   const strings = props.locale.strings;
   const chooserWrapperRef = useRef<HTMLDivElement>(null);
   const [showLocale, setShowLocale] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(isScrollAtTop(window.scrollY));
 
   useOutsideOnClick(chooserWrapperRef, () => {
     setShowLocale(false);
   });
 
-  useScrollListener(() => {
+  useScrollListener((scrollY) => {
     setShowLocale(false);
+    setIsAtTop(isScrollAtTop(scrollY));
   });
 
   return (
@@ -38,19 +42,21 @@ export function RightSide(props: RightSideProps) {
       <NavButton href={`${Sections.Passion}`}>
         {strings.passion}
       </NavButton>
-      <div ref={chooserWrapperRef}
-        className="localeChooserWrapper">
-        <Button className="nav-btn"
-          onClick={() => {
-            setShowLocale(!showLocale);
-          }}>
-          <Language className="locale-icon" />
-        </Button>
-        {showLocale && (
-          <LocaleFlyout
-            locale={props.locale} />
-        )}
-      </div>
+      {!isAtTop && (
+        <div ref={chooserWrapperRef}
+          className="localeChooserWrapper">
+          <Button className="nav-btn"
+            onClick={() => {
+              setShowLocale(!showLocale);
+            }}>
+            <Language className="locale-icon" />
+          </Button>
+          {showLocale && (
+            <LocaleFlyout
+              locale={props.locale} />
+          )}
+        </div>
+      )}
     </div>
   )
 }
