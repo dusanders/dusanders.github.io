@@ -11,9 +11,7 @@ export function CardTitle(props: CardTitleProps) {
   return (
     <div className="accordian-title">
       <Typography
-        fontSize={'3rem'}
-        fontWeight={700}
-        textTransform={'uppercase'}>
+        className="product-name-text">
         {props.title}
       </Typography>
       {props.summary}

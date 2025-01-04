@@ -14,6 +14,13 @@ export interface WorkProps {
   locale: ILocaleContext
 }
 
+function WorkSummaryText(props: { children?: any }) {
+  return (
+    <Typography className="work-summary">
+      {props.children}
+    </Typography>
+  )
+}
 function ProductSummary(props: { children?: any, className?: string }) {
   return (
     <Typography className={`summary ${props.className || ''}`}
@@ -126,7 +133,7 @@ const products: ProductCardProps[] = [
         skillName: 'Node',
         skillPoints: [
           'Design, implement, and deploy Node servers on embedded Linux that would send / recieve data via WiFi from a mobile device',
-          'Design, implement, and deploy Node servers from an Android device. The Android device was required to be a central \'server\' \
+          'Design, implement, and deploy Node servers from an Android device. The Android device was required to be a central server \
           that controls other connected devices.',
           'Node server was required to serve Web UI along with REST api for media files and control commands.'
         ]
@@ -242,6 +249,15 @@ const products: ProductCardProps[] = [
           'Implement functionality to perform drag / drop speaker configurations, EQ settings per speaker, and many more \
           innovative UX requirements.'
         ]
+      },
+      {
+        skillName: 'Play Store and Apple App Store',
+        skillPoints: [
+          'Setup, maintain, and coordinate app releases on iOS and Android app stores. Ensure store listings followed UI guidelines \
+          provided by UI/UX team.',
+          'Coordinate test releases across iOS and Android utilizing TestFlight and Google\'s test track for targeted testing \
+          deploys before rolling over to production.'
+        ]
       }
     ]
   }
@@ -255,9 +271,23 @@ export function WorkSection(props: WorkProps) {
           <SectionTitle>
             {props.locale.strings.work}
           </SectionTitle>
-          <Typography className="work-summary">
-            Here are some of the products I worked on at Fasetto. Please explore the products and some of the skills required to accomplish the product goals.
-          </Typography>
+          <WorkSummaryText>
+            Full-stack software engineer with over 8 years at Fasetto, a faced-paced startup.
+          </WorkSummaryText>
+          <WorkSummaryText >
+            I started as a junior developer and eventually worked into
+            team lead where I was managing a small team of developers to design, implement, and deploy innovative products.
+          </WorkSummaryText>
+          <WorkSummaryText>
+            During my time at Fasetto, I worked in numerous different
+            technology stacks:
+          </WorkSummaryText>
+          <div className="work-summary skills-list-h6">
+            <span>
+              Linux in embedded devices, .NET Core, Node.js, Next.js, ReactJS, React Native, SQLite, MongoDB, WebRTC,
+              and many other technologies.
+            </span>
+          </div>
           <Masonry
             className="masonry-root"
             columns={{ md: 2, xl: 3 }}>

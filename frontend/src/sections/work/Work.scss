@@ -9,10 +9,12 @@
 
   .work-summary {
     font-size: 0.9rem;
-    width: 60%;
-    margin-bottom: 1rem;
-    margin: 1rem auto;
-    margin-bottom: 1.4rem;
+    width: 70%;
+    margin: auto;
+    margin-bottom: 0.2rem;
+    @include sizes.for-size(tablet) {
+      width: 90%
+    }
   }
 
   .work-paper {
@@ -32,6 +34,10 @@
       padding: 1.3rem;
     }
 
+    .skills-list-h6 {
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
     .masonry-root {
       opacity: 0.8;
     }
@@ -44,6 +50,11 @@
     align-items: center;
     border-radius: 1rem;
 
+    .product-name-text {
+      font-size: 1.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
     .summary {
       font-size: 1rem;
       &.product {
