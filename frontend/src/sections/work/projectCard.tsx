@@ -10,16 +10,12 @@ export interface ProductSkill {
   skillPoints: string[];
 }
 
-export interface ProductLink {
-  description: string;
-  href: string;
-}
-
 export interface ProductCardProps {
   productName: string;
+  href?: string;
   productSummary: JSX.Element;
+  myWorkSummary: JSX.Element;
   skills: ProductSkill[];
-  links: ProductLink[]
 }
 
 export function ProductCard(props: ProductCardProps) {
@@ -28,8 +24,10 @@ export function ProductCard(props: ProductCardProps) {
       className="card">
       <CardContent className="content">
         <CardTitle
+          href={props.href || ''}
           title={props.productName}
           summary={props.productSummary} />
+        {props.myWorkSummary}
         {props.skills.map((skill) => (
           <div
             key={Utils.generateGuid()}>
@@ -47,26 +45,6 @@ export function ProductCard(props: ProductCardProps) {
             </AccordianItem>
           </div>
         ))}
-        <AccordianItem
-          title="See the Product">
-          <List>
-            {props.links.map((link) => (
-              <ListItem
-                className="product-link-item"
-                key={Utils.generateGuid()}>
-                <Typography>
-                  {link.description}
-                </Typography>
-                <Link
-                  target={'_blank'}
-                  rel={'noopener'}
-                  href={link.href}>
-                  Link
-                </Link>
-              </ListItem>
-            ))}
-          </List>
-        </AccordianItem>
       </CardContent>
     </Card>
   )

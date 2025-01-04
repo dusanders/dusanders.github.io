@@ -34,9 +34,9 @@ function App(props: AppProps) {
           locale={props.locale} />
         <IntroSection
           locale={props.locale} />
-        <AboutSection
-          locale={props.locale} />
         <WorkSection
+          locale={props.locale} />
+        <AboutSection
           locale={props.locale} />
         <EducationSection />
         <PassionSection />

@@ -1,6 +1,6 @@
 import React from "react";
 import './Work.scss';
-import { Grid2, List, ListItem, Paper, Typography } from "@mui/material";
+import { Container, Grid2, Link, List, ListItem, Paper, Typography } from "@mui/material";
 import { SectionTitle } from "../../components/sectionTitle/SectionTitle";
 import { ILocaleContext } from "../../context/locale/Locale";
 import { ProductCard, ProductCardProps } from "./projectCard";
@@ -8,14 +8,15 @@ import { Utils } from "../../types/types";
 import { Masonry } from "@mui/lab";
 import { BackgroundImage } from "../../components/backgroundImage/backgroundImage";
 import { StaticAssets } from "../../assets";
+import { CardTitle } from "./cardTitle";
 
 export interface WorkProps {
   locale: ILocaleContext
 }
 
-function ProductSummary(props: { children?: any }) {
+function ProductSummary(props: { children?: any, className?: string }) {
   return (
-    <Typography className="product-summary"
+    <Typography className={`summary ${props.className || ''}`}
       gutterBottom>
       {props.children}
     </Typography>
@@ -24,25 +25,25 @@ function ProductSummary(props: { children?: any }) {
 const products: ProductCardProps[] = [
   {
     productName: 'LINK',
+    href: 'https://flatt.design/fasetto-link',
     productSummary: (
+      <ProductSummary className="product">
+        An SSD with a WiFi card - providing a personal Cloud in your pocket!
+      </ProductSummary>
+    ),
+    myWorkSummary: (
       <>
         <ProductSummary>
-          An SSD with a WiFi card - providing a personal Cloud in your pocket!
+          I was tasked with designing and implementing Linux software to control various hardware
+          operations from a web application.
         </ProductSummary>
         <ProductSummary>
-          This was a small 2 inch by 2 inch hardware device that created a protected WiFi network.
+          I also implemented Web UI according to UX designs with an in-house JS / CSS framework to
+          provide browser access to hardware features.
         </ProductSummary>
         <ProductSummary>
-          The device had a battery pack and SSD which enabled users to have thier own personal
-          cloud storage at all times. Allowing for file, streaming, and connectivity any where.
-        </ProductSummary>
-        <ProductSummary>
-          The WiFi allowed multiple devices to connect and exchange
-          data between the LINK device.
-        </ProductSummary>
-        <ProductSummary>
-          Functionality was provided by both an installable mobile
-          app and a Web UI accessed via browser on any device.
+          Assisted in the development of an Android application to interact with the hardware. Sending
+          and receiving data to the embedded server.
         </ProductSummary>
       </>
     ),
@@ -71,22 +72,17 @@ const products: ProductCardProps[] = [
         ]
       }
     ],
-    links: [
-      {
-        description: 'Fasetto no longer supports this product, so it is a bit \
-        hard to find information directly from the company. Below is a link to \
-        a product design case study.',
-        href: 'https://flatt.design/fasetto-link'
-      }
-    ]
   },
   {
     productName: 'Gravity',
+    href: 'https://www.fasetto.com/gravity',
     productSummary: (
+      <ProductSummary className="product">
+        Device marshalling software that would allow a central device to control the content on any number of other devices.
+      </ProductSummary>
+    ),
+    myWorkSummary: (
       <>
-        <ProductSummary>
-          Device marshalling software that would allow a central device to control the content on any number of other devices.
-        </ProductSummary>
         <ProductSummary>
           Gravity was a larger project under Fasetto, where my team was assigned the 'streaming' aspect of the framework. The basic product
           design was as follows:
@@ -150,26 +146,33 @@ const products: ProductCardProps[] = [
           'Cordova app was required to host a \'publically\' available Node server and Web UI to other devices via WiFi.'
         ]
       }
-    ],
-    links: [
-      {
-        description: 'Please take a look at the information available from Fasetto.',
-        href: 'https://www.fasetto.com/gravity'
-      }
     ]
   },
   {
     productName: 'Flysview',
+    href: 'https://www.fasetto.com/flysview',
     productSummary: (
+      <ProductSummary className="product">
+        Flysview is a multi-device, video streaming solution.
+        The software allows for multiple devices to stream video content between
+        them to accomplish a multi-angle video recording. Video content can be
+        saved and watched later while preserving the synchronization and allowing
+        the viewer to select whichever angle they want in a custom video player.
+      </ProductSummary>
+    ),
+    myWorkSummary: (
       <>
         <ProductSummary>
-          Flysview is a multi-device, video streaming solution.
+          My team was tasked with designing and implementing an a web server that would
+          be capable of ingesting and forwarding multiple live vide streams to multiple devices.
         </ProductSummary>
         <ProductSummary>
-          The software allows for multiple devices to stream video content between
-          them to accomplish a multi-angle video recording. Video content can be
-          saved and watched later while preserving the synchronization and allowing
-          the viewer to select whichever angle they want in a custom video player.
+          My team was tasked with implementing a UI/UX for web and mobile apps designed by
+          the graphics teams.
+        </ProductSummary>
+        <ProductSummary>
+          Create, maintain, and coordinate mobile app releases between iOS and Android across
+          Play Store, Apple Store, along with TestFlight and Android Test Tracks.
         </ProductSummary>
       </>
     ),
@@ -212,25 +215,22 @@ const products: ProductCardProps[] = [
           deploys before rolling over to production.'
         ]
       }
-    ],
-    links: [
-      {
-        description: 'Please refer to Fasetto\'s information below.',
-        href: 'https://www.fasetto.com/flysview'
-      }
     ]
   },
   {
     productName: 'Audio Cu',
+    href: 'https://www.fasetto.com/audiocu',
     productSummary: (
-      <>
-      <ProductSummary>
-        AUDIO Cu is a Fasetto product that carries digital audio data over power lines. The product consists of a transceiver sending data out and multiple 
+      <ProductSummary className="product">
+        AUDIO Cu is a Fasetto product that carries digital audio data over power lines. The product consists of a transceiver sending data out and multiple
         receivers receiving the signal and powering speakers.
       </ProductSummary>
-      <ProductSummary>
-        I was tasked with implementing the AUDIO Cu mobile application for controlling the hardware devices.
-      </ProductSummary>
+    ),
+    myWorkSummary: (
+      <>
+        <ProductSummary>
+          I was tasked with implementing the AUDIO Cu mobile application for controlling the hardware devices.
+        </ProductSummary>
       </>
     ),
     skills: [
@@ -243,12 +243,6 @@ const products: ProductCardProps[] = [
           innovative UX requirements.'
         ]
       }
-    ],
-    links: [
-      {
-        href: 'https://www.fasetto.com/audiocu',
-        description: 'Please see the product description on Fasetto\'s site.'
-      }
     ]
   }
 ]
@@ -257,11 +251,7 @@ export function WorkSection(props: WorkProps) {
   return (
     <section id="work" className="work-root">
       <Paper elevation={8} className="work-paper">
-        <BackgroundImage
-          className="background-smart-position"
-          url={StaticAssets.MeAtGrandCanyon}
-          smokeScreen
-          contentClassName="background-content">
+        <Container className="background-content">
           <SectionTitle>
             {props.locale.strings.work}
           </SectionTitle>
@@ -270,19 +260,20 @@ export function WorkSection(props: WorkProps) {
           </Typography>
           <Masonry
             className="masonry-root"
-            columns={{ md: 1, lg: 2 }}>
+            columns={{ md: 2, xl: 3 }}>
             {products.map((product) => (
               <Grid2 size={{ md: 2, lg: 5 }} key={Utils.generateGuid()}
                 component={'div'}>
                 <ProductCard
                   productName={product.productName}
+                  myWorkSummary={product.myWorkSummary}
+                  href={product.href}
                   productSummary={product.productSummary}
-                  skills={product.skills}
-                  links={product.links} />
+                  skills={product.skills} />
               </Grid2>
             ))}
           </Masonry>
-        </BackgroundImage>
+        </Container>
       </Paper>
     </section>
   )

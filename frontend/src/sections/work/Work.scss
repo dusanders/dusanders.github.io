@@ -28,6 +28,7 @@
     }
 
     .background-content {
+      position: relative;
       padding: 1.3rem;
     }
 
@@ -43,8 +44,12 @@
     align-items: center;
     border-radius: 1rem;
 
-    .product-summary {
-      font-size: 0.8rem;
+    .summary {
+      font-size: 1rem;
+      &.product {
+        font-size: 0.8rem;
+        font-weight: 400;
+      }
     }
 
     .content {

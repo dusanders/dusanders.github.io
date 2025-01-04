@@ -7,8 +7,16 @@
   flex-direction: column;
   padding: 0rem 2rem;
   padding-top: sizes.$headerHeight;
+  .background-smart-position {
+    background-position: center;
+
+    @include sizes.for-size(phone) {
+      background-position-x: -100rem;
+    }
+  }
   .paper-root {
     padding: 2rem;
+    background-color: unset;
     .content {
       width: 95%;
       margin: auto;

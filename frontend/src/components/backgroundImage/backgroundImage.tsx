@@ -15,9 +15,9 @@ export function BackgroundImage(props: BackgroundImageProps) {
       style={{
         backgroundImage: `url(${props.url})`
       }}>
-      <div className={`content-div \
-        ${props.smokeScreen ? 'smoke-screen' : ''} \
-        ${props.contentClassName || ''}`}>
+      <div className={`content-div ` +
+        `${props.smokeScreen ? 'smoke-screen ' : ' '}` +
+        `${props.contentClassName || ''}`}>
         {props.children}
       </div>
     </div>

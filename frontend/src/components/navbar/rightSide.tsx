@@ -26,11 +26,11 @@ export function RightSide(props: RightSideProps) {
 
   return (
     <div className="rightSide">
-      <NavButton href={`${Sections.About}`}>
-        {strings.about}
-      </NavButton>
       <NavButton href={`${Sections.Work}`}>
         {strings.work}
+      </NavButton>
+      <NavButton href={`${Sections.About}`}>
+        {strings.about}
       </NavButton>
       <NavButton href={`${Sections.Education}`}>
         {strings.education}
@@ -44,7 +44,7 @@ export function RightSide(props: RightSideProps) {
           onClick={() => {
             setShowLocale(!showLocale);
           }}>
-          <Language className="locale-icon"/>
+          <Language className="locale-icon" />
         </Button>
         {showLocale && (
           <LocaleFlyout

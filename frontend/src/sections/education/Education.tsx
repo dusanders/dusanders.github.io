@@ -39,7 +39,7 @@ export function EducationSection(props: EducationProps) {
           Education
         </SectionTitle>
         <Container maxWidth={'md'}>
-          <Masonry columns={{md: 1, lg: 3}}>
+          <Masonry columns={{ md: 3 }}>
             <SchoolInfo
               name="University of Wisconsin-Superior"
               sublines={[
