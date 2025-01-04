@@ -3,7 +3,7 @@ import { Strings } from "../Locale";
 export class Strings_enUS implements Strings {
   myFirstName: string = "Dustin";
   myLastName: string = "Anderson";
-  myJobTitle: string = "Software Engineer";
+  myJobTitle: string = "Senior Software Engineer";
   about: string = 'About';
   work: string = 'Work';
   passion: string = 'Passion';
