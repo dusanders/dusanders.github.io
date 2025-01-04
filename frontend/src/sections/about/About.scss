@@ -11,7 +11,10 @@
     background-position: center;
 
     @include sizes.for-size(phone) {
-      background-position-x: -100rem;
+      background-position-x: -45rem;
+    }
+    @include sizes.for-size(phone-sm) {
+      background-position-x: -60rem;
     }
   }
   .paper-root {
