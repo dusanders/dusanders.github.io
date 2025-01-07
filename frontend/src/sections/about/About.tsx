@@ -69,35 +69,11 @@ export function AboutSection(props: AboutProps) {
                 <AboutTypography>
                   BSc. in Computer Science, minoring in Information Technology from the University of Wisconsin-Superior.
                 </AboutTypography>
-                {
-                  InsertLink(
-                    props.locale.strings.aboutSection.desc,
-                    'Fasetto',
-                    'https://www.fasetto.com'
-                  )}
-                <AboutTypography>
-                  During my time at Fasetto, I worked in numerous different
-                  technology stacks:
-                </AboutTypography>
-                <div className="skills-list-h6">
-                  <span>
-                    Linux in embedded devices, .NET Core, Node.js, Next.js, ReactJS, React Native, SQLite, MongoDB, WebRTC,
-                    and many other technologies.
-                  </span>
-                </div>
                 <AboutTypography>
                   I have experience with various non-technical assignments such as; working CES show booths where I
                   would be required to ensure booth functionality and demonstrate Fasetto products to the general public.
                   Additionally, I was required to attended numerous investor meetings, travel obligations overseas, and working
                   with various teams across time zones.
-                </AboutTypography>
-                <AboutTypography>
-                  Often times, the deadlines were tight and the teams were
-                  small - I am very familiar with fluid product design goals, sometimes changing by the hour,
-                  and prioritizing features to produce an awesome product as effeciently and quickly as needed.
-                  More information is available in the <Link href={`${Sections.Work}`}>work</Link> section.
-                  I really loved the challenges and diversity of the start-up culture, and I am excited to start
-                  a new chapter in my professional career.
                 </AboutTypography>
                 <div>
                   <Typography fontWeight={600} fontSize={'1.12rem'}>Hobbies</Typography>
@@ -106,10 +82,11 @@ export function AboutSection(props: AboutProps) {
                     When I am not creating software; I enjoy the outdoors, working on cars, sim racing, and bowling.
                   </AboutTypography>
                   <AboutTypography>
-                    I love spending time at my cabin, with acres of trails and tons of wildlife to watch.
+                    I love spending time at my cabin, with acres of trails and tons of wildlife to watch while high speed Starlink 
+                    internet also helps to stay connected when needed.
                   </AboutTypography>
                   <AboutTypography>
-                    I have a college degree and used to work as a mechanic; now that I can enjoy it as a hobby
+                    I used to work as a mechanic; now that I can enjoy it as a hobby
                     again, I like to work on my Camaro z28 and my wife's Miata.
                   </AboutTypography>
                   <AboutTypography>

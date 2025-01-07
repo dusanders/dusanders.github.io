@@ -15,7 +15,7 @@ export class Strings_enUS implements Strings {
   aboutSection = {
     title: 'About Me',
     desc: `Full-stack software engineer with over 8 years of experience in a fast-paced
-    startup company called Fasetto. I started as a junior developer and eventually worked into
-    team lead where I was managing projects and team members.`
+    startup company. I started as a junior developer and worked into a 
+    team lead position where I was managing projects and team members.`
   };
 }

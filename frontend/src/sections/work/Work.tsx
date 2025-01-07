@@ -275,8 +275,15 @@ export function WorkSection(props: WorkProps) {
             Full-stack software engineer with over 8 years at Fasetto, a faced-paced startup.
           </WorkSummaryText>
           <WorkSummaryText >
-            I started as a junior developer and eventually worked into
-            team lead where I was managing a small team of developers to design, implement, and deploy innovative products.
+            I started as a junior developer and worked into a
+            team lead position where I was managing a team of developers to design, implement, and deploy innovative products.
+          </WorkSummaryText>
+          <WorkSummaryText>
+            Often times, the deadlines were tight and the teams were
+            small - I am very familiar with fluid product design goals, sometimes changing by the hour,
+            and prioritizing features to produce an awesome product as efficiently and quickly as needed.
+            I really loved the challenges and diversity of the start-up culture, and I am excited to start
+            a new chapter in my professional career.
           </WorkSummaryText>
           <WorkSummaryText>
             During my time at Fasetto, I worked in numerous different
