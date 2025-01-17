@@ -13,6 +13,14 @@ export namespace LinkConstants {
    */
   export const ForzaUtils_Android: string = "https://github.com/dusanders/forzautils_android"
   /**
+   * Forza utility in React Native
+   */
+  export const ForzaUtils_ReactNative: string = "https://github.com/dusanders/forzautils_reactnative"
+  /**
+   * Forza Telemetry parser in TypeScript
+   */
+  export const ForzaTelemetryApi_TypeScript: string = "https://github.com/dusanders/ForzaTelemetryAPI_typescript"
+  /**
    * My base GitHub page
    */
   export const MyGithubUrl: string = 'https://github.com/dusanders';

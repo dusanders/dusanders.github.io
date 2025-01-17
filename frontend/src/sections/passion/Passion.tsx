@@ -84,6 +84,52 @@ export function PassionSection(props: PassionProps) {
                 </Typography>
               )} />
             <ProjectCard
+              href={LinkConstants.ForzaUtils_ReactNative}
+              title={(
+                <>
+                  <Typography
+                    className="project-title-text">
+                    Forza Utils
+                  </Typography>
+                  <Typography>
+                    (React Native)
+                  </Typography>
+                </>
+              )}
+              body={(
+                <>
+                  <Typography
+                    className="project-desc-text">
+                    Mobile application for viewing live telemetry data from Forza Motorsports racing game.
+                  </Typography>
+                  <Typography className="project-desc-text">
+                    Compatible with iOS and Android.
+                  </Typography>
+                </>
+              )} />
+            <ProjectCard
+              href={LinkConstants.ForzaTelemetryApi_TypeScript}
+              title={(
+                <>
+                  <Typography
+                    className="project-title-text">
+                    Forza Telemetry Parser
+                  </Typography>
+                  <Typography>
+                    (TypeScript)
+                  </Typography>
+                </>
+              )}
+              body={(
+                <>
+                  <Typography
+                    className="project-desc-text">
+                      Support package for TypeScript that parses a byte buffer from a UDP packet and returns an object 
+                      that structures the Forza Telemetry data.
+                  </Typography>
+                </>
+              )} />
+            <ProjectCard
               href={LinkConstants.Github_Pages_Portfolio_Repo}
               title={(
                 <Typography
