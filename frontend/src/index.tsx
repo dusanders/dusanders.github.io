@@ -6,34 +6,37 @@ import reportWebVitals from './reportWebVitals';
 import { RouteContext, RouteContextProvider } from './context/route/RouteContext';
 import { LoggerContext, LoggerContextProvider } from './context/logger/Logger';
 import { LocaleContext, LocaleContextProvider } from './context/locale/Locale';
+import { ThemeContextProvider } from './context/theme/Theme';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <LoggerContextProvider>
-    <LoggerContext.Consumer>
-      {logger => (
-        <LocaleContextProvider>
-          <LocaleContext.Consumer>
-            {locale => (
-              <RouteContextProvider
-                logger={logger}>
-                <RouteContext.Consumer>
-                  {router => (
-                    <App
-                      locale={locale}
-                      logger={logger}
-                      router={router} />
-                  )}
-                </RouteContext.Consumer>
-              </RouteContextProvider>
-            )}
-          </LocaleContext.Consumer>
-        </LocaleContextProvider>
-      )}
-    </LoggerContext.Consumer>
-  </LoggerContextProvider>
+  <ThemeContextProvider>
+    <LoggerContextProvider>
+      <LoggerContext.Consumer>
+        {logger => (
+          <LocaleContextProvider>
+            <LocaleContext.Consumer>
+              {locale => (
+                <RouteContextProvider
+                  logger={logger}>
+                  <RouteContext.Consumer>
+                    {router => (
+                      <App
+                        locale={locale}
+                        logger={logger}
+                        router={router} />
+                    )}
+                  </RouteContext.Consumer>
+                </RouteContextProvider>
+              )}
+            </LocaleContext.Consumer>
+          </LocaleContextProvider>
+        )}
+      </LoggerContext.Consumer>
+    </LoggerContextProvider>
+  </ThemeContextProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

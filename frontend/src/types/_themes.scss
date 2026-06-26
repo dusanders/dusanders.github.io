@@ -1,0 +1,37 @@
+
+@use './colors';
+
+$themes: (
+  light: (
+    color-background: colors.$background_lightGray,
+    color-text: colors.$textColor_default,
+    color-link: #61dafb
+  ),
+  dark: (
+    color-background: colors.$background_smokeScreen,
+    color-text: colors.$textColor_default,
+    color-link: #61dafb
+  ),
+  terminal: (
+    color-background: colors.$background_footer,
+    color-text: colors.$terminal_green,
+    color-link: #61dafb
+  ),
+  hardware: (
+    color-background: colors.$hardware_blue,
+    color-text: colors.$textColor_default,
+    color-link: #61dafb
+  ),
+);
+
+@mixin generate-theme {
+  @each $theme, $map in $themes {
+    :root[data-theme='#{$theme}'] {
+      @each $key, $value in $map {
+        --#{$key}: #{$value};
+      }
+    }
+  }
+}
+
+@include generate-theme;

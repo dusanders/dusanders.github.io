@@ -13,7 +13,7 @@ export class Strings_enUS implements Strings {
     knightsOfNi: 'Knights of Ni'
   };
   aboutSection = {
-    title: 'About Me',
+    title: 'About',
     desc: `Full-stack software engineer with over 8 years of experience in a fast-paced
     startup company. I started as a junior developer and worked into a 
     team lead position where I was managing projects and team members.`

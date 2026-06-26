@@ -34,14 +34,15 @@ export function Navbar(props: NavbarProps) {
       <AppBar
         className={`nav-AppBar ${getAppBarScrollClassname()}`}
         enableColorOnDark
+        sx={{
+          backdropFilter: 'blur(0.5rem)',
+        }}
         elevation={scrollAtTop ? 0 : 4}>
         <Toolbar className="nav-Toolbar">
-          {!scrollAtTop && (
-            <NavButton href={`${Sections.Intro}`}
-              className="nav-intro_link">
-              {strings.myFirstName} {strings.myLastName}
-            </NavButton>
-          )}
+          <NavButton href={`${Sections.Intro}`}
+            className="nav-intro_link">
+            {strings.myFirstName} {strings.myLastName}
+          </NavButton>
           <RightSide
             locale={props.locale} />
         </Toolbar>

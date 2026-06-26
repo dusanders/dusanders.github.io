@@ -1,21 +1,41 @@
 @use '../../types/sizes';
 
 .passion-root {
-  width: 100%;
+  // width: 100%;
   padding-top: sizes.$headerHeight;
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   .content {
     padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
 
     .project-masonry {
       margin-top: 1rem;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+
+      // MUI Masonry expands width to account for gutters; clamp it to parent.
+      &.MuiMasonry-root {
+        margin: 1rem auto 0;
+        max-width: 100%;
+      }
+
+      > .MuiMasonryItem-root {
+        box-sizing: border-box;
+        max-width: 100%;
+      }
 
       .project-link {
         cursor: pointer;
+        display: block;
 
         .project-card-root {
           padding: 1rem;
+          box-sizing: border-box;
           background-color: rgba(0,0,0,0.5);
 
           .project-title-text {

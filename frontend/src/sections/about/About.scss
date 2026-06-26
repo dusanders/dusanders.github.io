@@ -25,6 +25,10 @@
       margin: auto;
       .about-typography {
         margin-bottom: 1rem;
+        &.heading {
+          font-weight: 600;
+          margin-bottom: 0.8rem;
+        }
       }
       .skills-list-h6 {
         font-weight: 600;

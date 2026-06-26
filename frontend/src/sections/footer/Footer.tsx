@@ -10,7 +10,7 @@ export interface FooterProps {
 export function FooterSection(props: FooterProps) {
   return (
     <section id="contact" className="footer-root">
-      <Container>
+      {/* <Container>
         <Typography
         fontSize={'small'}>
           This site created by myself, with help from Material UI React package.
@@ -29,7 +29,7 @@ export function FooterSection(props: FooterProps) {
             GitHub
           </Link>
         </Container>
-      </Container>
+      </Container> */}
     </section>
   )
 }
