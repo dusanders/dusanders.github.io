@@ -1,0 +1,40 @@
+@use '../../types/sizes';
+
+.card {
+  padding: sizes.$cardPadding;
+  display: flex;
+  flex-direction: column;
+  gap: sizes.$margin_tiny;
+
+  .title {
+    display: flex;
+    flex-direction: row;
+    font-weight: 700;
+    .title-divider {
+      flex: 1;
+      margin-left: sizes.$margin_small;
+      height: 0.6rem;
+    }
+  }
+}
+
+.right-border {
+  border-right: 1px solid var(--color-border);
+}
+
+.left-border {
+  border-left: 1px solid var(--color-border);
+}
+
+.top-border {
+  border-top: 1px solid var(--color-border);
+}
+
+.bottom-border {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.full-border {
+  border-radius: sizes.$cardRadius;
+  border: 1px solid var(--color-border);
+}

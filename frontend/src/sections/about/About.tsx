@@ -1,77 +1,76 @@
-import React from "react";
 import './About.scss';
-import { Divider, Link, Paper, Typography } from "@mui/material";
-import { ILocaleContext, SupportedLocales } from "../../context/locale/Locale";
-import { SectionTitle } from "../../components/sectionTitle/SectionTitle";
-import { Sections } from "../../types/types";
-import { StaticAssets } from "../../assets";
-import { BackgroundImage } from "../../components/backgroundImage/backgroundImage";
-import { Bold } from "../../components/typography/Typography";
+import { ILocaleContext } from "../../context/locale/Locale";
+import { Typography } from "../../components/typography/Typography";
+import { Card } from "../../components/card/Card";
 
 export interface AboutProps {
   locale: ILocaleContext;
 }
 
-interface AboutTypographyProps {
-  children: any;
-  variant?: 'heading' | 'body';
-}
-function AboutTypography(props: AboutTypographyProps) {
-  return (
-    <Typography className={`about-typography ${props.variant ? props.variant : ''}`}>
-      {props.children}
-    </Typography>
-  )
-}
-
-/**
- * Helper function to place a Link element into a Typography string
- * @param fullString Full string to display
- * @param toReplace Token string to replace
- * @param href href to use in Link element
- * @returns Typography element with inserted Link element
- */
-function InsertLink(fullString: string, toReplace: string, href: string) {
-  const replaceIndex = fullString.indexOf(toReplace);
-  return (
-    <>
-      <AboutTypography>
-        {fullString.substring(0, replaceIndex)}
-        <Link href={`${href}`}
-          target={'_blank'}
-          rel={'noopener'}>
-          {toReplace}
-        </Link>
-        {fullString.substring(replaceIndex + toReplace.length)}
-      </AboutTypography>
-    </>
-  );
-}
 
 export function AboutSection(props: AboutProps) {
-
+  const formatTitle = (title: string) => {
+    return `*${title.toUpperCase()}:>_ `
+  }
   return (
-    <section id="about"
-      className="about-root">
-          <SectionTitle>
-            {props.locale.strings.aboutSection.title}
-          </SectionTitle>
-          <div className="content">
-              <AboutTypography variant="heading">
-                Senior Software Engineer | Mobile & IoT Architect | Systems Engineering
-                </AboutTypography>
-              <Divider className="divider" />
-              <Bold>
-                What I Do:
-              </Bold>
-                I architect high-performance cross-platform and native mobile ecosystems (React Native, Kotlin, Java) that interface directly with complex IoT hardware, custom backends (Node.js), and low-latency streaming networks.
-              <AboutTypography>
-
-                My Core Passion: I thrive in the middle layer and backend infrastructure—building robust data synchronization layers, handling hardware/device integration, profiling memory management, and engineering custom communication protocols where there is zero margin for error.
-
-                Track Record: Over 10 years of startup execution. Secured a patent for multi-angle video synchronization via custom WebRTC/WebSockets, built BLE/Wi-Fi communication systems for enterprise IoT devices demoed at CES, and modernized legacy event data-pipelines to efficiently process high-concurrency real-time event traffic.
-              </AboutTypography>
+    <Card id="about"
+      className="about-root"
+      title={props.locale.strings.aboutSection.title}>
+      <div className="content">
+        <div>
+          <Typography variant="faded">
+            Senior Software Engineer | Mobile & IoT Architect | Systems Engineering
+          </Typography>
+        </div>
+        <div className="row">
+          <div className="title">
+            <Typography variant="bold">
+              {formatTitle("WHAT_I_DO")}
+            </Typography>
           </div>
-    </section>
+          <div className="body">
+            <Typography variant="faded">
+              {` I architect high-performance cross-platform and native mobile ecosystems (React Native, Kotlin, Java) that interface directly with complex IoT hardware, custom backends (Node.js), and low-latency streaming networks.`}
+            </Typography>
+          </div>
+        </div>
+        <div className="row">
+          <div className="title">
+            <Typography variant="bold">
+              {formatTitle("MY_CORE_APPROACH")}
+            </Typography>
+          </div>
+          <div className="body">
+            <Typography variant="faded">
+              {` I design and implement robust data synchronization layers, handle hardware/device integration, profile memory management, and engineer custom communication protocols where there is zero margin for error.`}
+            </Typography>
+          </div>
+        </div>
+        <div className="row">
+          <div className="title">
+            <Typography variant="bold">
+              {formatTitle("TRACK_RECORD")}
+            </Typography>
+          </div>
+          <div className="body">
+            <Typography variant="faded">
+              {` Over 10 years of startup execution. Secured a patent for multi-angle video synchronization via custom WebRTC/WebSockets, built BLE/Wi-Fi communication systems for enterprise IoT devices demoed at CES, and modernized legacy event data-pipelines to efficiently process high-concurrency real-time event traffic.`}
+            </Typography>
+          </div>
+        </div>
+        <div className="row">
+          <div className="title">
+            <Typography variant="bold">
+              {formatTitle("MY_CORE_PASSION")}
+            </Typography>
+          </div>
+          <div className="body">
+            <Typography variant="faded">
+              {`I thrive in the middle layer and backend infrastructure—building robust data synchronization layers, handling hardware/device integration, profiling memory management, and engineering custom communication protocols where there is zero margin for error.`}
+            </Typography>
+          </div>
+        </div>
+      </div>
+    </Card>
   )
 }

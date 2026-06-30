@@ -1,0 +1,60 @@
+@use '../../types/sizes';
+
+.socials {
+  padding: sizes.$cardPadding;
+
+  &__with-border {
+    margin: sizes.$cardMargin;
+    padding: sizes.$cardPadding;
+    border-radius: sizes.$cardRadius;
+    border: 1px solid var(--color-border);
+
+    table {
+      border-collapse: collapse;
+
+      th,
+      td {
+        border-bottom: 1px solid var(--color-border);
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        text-align: start;
+        padding: sizes.$margin_small;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+    }
+  }
+
+  .compact {
+    display: flex;
+    flex-direction: column;
+    gap: sizes.$margin_small;
+    
+    .link-div {
+      display: flex;
+      flex-direction: row;
+      gap: sizes.$margin_small;
+    }
+  }
+
+  .title {
+    margin-bottom: sizes.$cardMargin;
+  }
+
+  .link-type {
+    margin-right: sizes.$cardMargin;
+  }
+
+  .link-icon {
+    color: var(--color-text-faded);
+  }
+
+  .table-heading-text {
+    margin-bottom: sizes.$margin_tiny;
+    font-size: sizes.$textSize_small;
+  }
+
+}

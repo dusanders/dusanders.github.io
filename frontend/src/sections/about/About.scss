@@ -1,38 +1,22 @@
 @use '../../types/sizes';
 
 .about-root {
-  height:auto;
-  width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0rem 2rem;
-  padding-top: sizes.$headerHeight;
-  .background-smart-position {
-    background-position: center;
-
-    @include sizes.for-size(phone) {
-      background-position-x: -45rem;
-    }
-    @include sizes.for-size(phone-sm) {
-      background-position-x: -60rem;
-    }
-  }
-  .paper-root {
-    padding: 2rem;
-    background-color: unset;
-    .content {
-      width: 95%;
-      margin: auto;
-      .about-typography {
-        margin-bottom: 1rem;
-        &.heading {
-          font-weight: 600;
-          margin-bottom: 0.8rem;
-        }
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: sizes.$margin_small;
+    .row {
+      display: flex;
+      flex-direction: column;
+      gap: sizes.$margin_small;
+      .title {
+        flex: 1;
       }
-      .skills-list-h6 {
-        font-weight: 600;
-        margin-bottom: 0.8rem;
+      .body {
+        flex: 1;
+        margin-left: 0.7rem;
       }
     }
   }

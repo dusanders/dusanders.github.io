@@ -1,0 +1,16 @@
+@use '../../types/sizes';
+  
+.location {
+  padding: sizes.$cardPadding;
+
+  .location__content {
+    display: flex;
+    flex-direction: column;
+
+    .location__content__text {
+      display: flex;
+      flex-direction: column;
+      font-size: sizes.$textSize_normal;
+    }
+  }
+}

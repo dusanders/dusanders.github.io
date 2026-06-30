@@ -8,16 +8,30 @@ $textSize_med: 1.3rem;
 $textSize_normal: 1rem;
 $textSize_small: 0.8rem;
 
-$headerHeight: 5rem;
+$headerHeight: 1.5rem;
 $footerHeight: 5rem;
 
+$cardPadding: 0.8rem;
+$cardRadius: 0.2rem;
+$cardMargin: 0.5rem;
+
+$margin_tiny: 0.2rem;
+$margin_small: 0.5rem;
+
+$phoneSmall: 480px;
+$phone: 590px;
+$tablet: 768px;
+$tabletLg: 1024px;
+$desktop: 1025px;
+$desktopLg: 1600px;
+
 $supportedSizes: (
-  phone-sm: 480px,
-  phone: 590px,
-  tablet: 768px,
-  tablet-lg: 1024px,
-  desktop: 1025px,
-  desktop-lg: 1600px
+  phone-sm: $phoneSmall,
+  phone: $phone,
+  tablet: $tablet,
+  tablet-lg: $tabletLg,
+  desktop: $desktop,
+  desktop-lg: $desktopLg
 );
 
 @mixin for-size($size) {

@@ -1,5 +1,37 @@
 
+.typography {
+  font-size: 1rem;
+}
+
 .bold {
   font-weight: bold;
   margin-right: 0.2rem;
+}
+
+.italic {
+  font-style: italic;
+  margin-right: 0.2rem;
+}
+
+.light {
+  font-weight: 300;
+  margin-right: 0.2rem;
+}
+
+.link {
+  color: var(--color-text-secondary);
+}
+
+.faded {
+  color: var(--color-text-faded);
+  font-size: 0.9rem;
+}
+
+.secondary {
+  color: var(--color-text-secondary);
+}
+
+.all-caps {
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
 }

@@ -1,6 +1,15 @@
 @use '../../types/sizes';
 @use '../../types/colors';
 
+.experience {
+  .job-title {
+
+  }
+  .job-desc {
+    margin-left: 0.7rem;
+  }
+}
+
 .work-root {
   width: 100%;
   display: flex;
