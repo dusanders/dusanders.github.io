@@ -1,49 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.scss';
-import { IntroSection } from './sections/intro/Intro';
-import { ILoggerContext } from './context/logger/Logger';
-import { IRouteContext } from './context/route/RouteContext';
-import { Navbar } from './components/navbar/Navbar';
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
-import { AboutSection } from './sections/about/About';
-import { ILocaleContext } from './context/locale/Locale';
-import { WorkSection } from './sections/work/Work';
-import { PassionSection } from './sections/passion/Passion';
-import { EducationSection } from './sections/education/Education';
-import { FooterSection } from './sections/footer/Footer';
+import './App.scss'
+import { Footer } from './sections/footer/Footer'
+import { Header } from './sections/header/Header'
+import { Skills } from './sections/skills/Skills'
+import { Tabs } from './sections/tabs/Tabs'
+import { Work } from './sections/work/Work'
 
-export interface AppProps {
-  logger: ILoggerContext;
-  router: IRouteContext;
-  locale: ILocaleContext;
-}
-
-const defaultTheme = createTheme({
-  palette: {
-    mode: 'dark'
-  },
-})
-
-function App(props: AppProps) {
+function App() {
   return (
-    <div className='App'>
-      <ThemeProvider theme={defaultTheme}>
-        <CssBaseline />
-        <Navbar
-          locale={props.locale} />
-        <IntroSection
-          locale={props.locale} />
-        <WorkSection
-          locale={props.locale} />
-        <AboutSection
-          locale={props.locale} />
-        <EducationSection />
-        <PassionSection />
-        <FooterSection />
-      </ThemeProvider>
+    <div className="max-w-5xl mx-auto px-4 py-12 md:py-20 space-y-8">
+      <Header />
+      <Tabs />
+      <Skills />
+      <Work />
+      <Footer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

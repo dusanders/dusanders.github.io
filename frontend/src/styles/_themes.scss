@@ -1,0 +1,49 @@
+
+@use './colors';
+
+$themes: (
+  light: (
+    color-background: #e2e1e1,
+    color-text: #303030,
+    color-text-faded: #808080,
+    color-text-secondary: #014f0d,
+    color-link: #017798,
+    color-border: #d3d3d3
+  ),
+  dark: (
+    color-background: #121214,
+    color-text: #e2e1e1,
+    color-text-faded: #808080,
+    color-text-secondary: #85d992,
+    color-link: #61dafb,
+    color-border: #4a4a4a
+  ),
+  terminal: (
+    color-background: #00470a,
+    color-text: #00c200,
+    color-text-faded: #808080,
+    color-text-secondary: #00ff00,
+    color-link: #0183a7,
+    color-border: #014a1a
+  ),
+  hardware: (
+    color-background: #121214,
+    color-text: #e2e1e1,
+    color-text-faded: #808080,
+    color-text-secondary: #027f15,
+    color-link: #017798,
+    color-border: #4a4a4a
+  ),
+);
+
+@mixin generate-theme {
+  @each $theme, $map in $themes {
+    :root[data-theme='#{$theme}'] {
+      @each $key, $value in $map {
+        --#{$key}: #{$value};
+      }
+    }
+  }
+}
+
+@include generate-theme;
