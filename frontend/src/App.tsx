@@ -1,6 +1,7 @@
 import './App.scss'
 import { Footer } from './sections/footer/Footer'
 import { Header } from './sections/header/Header'
+import { GitHubProjects } from './sections/projects/Projects'
 import { Skills } from './sections/skills/Skills'
 import { Tabs } from './sections/tabs/Tabs'
 import { Work } from './sections/work/Work'
@@ -12,6 +13,7 @@ function App() {
       <Tabs />
       <Skills />
       <Work />
+      <GitHubProjects />
       <Footer />
     </div>
   )

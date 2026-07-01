@@ -17,7 +17,8 @@ export function Work() {
           "Led the migration of the flagship React Native codebase from legacy JavaScript to modern, type-safe TypeScript.",
           "Architected and optimized the flagship React Native enterprise event engine handled by millions of active attendees.",
           "Established scalable architectural patterns by implementing modular service layers and custom hooks for precise business logic extraction.",
-          "Architected robust offline data synchronization workflows leveraging GraphQL with Apollo Client and SQLite local storage."
+          "Architected robust offline data synchronization workflows leveraging GraphQL with Apollo Client and SQLite local storage.",
+          "Engineered on-device AI capabilities by integrating Optical Character Recognition (OCR) models directly into the mobile client, enabling instant extraction of real-world physical text data.",
         ]}
       />
 
