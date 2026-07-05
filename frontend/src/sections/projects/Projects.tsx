@@ -11,24 +11,24 @@ interface Project {
 
 const featuredProjects: Project[] = [
   {
-    title: "Flysview Architecture",
-    description: "Patented real-time multi-angle video streaming system. Implemented custom synchronization algorithms utilizing React Native, CameraX, WebRTC, and Redis to solve concurrent stream alignment.",
-    tags: ["React Native", "CameraX", "WebRTC", "Redis", "Node.js"],
-    githubUrl: "https://github.com/dusanders/flysview-core", // Replace with actual links
-    badge: "PATENTED"
+    title: "Forza Utils",
+    description: "Expo and Electron-based cross-platform utility suite for Forza Motorsport / Horizon games. Features a telemetry dashboard, live map overlay, and real-time vehicle data visualization.",
+    tags: ["React Native", "Websockets", "SQLite", "Expo", "Node.js", "Electron"],
+    githubUrl: "https://github.com/dusanders/forzautils_reactnative", // Replace with actual links
+    badge: "Real-Time Telemetry"
   },
   {
-    title: "Gravity IoT Centralization",
-    description: "An IoT multi-device control hub deployed on custom Linux clients. Features a type-safe React/Node web dashboard paired with an Android kiosk interface for low-latency hardware synchronization.",
-    tags: ["React", "Node.js", "TypeScript", "Android SDK", "AOSP"],
-    githubUrl: "https://github.com/dusanders/gravity-iot"
+    title: "ForzaTelemetryAPI (TypeScript)",
+    description: "TypeScript implementation of a telemetry data parser and API for Forza Motorsport / Horizon games. Provides structured access to real-time vehicle data, enabling developers to build custom telemetry applications.",
+    tags: ["TypeScript", "Node.js", "Buffer Parsing", "API"],
+    githubUrl: "https://github.com/dusanders/ForzaTelemetryAPI_typescript"
   },
   {
-    title: "AI Retrieval / Semantic Search Playground",
-    description: "Experimental local-first dashboard built to explore modern embedding models and vector search optimization. Tailored with high-performance UI layers to visualize dataset reranking states.",
-    tags: ["TypeScript", "React", "Vector DB", "LLM Integration"],
-    githubUrl: "https://github.com/dusanders/ai-retrieval-ui",
-    badge: "AI EXPERIMENT"
+    title: "dusanders.github.io",
+    description: "Personal portfolio and project showcase website built with React, TypeScript, and Tailwind CSS. Features a dynamic project grid, GitHub contributions visualization, and responsive design.",
+    tags: ["TypeScript", "React", "Tailwind CSS", "Vite"],
+    githubUrl: "https://github.com/dusanders/dusanders.github.io",
+    badge: "Frontend Showcase"
   }
 ];
 

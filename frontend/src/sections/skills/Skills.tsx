@@ -9,7 +9,7 @@ export function Skills() {
         <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4">
           <div className="mono text-xs text-emerald-400 font-medium uppercase tracking-wider md:pt-1">01 / Mobile & Native</div>
           <div className="md:col-span-3 text-sm text-zinc-300 leading-relaxed">
-            React Native, Kotlin, Java, Jetpack Compose, CameraX, Android SDK, AOSP, Android Core Modules.
+            React / React Native, Electron, Expo, Kotlin, Jetpack Compose, CameraX, Android SDK, AOSP.
           </div>
         </div>
         <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4">
