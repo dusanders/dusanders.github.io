@@ -19,7 +19,7 @@ export const GitHubLive: React.FC = () => {
       .then(res => res.json())
       .then((data: GitHubRepo[]) => {
         // Filter down to only repositories you labeled with the 'portfolio-feature' topic on GitHub
-        const featured = data.filter(repo => repo.topics?.includes('portfolio-feature'));
+        // const featured = data.filter(repo => repo.topics?.includes('portfolio-feature'));
         setRepos(data);
         setLoading(false);
       })

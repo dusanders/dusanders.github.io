@@ -14,7 +14,7 @@ const featuredProjects: Project[] = [
     title: "Forza Utils",
     description: "Expo and Electron-based cross-platform utility suite for Forza Motorsport / Horizon games. Features a telemetry dashboard, live map overlay, and real-time vehicle data visualization.",
     tags: ["React Native", "Websockets", "SQLite", "Expo", "Node.js", "Electron"],
-    githubUrl: "https://github.com/dusanders/forzautils_reactnative", // Replace with actual links
+    githubUrl: "https://github.com/dusanders/forzautils_reactnative", 
     badge: "Real-Time Telemetry"
   },
   {
