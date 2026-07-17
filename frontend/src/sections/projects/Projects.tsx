@@ -11,6 +11,14 @@ interface Project {
 
 const featuredProjects: Project[] = [
   {
+    title: "ARK Config Editor",
+    description: "Browser-based React app for uploading, editing, and exporting ARK: Survival Ascended Game.ini and GameUserSettings.ini files with helper tools for NPC replacement and difficulty overrides.",
+    tags: ["TypeScript", "React", "Vite", "INI Editor"],
+    githubUrl: "https://github.com/dusanders/ark-config-editor",
+    liveUrl: "https://dusanders.github.io/ark-config-editor/",
+    badge: "Latest"
+  },
+  {
     title: "Forza Utils",
     description: "Expo and Electron-based cross-platform utility suite for Forza Motorsport / Horizon games. Features a telemetry dashboard, live map overlay, and real-time vehicle data visualization.",
     tags: ["React Native", "Websockets", "SQLite", "Expo", "Node.js", "Electron"],
@@ -21,15 +29,9 @@ const featuredProjects: Project[] = [
     title: "ForzaTelemetryAPI (TypeScript)",
     description: "TypeScript implementation of a telemetry data parser and API for Forza Motorsport / Horizon games. Provides structured access to real-time vehicle data, enabling developers to build custom telemetry applications.",
     tags: ["TypeScript", "Node.js", "Buffer Parsing", "API"],
-    githubUrl: "https://github.com/dusanders/ForzaTelemetryAPI_typescript"
+    githubUrl: "https://github.com/dusanders/ForzaTelemetryAPI_typescript",
+    badge: "Java / Kotlin to TypeScript"
   },
-  {
-    title: "dusanders.github.io",
-    description: "Personal portfolio and project showcase website built with React, TypeScript, and Tailwind CSS. Features a dynamic project grid, GitHub contributions visualization, and responsive design.",
-    tags: ["TypeScript", "React", "Tailwind CSS", "Vite"],
-    githubUrl: "https://github.com/dusanders/dusanders.github.io",
-    badge: "Frontend Showcase"
-  }
 ];
 
 export const GitHubProjects: React.FC = () => {
