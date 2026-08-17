@@ -13,10 +13,18 @@ const featuredProjects: Project[] = [
   {
     title: "ARK Config Editor",
     description: "Browser-based React app for uploading, editing, and exporting ARK: Survival Ascended Game.ini and GameUserSettings.ini files with helper tools for NPC replacement and difficulty overrides.",
-    tags: ["TypeScript", "React", "Vite", "INI Editor"],
+    tags: ["TypeScript", "React", "Vite","TailwindCSS", "INI Editor"],
     githubUrl: "https://github.com/dusanders/ark-config-editor",
     liveUrl: "https://dusanders.github.io/ark-config-editor/",
-    badge: "Latest"
+    badge: "In-memory file operations"
+  },
+  {
+    title: "The Long Dark Maps",
+    description: "Mobile app and webpage featuring an interactive map collection for The Long Dark with integrated wiki links. Includes custom annotation drawing tools and cross-platform pan/zoom support. Uses Expo for Android, iOS, and Web.",
+    tags: ["React", "React Native", "Canvas", "Expo", "Expo Web"],
+    githubUrl: "https://github.com/dusanders",
+    liveUrl: "https://thelongdarkmaps.com",
+    badge: "Multi-platform"
   },
   {
     title: "Forza Utils",
@@ -25,13 +33,13 @@ const featuredProjects: Project[] = [
     githubUrl: "https://github.com/dusanders/forzautils_reactnative", 
     badge: "Real-Time Telemetry"
   },
-  {
-    title: "ForzaTelemetryAPI (TypeScript)",
-    description: "TypeScript implementation of a telemetry data parser and API for Forza Motorsport / Horizon games. Provides structured access to real-time vehicle data, enabling developers to build custom telemetry applications.",
-    tags: ["TypeScript", "Node.js", "Buffer Parsing", "API"],
-    githubUrl: "https://github.com/dusanders/ForzaTelemetryAPI_typescript",
-    badge: "Java / Kotlin to TypeScript"
-  },
+  // {
+  //   title: "ForzaTelemetryAPI (TypeScript)",
+  //   description: "TypeScript implementation of a telemetry data parser and API for Forza Motorsport / Horizon games. Provides structured access to real-time vehicle data, enabling developers to build custom telemetry applications.",
+  //   tags: ["TypeScript", "Node.js", "Buffer Parsing", "API"],
+  //   githubUrl: "https://github.com/dusanders/ForzaTelemetryAPI_typescript",
+  //   badge: "Java / Kotlin to TypeScript"
+  // },
 ];
 
 export const GitHubProjects: React.FC = () => {
