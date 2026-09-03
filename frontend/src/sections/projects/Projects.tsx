@@ -14,8 +14,8 @@ const featuredProjects: Project[] = [
     title: "ARK Config Editor",
     description: "Browser-based React app for uploading, editing, and exporting ARK: Survival Ascended Game.ini and GameUserSettings.ini files with helper tools for NPC replacement and difficulty overrides.",
     tags: ["TypeScript", "React", "Vite","TailwindCSS", "INI Editor"],
-    githubUrl: "https://github.com/dusanders/ark-config-editor",
-    liveUrl: "https://dusanders.github.io/ark-config-editor/",
+    githubUrl: "https://github.com/dusanders/",
+    liveUrl: "https://www.arkconfigs.com/",
     badge: "In-memory file operations"
   },
   {
