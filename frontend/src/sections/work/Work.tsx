@@ -24,7 +24,8 @@ export function Work() {
 
       <Article
         company="AUDIO Cu"
-        role="Lead / Senior Mobile Systems Engineer"
+        companySubtitle="Fasetto, Inc."
+        role="Lead Mobile Developer"
         date="2022 — 2024"
         tag="IoT LAYER / HARDWARE"
         responsibilities={[
@@ -36,6 +37,7 @@ export function Work() {
 
       <Article
         company="Flysview"
+        companySubtitle="Fasetto, Inc."
         role="Core Architect & Patent Author"
         date="2020 — 2022"
         tag="REAL-TIME PROTOCOLS"
@@ -48,6 +50,7 @@ export function Work() {
 
       <Article
         company="Gravity"
+        companySubtitle="Fasetto, Inc."
         role="Core Architect & Product Owner"
         date="2019 — 2020"
         tag="IoT / HARDWARE INTEGRATION"
@@ -61,7 +64,8 @@ export function Work() {
 
       <Article
         company="LINK"
-        role="Lead / Senior Software Engineer (Mobile & IoT)"
+        companySubtitle="Fasetto, Inc."
+        role="Lead Software Engineer (Mobile & IoT)"
         date="2018 — 2019"
         tag="IoT / HARDWARE INTEGRATION"
         responsibilities={[
@@ -74,8 +78,8 @@ export function Work() {
 
       <Article
         company="Fasetto, Inc."
-        role="Senior Software Engineer (Mobile & IoT)"
-        date="2017 — 2021"
+        role="Staff Software Engineer (Mobile & IoT)"
+        date="2017 — 2024"
         tag="MOBILE PEER-TO-PEER"
         responsibilities={[
           "Built peer-to-peer data streaming transport links on top of Xamarin iOS and Android applications, enabling real-time file sharing via BLE and Wi-Fi matrixes.",

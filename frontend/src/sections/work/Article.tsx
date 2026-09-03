@@ -1,18 +1,19 @@
 
 export interface ArticleProps {
   company: string;
+  companySubtitle?: string;
   role: string;
   date: string;
   tag: string;
   responsibilities?: string[];
 }
 
-export function Article({ company, role, date, tag, responsibilities }: ArticleProps) {
+export function Article({ company, companySubtitle, role, date, tag, responsibilities }: ArticleProps) {
   return (
       <article className="border border-zinc-800/80 bg-[#121215] p-6 rounded-lg transition-all hover:border-zinc-700/80">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 className="text-lg font-bold text-zinc-100 mono">{company}</h3>
+            <h3 className="text-lg font-bold text-zinc-100 mono">{company} {companySubtitle && <span className="text-zinc-400 text-xs">— {companySubtitle}</span>}</h3>
             <p className="text-sm text-zinc-400 mt-0.5">{role}</p>
           </div>
           <div className="text-right sm:text-right text-xs mono text-zinc-500">
