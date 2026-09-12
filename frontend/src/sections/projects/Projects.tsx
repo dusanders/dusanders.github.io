@@ -4,7 +4,7 @@ interface Project {
   title: string;
   description: string;
   tags: string[];
-  githubUrl: string;
+  githubUrl?: string;
   liveUrl?: string;
   badge?: string;
 }
@@ -13,8 +13,7 @@ const featuredProjects: Project[] = [
   {
     title: "ARK Config Editor",
     description: "Browser-based React app for uploading, editing, and exporting ARK: Survival Ascended Game.ini and GameUserSettings.ini files with helper tools for NPC replacement and difficulty overrides.",
-    tags: ["TypeScript", "React", "Vite","TailwindCSS", "INI Editor"],
-    githubUrl: "https://github.com/dusanders/",
+    tags: ["TypeScript", "React", "Vite", "TailwindCSS", "INI Editor"],
     liveUrl: "https://www.arkconfigs.com/",
     badge: "In-memory file operations"
   },
@@ -22,7 +21,6 @@ const featuredProjects: Project[] = [
     title: "The Long Dark Maps",
     description: "Mobile app and webpage featuring an interactive map collection for The Long Dark with integrated wiki links. Includes custom annotation drawing tools and cross-platform pan/zoom support. Uses Expo for Android, iOS, and Web.",
     tags: ["React", "React Native", "Canvas", "Expo", "Expo Web"],
-    githubUrl: "https://github.com/dusanders",
     liveUrl: "https://thelongdarkmaps.com",
     badge: "Multi-platform"
   },
@@ -30,7 +28,7 @@ const featuredProjects: Project[] = [
     title: "Forza Utils",
     description: "Expo and Electron-based cross-platform utility suite for Forza Motorsport / Horizon games. Features a telemetry dashboard, live map overlay, and real-time vehicle data visualization.",
     tags: ["React Native", "Websockets", "SQLite", "Expo", "Node.js", "Electron"],
-    githubUrl: "https://github.com/dusanders/forzautils_reactnative", 
+    githubUrl: "https://github.com/dusanders/forzautils_reactnative",
     badge: "Real-Time Telemetry"
   },
   // {
@@ -51,9 +49,9 @@ export const GitHubProjects: React.FC = () => {
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           SYS.REPOSITORIES // KEY_PROJECTS
         </h2>
-        <a 
-          href="https://github.com/dusanders" 
-          target="_blank" 
+        <a
+          href="https://github.com/dusanders"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-zinc-400 hover:text-emerald-400 transition-colors mono"
         >
@@ -93,18 +91,20 @@ export const GitHubProjects: React.FC = () => {
 
               {/* Interactive Actions */}
               <div className="flex gap-4 text-xs mono">
-                <a 
-                  href={project.githubUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-zinc-500 hover:text-zinc-200 transition-colors"
-                >
-                  [ source_code ]
-                </a>
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-zinc-500 hover:text-zinc-200 transition-colors"
+                  >
+                    [ source_code ]
+                  </a>
+                )}
                 {project.liveUrl && (
-                  <a 
-                    href={project.liveUrl} 
-                    target="_blank" 
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-emerald-400/90 hover:text-emerald-400 transition-colors"
                   >
